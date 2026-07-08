@@ -91,6 +91,8 @@
     }
   },
   "media": {
-    "modulos": []
+    "modulos": [
+      "https://raw.githubusercontent.com/andina-ia/qbox/main/public/assets/media/modulos/1783514307091_images.png"
+    ]
   }
 }
