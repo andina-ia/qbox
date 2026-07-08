@@ -1,0 +1,35 @@
+---
+import { MAPS_URL } from '../lib/site.js';
+interface Props {
+  home?: boolean;
+}
+const { home = false } = Astro.props;
+---
+<footer>
+  <div class="foot-in">
+    <div class="foot-grid">
+      <div>
+        <img src="/assets/qbox-logo-ink.webp" alt="qBox" class="foot-logo" />
+        <p class="foot-desc">Construcción modular premium sismo resistente. Diseñamos, gestionamos y construimos espacios listos para habitar en San Juan y toda la región.</p>
+      </div>
+      <div class="foot-r">
+        <p class="foot-sh-title">Showroom</p>
+        <div class="foot-info">
+          <a href={MAPS_URL} target="_blank" rel="noopener" class="foot-addr">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span>Rivadavia, San Juan<br />Argentina</span>
+          </a>
+          <span class="foot-hrs">Lun a Sáb · 09 a 18 h</span>
+          {home && <button class="foot-vis" onclick="openModal()">Agendar visita</button>}
+        </div>
+      </div>
+    </div>
+    <div class="foot-bot">
+      <span>© 2026 qBox · Construcciones Modulares</span>
+      <div class="foot-links">
+        <a href="/admin">Administración</a>
+        <span>Construcción modular premium · San Juan</span>
+      </div>
+    </div>
+  </div>
+</footer>

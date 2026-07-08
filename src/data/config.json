@@ -1,0 +1,58 @@
+{
+  "content": {
+    "heroSub": "Cocheras · Galerías · Stands · Módulos · Oficinas · Ampliaciones",
+    "nosotrosP1": "En qBox adaptamos y flexibilizamos la forma de construir. Nacimos en San Juan durante la pandemia con un objetivo claro: ofrecer espacios habitables en tiempo récord, en lugares con desafíos logísticos y con la mejor relación precio–calidad.",
+    "nosotrosP2": "Nos diferenciamos por nuestra localía, compromiso y transparencia. Cada proyecto lo desarrollamos en conjunto con nuestros clientes, asegurando soluciones eficientes y personalizadas."
+  },
+  "cotizador": {
+    "rateModulo": 640,
+    "rateSemi": 135
+  },
+  "clients": [
+    { "name": "Mapal", "active": true },
+    { "name": "Sigma", "active": true },
+    { "name": "MTZ Transporte", "active": true },
+    { "name": "Logística Empresaria", "active": true },
+    { "name": "Bulonería Mitre", "active": true },
+    { "name": "Proyecto Altar", "active": true },
+    { "name": "Austral Gold", "active": true },
+    { "name": "Caposo", "active": true },
+    { "name": "Linked", "active": true },
+    { "name": "Tip Top", "active": true },
+    { "name": "Starlink Monitoreo", "active": true },
+    { "name": "Grupo Cuyano", "active": true }
+  ],
+  "seo": {
+    "inicio": {
+      "title": "qBox · Construcción Modular y en Seco San Juan | Llave en Mano",
+      "desc": "Empresa local de construcción modular y en seco en San Juan. Viviendas, oficinas, cocheras y ampliaciones sismo resistentes listas para habitar. Más de 120 proyectos entregados en Cuyo.",
+      "keywords": "construcción modular San Juan, casas modulares San Juan, construcción en seco San Juan, viviendas modulares sismo resistente, módulos habitacionales San Juan, empresa constructora San Juan, casas prefabricadas San Juan Argentina, construcción rápida San Juan, qBox modular"
+    },
+    "modulos": {
+      "title": "Módulos Habitacionales San Juan | Casas y Oficinas Modulares | qBox",
+      "desc": "Módulos habitacionales premium en San Juan. Viviendas, estudios y oficinas modulares llave en mano con ingeniería sismo resistente. Entrega en 45 días. Presupuesto sin cargo.",
+      "keywords": "módulos habitacionales San Juan, casas modulares San Juan, viviendas modulares llave en mano, módulo habitable San Juan, casa prefabricada San Juan, oficinas modulares San Juan, vivienda modular sismo resistente San Juan, construcción modular residencial Cuyo"
+    },
+    "stands": {
+      "title": "Stands Modulares para Eventos y Ferias San Juan | qBox",
+      "desc": "Stands modulares para eventos, ferias y exposiciones en San Juan. Diseño profesional, montaje rápido y alto impacto visual. Especialistas en Feria Minera PDAC y eventos corporativos.",
+      "keywords": "stands para ferias San Juan, stands modulares San Juan, stands feria minera San Juan, stands eventos corporativos San Juan, alquiler stands San Juan, diseño stands San Juan, stands exposición San Juan, estructuras modulares eventos Cuyo"
+    },
+    "cocheras-galerias": {
+      "title": "Cocheras y Galerías Modulares San Juan | Semicubiertos | qBox",
+      "desc": "Cocheras, galerías y semicubiertos modulares en San Juan. Diseño moderno, montaje en días, sin obra húmeda. Soluciones de construcción en seco para proteger y valorizar tu propiedad.",
+      "keywords": "cocheras modulares San Juan, galerías modulares San Juan, semicubiertos San Juan, cochera metálica San Juan, galería construcción en seco San Juan, ampliación semicubierta San Juan, cochera prefabricada San Juan, galería aluminio San Juan"
+    },
+    "ampliaciones": {
+      "title": "Ampliaciones en Seco San Juan | Rápidas y Sin Obra Húmeda | qBox",
+      "desc": "Ampliaciones de viviendas y locales en construcción en seco en San Juan. Sin demoler, sin obra húmeda, sin meses de espera. Steel framing y estructura metálica. Entrega express.",
+      "keywords": "ampliaciones en seco San Juan, ampliar casa San Juan, construcción en seco San Juan, steel framing San Juan, ampliación rápida San Juan, ampliación sin obra húmeda San Juan, segundo piso construcción en seco San Juan, ampliación económica San Juan"
+    },
+    "locales": {
+      "title": "Locales Comerciales y Showrooms Modulares San Juan | qBox",
+      "desc": "Locales comerciales, showrooms y espacios retail modulares en San Juan. Alta gama, entrega rápida y diseño a medida. Construcción modular para comercios, franquicias y emprendedores.",
+      "keywords": "locales comerciales modulares San Juan, showroom modular San Juan, locales prefabricados San Juan, construcción local comercial San Juan, tienda modular San Juan, espacio comercial modular Cuyo, local llave en mano San Juan, retail modular San Juan"
+    }
+  },
+  "media": {}
+}

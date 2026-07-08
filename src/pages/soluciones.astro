@@ -1,0 +1,174 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { waLink } from '../lib/site.js';
+
+const DATA = {
+  residencial: {
+    name: 'Residencial',
+    kicker: 'Para vivir · Residencial',
+    title: 'Desarrollos residenciales listos para habitar.',
+    tagline:
+      'Espacios pensados para el confort cotidiano, fabricados en seco y montados en tiempo récord, con la misma calidad de una obra tradicional.',
+    introTitle: 'Una vivienda completa, lista para usar.',
+    introBody:
+      'Resolvemos casas, estudios, ampliaciones y espacios de recreación con la misma ingeniería sismo resistente y terminaciones premium. Diseño, gestión y construcción en un único canal de responsabilidad, sin intermediarios.',
+    image: '/assets/residencial.webp',
+    imageAlt: 'Desarrollos residenciales modulares qBox',
+    features: [
+      { title: 'Viviendas llave en mano', desc: 'Casas y dúplex completos, listos para mudarse.' },
+      { title: 'Estudios y monoambientes', desc: 'Unidades compactas para renta o uso propio.' },
+      { title: 'Ampliaciones y dependencias', desc: 'Sumá metros sin frenar tu día a día.' },
+      { title: 'Quinchos y cocheras', desc: 'Espacios de recreación y resguardo a medida.' }
+    ],
+    ctaTitle: '¿Listo para tu proyecto residencial?',
+    wa: waLink('Hola qBox, me interesa la línea residencial. Quisiera más información.')
+  },
+  corporativo: {
+    name: 'Corporativo',
+    kicker: 'Para operar · Corporativo',
+    title: 'Soluciones corporativas que acompañan la operación.',
+    tagline:
+      'Infraestructura modular escalable y reubicable, diseñada para responder a las exigencias productivas de cada industria.',
+    introTitle: 'Infraestructura que se adapta a tu operación.',
+    introBody:
+      'Oficinas, obradores, módulos para minería, locales y stands resueltos con sistema modular: rápidos de montar, reubicables y calculados con ingeniería sismo resistente para los entornos más exigentes.',
+    image: '/assets/corporativo-modulo-negro.webp',
+    imageAlt: 'Soluciones corporativas modulares qBox',
+    features: [
+      { title: 'Oficinas y co-working', desc: 'Espacios de trabajo escalables y reubicables.' },
+      { title: 'Obradores y campamentos', desc: 'Infraestructura de obra montada al instante.' },
+      { title: 'Minería y entornos exigentes', desc: 'Módulos resistentes para altura y clima severo.' },
+      { title: 'Locales y stands', desc: 'Comercios, showrooms y stands para eventos.' }
+    ],
+    ctaTitle: '¿Listo para tu proyecto corporativo?',
+    wa: waLink('Hola qBox, me interesa la línea corporativo. Quisiera más información.')
+  }
+};
+
+const seo = {
+  title: 'qBox · Soluciones',
+  description: 'Soluciones de construcción modular premium sismo resistente en San Juan.'
+};
+---
+
+<BaseLayout seo={seo}>
+  <main class="sol">
+    <section class="sol-hero">
+      <div class="sol-crumb">
+        <a href="/">Inicio</a><span>/</span>
+        <a href="/#soluciones">Soluciones</a><span>/</span>
+        <span class="sol-crumb-cur" data-field="name">Residencial</span>
+      </div>
+      <div class="sol-kick">
+        <span class="sol-kick-line"></span>
+        <span class="sol-kick-txt" data-field="kicker"></span>
+      </div>
+      <h1 data-field="title"></h1>
+      <p class="sol-tagline" data-field="tagline"></p>
+    </section>
+
+    <section class="sol-imgwrap">
+      <img id="sol-img" src="" alt="" loading="lazy" />
+    </section>
+
+    <section class="sol-intro">
+      <div class="sol-intro-in">
+        <div class="rv" style="max-width:760px;">
+          <h2 data-field="introTitle"></h2>
+          <p class="sol-intro-body" data-field="introBody"></p>
+        </div>
+        <div class="sol-feat" id="sol-feat"></div>
+      </div>
+    </section>
+
+    <section class="sol-cta-sec">
+      <div class="sol-cta rv">
+        <h2 data-field="ctaTitle"></h2>
+        <p>Agendá una visita al showroom o pedí tu cotización. Sin demoras, sin sorpresas.</p>
+        <div class="sol-cta-btns">
+          <a href="/#showroom" class="btn-p" style="background:#F5F4F0;color:#1E2022;">Agendar Cita en Showroom</a>
+          <a id="sol-wa" href="#" target="_blank" rel="noopener" class="btn-s">Consultar por WhatsApp</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script is:inline define:vars={{ DATA }}>
+    const tipo = (() => {
+      try {
+        const q = new URLSearchParams(window.location.search).get('tipo');
+        if (q && DATA[q]) return q;
+      } catch (e) {}
+      return 'residencial';
+    })();
+    const d = DATA[tipo];
+
+    document.querySelectorAll('[data-field]').forEach((el) => {
+      const key = el.getAttribute('data-field');
+      if (d[key] != null) el.textContent = d[key];
+    });
+    document.title = 'qBox · ' + d.name;
+
+    const img = document.getElementById('sol-img');
+    img.src = d.image;
+    img.alt = d.imageAlt;
+
+    document.getElementById('sol-feat').innerHTML = d.features
+      .map(
+        (f, i) => `
+      <div class="rv sol-feat-card">
+        <div class="sol-feat-n">0${i + 1}</div>
+        <div class="sol-feat-t">${f.title}</div>
+        <div class="sol-feat-d">${f.desc}</div>
+      </div>`
+      )
+      .join('');
+
+    document.getElementById('sol-wa').href = d.wa;
+
+    const _ro = new IntersectionObserver(
+      (es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); _ro.unobserve(e.target); } }),
+      { threshold: 0.14 }
+    );
+    document.querySelectorAll('.sol .rv').forEach((el) => _ro.observe(el));
+  </script>
+
+  <style is:global>
+    .sol { padding-top: 68px; }
+    .sol-hero { max-width: var(--max); margin: 0 auto; padding: clamp(34px,5vw,60px) var(--px) clamp(20px,3vw,32px); }
+    .sol-crumb { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--accent); margin-bottom: 26px; flex-wrap: wrap; }
+    .sol-crumb a { color: var(--accent); text-decoration: none; }
+    .sol-crumb a:hover { color: var(--ink); }
+    .sol-crumb-cur { color: var(--ink); font-weight: 600; }
+    .sol-kick { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 22px; }
+    .sol-kick-line { width: 28px; height: 1px; background: var(--accent); }
+    .sol-kick-txt { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: var(--accent); }
+    .sol-hero h1 { font-size: clamp(26px,3.4vw,44px); letter-spacing: -.02em; margin: 0 0 18px; max-width: 20ch; }
+    .sol-tagline { margin: 0; max-width: 560px; font-size: clamp(15px,1.6vw,18px); line-height: 1.55; color: var(--ink); }
+
+    .sol-imgwrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--px) clamp(34px,4vw,52px); }
+    .sol-imgwrap img { width: 100%; height: clamp(200px,26vw,340px); object-fit: cover; border-radius: 18px; }
+
+    .sol-intro { border-top: 1px solid var(--border); background: var(--card); }
+    .sol-intro-in { max-width: var(--max); margin: 0 auto; padding: clamp(46px,6vw,82px) var(--px); }
+    .sol-intro h2 { font-size: clamp(22px,2.8vw,32px); letter-spacing: -.01em; margin: 0 0 16px; }
+    .sol-intro-body { margin: 0 0 clamp(34px,4vw,52px); font-size: 16px; line-height: 1.62; color: var(--ink); }
+    .sol-feat { display: grid; grid-template-columns: repeat(2,1fr); gap: 16px; }
+    .sol-feat-card { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: clamp(24px,3vw,32px); }
+    .sol-feat-n { font-family: var(--serif); font-size: 26px; color: var(--accent); margin-bottom: 14px; line-height: 1; }
+    .sol-feat-t { font-weight: 600; font-size: 19px; margin-bottom: 8px; color: var(--ink); }
+    .sol-feat-d { font-size: 15px; line-height: 1.58; color: #6B655D; }
+
+    .sol-cta-sec { padding: clamp(16px,3vw,40px) var(--px) clamp(56px,7vw,96px); }
+    .sol-cta { max-width: var(--max); margin: 0 auto; background: var(--ink); border-radius: 24px; padding: clamp(44px,6vw,82px) clamp(28px,5vw,48px); text-align: center; }
+    .sol-cta h2 { color: #F5F4F0; margin: 0 auto 20px; max-width: 680px; }
+    .sol-cta p { margin: 0 auto 36px; max-width: 500px; font-size: 18px; line-height: 1.6; color: rgba(245,244,240,.82); }
+    .sol-cta-btns { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+
+    @media (max-width: 640px) {
+      .sol-feat { grid-template-columns: 1fr; }
+      .sol-cta-btns { flex-direction: column; }
+      .sol-cta-btns > * { justify-content: center; }
+    }
+  </style>
+</BaseLayout>

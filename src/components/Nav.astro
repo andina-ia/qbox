@@ -1,0 +1,34 @@
+---
+interface Props {
+  home?: boolean;
+}
+const { home = false } = Astro.props;
+const prefix = home ? '' : '/';
+---
+<header id="hdr">
+  <div class="hdr-in">
+    <a href="/"><img src="/assets/qbox-logo-white.webp" alt="qBox" class="hdr-logo" /></a>
+    <button class="hdr-btn" onclick="toggleMenu()" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<nav id="nav">
+  <a href={`${prefix}#soluciones`} onclick="closeMenu()">Soluciones</a>
+  <a href={`${prefix}#nosotros`} onclick="closeMenu()">Quiénes somos</a>
+  <a href={`${prefix}#proyectos`} onclick="closeMenu()">Proyectos</a>
+  {home && <a href="#respaldo" onclick="closeMenu()">Confían en nosotros</a>}
+  <a href={`${prefix}#precios`} onclick="closeMenu()">Cotizador</a>
+  <a href={`${prefix}#showroom`} onclick="closeMenu()">Showroom</a>
+  {home && (
+    <button
+      class="btn-p"
+      style="margin-top:20px;align-self:flex-start;background:var(--ink);color:#FAF9F5;"
+      onclick="openModal();closeMenu()"
+    >
+      Agendar visita al showroom
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </button>
+  )}
+</nav>
