@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>qBox</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/favicon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#F5F4F0; --ink:#1E2022; --accent:#8C7E74; --card:#FAF9F5;
+  --border:rgba(30,32,34,.12); --max:1240px;
+  --serif:'Newsreader',Georgia,serif; --sans:'Hanken Grotesk',system-ui,sans-serif;
+  --px:clamp(20px,4vw,60px);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.7;}
+::selection{background:rgba(140,126,116,.28);}
+img{display:block;max-width:100%;}
+a{color:inherit;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;}
+
+/* TYPOGRAPHY — identical to index */
+.eye{font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);}
+h1{font-family:var(--serif);font-size:clamp(36px,4.6vw,64px);font-weight:400;line-height:1.08;}
+h2{font-family:var(--serif);font-size:clamp(28px,3.6vw,52px);font-weight:400;line-height:1.12;}
+h3{font-family:var(--serif);font-size:clamp(20px,2.2vw,32px);font-weight:400;line-height:1.25;}
+
+/* HEADER */
+#hdr{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(18,16,12,.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(245,238,220,.08);}
+.hdr-in{max-width:100%;padding:0 var(--px);height:68px;display:flex;align-items:center;justify-content:space-between;}
+.hdr-logo{height:50px;width:auto;}
+.hdr-btn{display:flex;flex-direction:column;gap:5px;padding:10px 12px;border-radius:8px;border:1.5px solid rgba(245,238,220,.2);background:transparent;transition:.2s;}
+.hdr-btn:hover{border-color:rgba(245,238,220,.5);background:rgba(245,238,220,.06);}
+.hdr-btn span{display:block;width:20px;height:1.5px;background:#F5EEDC;}
+
+/* NAV */
+#nav{display:none;position:fixed;top:68px;left:0;right:0;bottom:0;z-index:99;background:rgba(245,244,240,.98);backdrop-filter:blur(12px);padding:32px var(--px);flex-direction:column;gap:4px;}
+#nav.open{display:flex;}
+#nav a{font-family:var(--serif);font-size:28px;color:var(--ink);text-decoration:none;padding:10px 0;transition:.2s;}
+#nav a:hover{color:var(--accent);}
+
+/* HERO — dark same as index */
+#cat-hero{position:relative;min-height:36vh;display:flex;align-items:flex-end;overflow:hidden;padding-top:68px;background:#0E0C0A;}
+.cat-hero-bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.45;z-index:0;}
+.cat-hero-ov{position:absolute;inset:0;background:linear-gradient(to right,rgba(14,12,10,.98) 0%,rgba(14,12,10,.75) 45%,rgba(14,12,10,.2) 100%);z-index:1;}
+.cat-hero-cnt{position:relative;z-index:2;padding:clamp(28px,4vw,48px) var(--px) clamp(28px,4vw,48px);width:100%;}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:600;color:rgba(245,238,220,.45);text-decoration:none;margin-bottom:16px;transition:.2s;}
+.back-link:hover{color:rgba(245,238,220,.8);}
+.cat-kicker{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,238,220,.5);margin-bottom:10px;}
+#cat-hero h1{color:#F5EEDC;font-size:clamp(28px,3.5vw,48px);line-height:1.1;margin-bottom:10px;}
+#cat-hero h1 em{font-style:normal;color:#A0917F;}
+.cat-tagline{color:rgba(245,238,220,.55);font-size:clamp(14px,1.4vw,16px);max-width:480px;}
+
+/* MAIN */
+.sec{padding:clamp(48px,6vw,80px) var(--px);max-width:var(--max);margin:0 auto;}
+
+/* INTRO */
+.intro-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:clamp(32px,5vw,64px);align-items:start;}
+.intro-title{font-family:var(--serif);font-size:clamp(20px,2.6vw,34px);line-height:1.22;margin-bottom:18px;}
+.intro-p{font-size:16.5px;line-height:1.75;color:rgba(30,32,34,.75);margin-bottom:12px;}
+.features{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px;}
+.feat{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:18px 20px;transition:.2s;}
+.feat:hover{border-color:rgba(30,32,34,.22);box-shadow:0 8px 24px -10px rgba(30,32,34,.12);}
+.feat-n{font-family:var(--serif);font-size:22px;color:var(--accent);margin-bottom:8px;}
+.feat-t{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.feat-d{font-size:14px;color:var(--accent);line-height:1.55;}
+
+/* GALLERY */
+.gal-hd{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:8px;}
+.gal-count{font-size:15px;color:var(--accent);}
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.gal-item{border-radius:16px;overflow:hidden;aspect-ratio:4/5;cursor:zoom-in;position:relative;}
+.gal-item:first-child{grid-column:1/3;aspect-ratio:16/9;}
+.gal-item img{width:100%;height:100%;object-fit:cover;transition:.4s;}
+.gal-item:hover img{transform:scale(1.04);}
+.gal-item::after{content:'';position:absolute;inset:0;background:rgba(30,32,34,0);transition:.2s;}
+.gal-item:hover::after{background:rgba(30,32,34,.06);}
+
+/* LIGHTBOX */
+.lb{display:none;position:fixed;inset:0;z-index:300;background:rgba(14,12,10,.96);align-items:center;justify-content:center;}
+.lb.open{display:flex;}
+.lb img{max-height:90vh;max-width:88vw;border-radius:10px;object-fit:contain;}
+.lb-close{position:absolute;top:20px;right:24px;color:#F5EEDC;font-size:34px;cursor:pointer;opacity:.65;transition:.2s;background:none;border:none;line-height:1;}
+.lb-close:hover{opacity:1;}
+.lb-nav{position:absolute;top:50%;transform:translateY(-50%);color:#F5EEDC;font-size:30px;cursor:pointer;background:rgba(245,238,220,.1);border:none;border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;transition:.2s;}
+.lb-nav:hover{background:rgba(245,238,220,.2);}
+.lb-prev{left:20px;}
+.lb-next{right:20px;}
+
+/* CTA BOX — same as showroom-box in index */
+.cta-box{background:var(--ink);border-radius:24px;padding:clamp(48px,6vw,64px) clamp(32px,4vw,56px);display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap;margin-top:clamp(48px,6vw,80px);}
+.cta-box h2{color:#FAF9F5;max-width:520px;margin-top:10px;}
+.cta-box p{color:rgba(245,244,240,.65);margin-top:10px;font-size:15px;max-width:460px;line-height:1.65;}
+.cta-btns{display:flex;gap:12px;flex-wrap:wrap;flex-shrink:0;}
+.btn-p{display:inline-flex;align-items:center;gap:8px;background:#F5EEDC;color:#1A1814;font-size:15.5px;font-weight:700;padding:15px 26px;border-radius:100px;text-decoration:none;border:none;cursor:pointer;transition:.2s;letter-spacing:.01em;}
+.btn-p:hover{background:#fff;transform:translateY(-2px);}
+.btn-s{display:inline-flex;align-items:center;gap:8px;background:transparent;color:#F5EEDC;font-size:15px;font-weight:500;padding:14px 22px;border-radius:100px;border:1.5px solid rgba(245,238,220,.25);text-decoration:none;transition:.2s;cursor:pointer;}
+.btn-s:hover{border-color:rgba(245,238,220,.6);}
+
+/* SISMO BANNER (reutilizado) */
+.sismo{background:var(--ink);border-radius:16px;padding:22px 26px;display:flex;gap:18px;align-items:flex-start;margin-top:32px;}
+.sismo-icon{width:42px;height:42px;border-radius:50%;background:rgba(245,244,240,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sismo-title{font-size:16px;font-weight:600;color:#FAF9F5;margin-bottom:6px;}
+.sismo-body{font-size:15px;line-height:1.65;color:rgba(245,244,240,.65);}
+
+/* FOOTER */
+footer{background:var(--card);border-top:1px solid var(--border);padding:clamp(36px,4vw,56px) var(--px) 28px;}
+.foot-in{max-width:var(--max);margin:0 auto;}
+.foot-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:40px;margin-bottom:36px;}
+.foot-logo{height:30px;margin-bottom:18px;}
+.foot-desc{font-size:16px;line-height:1.6;max-width:300px;color:rgba(30,32,34,.75);}
+.foot-r{text-align:right;}
+.foot-sh-title{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;}
+.foot-info{display:flex;flex-direction:column;gap:10px;align-items:flex-end;}
+.foot-addr{display:inline-flex;align-items:center;gap:6px;font-size:15px;text-decoration:none;border-bottom:1px solid transparent;transition:.2s;}
+.foot-addr:hover{border-bottom-color:var(--ink);}
+.foot-hrs{font-size:14.5px;color:var(--accent);}
+.foot-bot{border-top:1px solid var(--border);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.foot-bot span,.foot-bot a{font-size:14px;color:var(--accent);text-decoration:none;}
+.foot-bot a:hover{color:var(--ink);}
+
+/* WA FAB */
+.wa{position:fixed;bottom:28px;right:28px;z-index:90;width:54px;height:54px;background:var(--ink);color:#FAF9F5;border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 4px 24px rgba(30,32,34,.25);transition:.2s;}
+.wa:hover{background:#000;transform:translateY(-3px);}
+
+/* REVEAL */
+.rv{opacity:0;transform:translateY(28px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1);}
+.rv.in{opacity:1;transform:none;}
+.d1{transition-delay:.08s;}.d2{transition-delay:.16s;}.d3{transition-delay:.24s;}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;}}
+
+/* RESPONSIVE */
+/* === TABLET (≤900px) === */
+@media(max-width:900px){
+  :root{--px:clamp(16px,4vw,28px);}
+  .intro-grid{grid-template-columns:1fr;}
+  .gallery{grid-template-columns:repeat(2,1fr);}
+  .foot-grid{grid-template-columns:1fr;gap:24px;}
+  .foot-r{text-align:left;}
+  .foot-info{align-items:flex-start;}
+  .cta-box{flex-direction:column;align-items:flex-start;}
+  .features{grid-template-columns:1fr 1fr;}
+}
+
+/* === MOBILE (≤640px) === */
+@media(max-width:640px){
+  :root{--px:16px;}
+  html,body{font-size:15.5px;}
+
+  /* Hero */
+  #cat-hero{min-height:30vh;}
+  .cat-hero-cnt{padding:24px var(--px) 28px;}
+  .back-link{font-size:12.5px;margin-bottom:12px;}
+  .cat-kicker{font-size:10.5px;margin-bottom:8px;}
+  #cat-hero h1{font-size:clamp(26px,8vw,34px);margin-bottom:8px;}
+  .cat-tagline{font-size:13.5px;}
+
+  /* Sections */
+  .sec{padding:32px var(--px);}
+  h2{font-size:clamp(22px,7vw,28px);}
+
+  /* Gallery */
+  .gal-hd{flex-direction:column;align-items:flex-start;gap:6px;margin-bottom:16px;}
+  .gal-count{font-size:13px;}
+  .gallery{grid-template-columns:repeat(2,1fr);gap:8px;}
+  .gal-item{border-radius:10px;}
+
+  /* Intro */
+  .intro-title{font-size:clamp(18px,5.5vw,22px);}
+  .intro-p{font-size:14.5px;}
+  .features{grid-template-columns:1fr;gap:10px;}
+  .feat{padding:14px 16px;}
+  .feat-n{font-size:18px;margin-bottom:5px;}
+  .feat-t{font-size:14px;}
+  .feat-d{font-size:13px;}
+
+  /* Sismo banner */
+  .sismo{flex-direction:column;gap:12px;padding:16px;border-radius:14px;}
+  .sismo-title{font-size:14.5px;}
+  .sismo-body{font-size:13.5px;}
+
+  /* CTA */
+  .cta-box{padding:28px var(--px);border-radius:18px;gap:20px;}
+  .cta-box h2{font-size:clamp(20px,6.5vw,26px);}
+  .cta-box p{font-size:13.5px;}
+  .cta-btns{flex-direction:column;width:100%;}
+  .btn-p,.btn-s{justify-content:center;width:100%;font-size:14px;padding:13px 20px;}
+
+  /* Footer */
+  footer{padding:28px var(--px) 20px;}
+  .foot-logo{height:24px;}
+  .foot-desc{font-size:13.5px;}
+  .foot-sh-title{font-size:11px;}
+  .foot-addr{font-size:13px;}
+  .foot-hrs{font-size:12.5px;}
+  .foot-bot{flex-direction:column;align-items:flex-start;gap:8px;}
+  .foot-bot span,.foot-bot a{font-size:12.5px;}
+
+  /* WA fab */
+  .wa{width:46px;height:46px;bottom:18px;right:18px;}
+
+  /* Lightbox */
+  .lb-nav{width:40px;height:40px;font-size:24px;}
+  .lb-prev{left:10px;}
+  .lb-next{right:10px;}
+  .lb-close{top:14px;right:16px;font-size:28px;}
+}
+
+@media(max-width:380px){
+  .gallery{grid-template-columns:1fr 1fr;gap:6px;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header id="hdr">
+  <div class="hdr-in">
+    <a href="index.html"><img src="assets/qbox-logo-white.webp" alt="qBox" class="hdr-logo"></a>
+    <button class="hdr-btn" onclick="toggleMenu()" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="index.html#soluciones" onclick="closeMenu()">Soluciones</a>
+  <a href="index.html#nosotros" onclick="closeMenu()">Quiénes somos</a>
+  <a href="index.html#proyectos" onclick="closeMenu()">Proyectos</a>
+  <a href="index.html#precios" onclick="closeMenu()">Cotizador</a>
+  <a href="index.html#showroom" onclick="closeMenu()">Showroom</a>
+</nav>
+
+<!-- HERO -->
+<section id="cat-hero">
+  <div class="cat-hero-bg" id="hero-bg"></div>
+  <div class="cat-hero-ov"></div>
+  <div class="cat-hero-cnt">
+    <a href="index.html" class="back-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Volver al inicio
+    </a>
+    <p class="cat-kicker" id="cat-kicker"></p>
+    <h1 id="cat-title"></h1>
+    <p class="cat-tagline" id="cat-tagline"></p>
+  </div>
+</section>
+
+<!-- GALLERY PRIMERO -->
+<section class="sec" style="padding-top:clamp(32px,4vw,48px);">
+  <div class="gal-hd rv">
+    <div>
+      <p class="eye" style="margin-bottom:10px;">Proyectos terminados</p>
+      <h2>Nuestro trabajo <em style="font-style:italic;color:var(--accent)">habla solo.</em></h2>
+    </div>
+    <p class="gal-count" id="gal-count"></p>
+  </div>
+  <div class="gallery rv" id="gallery"></div>
+</section>
+
+<!-- INTRO ABAJO -->
+<section class="sec" style="padding-top:0;background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="intro-grid rv" style="padding-top:clamp(48px,6vw,80px);">
+    <div>
+      <p class="eye" style="margin-bottom:12px;">Por qué elegirnos</p>
+      <h2 class="intro-title" id="intro-title"></h2>
+      <p class="intro-p" id="intro-p1"></p>
+      <p class="intro-p" id="intro-p2"></p>
+    </div>
+    <div class="features" id="features"></div>
+  </div>
+</section>
+
+<!-- SISMO + CTA -->
+<section class="sec">
+  <div class="sismo rv">
+    <div class="sismo-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FAF9F5" stroke-width="1.6"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
+    </div>
+    <div>
+      <p class="sismo-title">Ingeniería sismo resistente homologada</p>
+      <p class="sismo-body">Todas nuestras soluciones se calculan y certifican con ingeniería sismo resistente, capaz de absorber movimientos sísmicos sin comprometer la seguridad ni la integridad del espacio habitable.</p>
+    </div>
+  </div>
+
+  <div class="cta-box rv d1">
+    <div>
+      <p class="eye" style="color:rgba(245,244,240,.45);">Siguiente paso</p>
+      <h2 id="cta-title"></h2>
+      <p id="cta-p"></p>
+    </div>
+    <div class="cta-btns">
+      <a href="#" id="cta-wa" class="btn-p" target="_blank" rel="noopener">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.978-1.607zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.096 3.2 5.077 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+        Solicitar presupuesto
+      </a>
+      <button class="btn-s" onclick="window.location.href='index.html#showroom'">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        Agendar visita
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- LIGHTBOX -->
+<div class="lb" id="lb" onclick="if(event.target===this)closeLb()">
+  <button class="lb-close" onclick="closeLb()">×</button>
+  <button class="lb-nav lb-prev" onclick="lbNav(-1)">‹</button>
+  <img id="lb-img" src="" alt="">
+  <button class="lb-nav lb-next" onclick="lbNav(1)">›</button>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-in">
+    <div class="foot-grid">
+      <div>
+        <img src="assets/qbox-logo-ink.webp" alt="qBox" class="foot-logo">
+        <p class="foot-desc">Construcción modular premium sismo resistente. San Juan y toda la región Cuyo.</p>
+      </div>
+      <div class="foot-r">
+        <p class="foot-sh-title">Showroom</p>
+        <div class="foot-info">
+          <a href="https://www.google.com/maps/search/?api=1&query=Rivadavia%2C+San+Juan%2C+Argentina" target="_blank" rel="noopener" class="foot-addr">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Rivadavia, San Juan · Argentina
+          </a>
+          <span class="foot-hrs">Lun a Sáb · 09 a 18 hs</span>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bot">
+      <span>© 2026 qBox · Construcciones Modulares</span>
+      <a href="index.html">← Volver al inicio</a>
+    </div>
+  </div>
+</footer>
+
+<!-- WA -->
+<a href="https://wa.me/5492644431309?text=Hola%20qBox%2C%20quiero%20hacer%20una%20consulta." target="_blank" rel="noopener" aria-label="WhatsApp" class="wa">
+  <svg width="27" height="27" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.978-1.607zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.096 3.2 5.077 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+</a>
+
+<script>
+const CATS = {
+  modulos: {
+    name:'Módulos', kicker:'Viviendas · Oficinas · Llave en mano',
+    tagline:'Un módulo. Infinitas posibilidades. Vos elegís para qué usarlo, nosotros lo entregamos listo.',
+    heroBg:'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1400&auto=format&fit=crop',
+    introTitle:'Una vivienda u oficina completa, lista para usar.',
+    introP1:'Los módulos qBox se proyectan, fabrican y terminan en taller bajo control de calidad, y se montan en obra en cuestión de días. Resolvemos viviendas, estudios y oficinas con la misma ingeniería sismo resistente.',
+    introP2:'Cada módulo se entrega con terminaciones premium y se adapta a tu terreno, incluso en ubicaciones con desafíos logísticos.',
+    features:[
+      {n:'01',title:'Llave en mano',desc:'Diseño, gestión y construcción integral. Usted elige el lugar.'},
+      {n:'02',title:'Montaje en tiempo récord',desc:'Fabricación en taller en paralelo a la preparación del terreno.'},
+      {n:'03',title:'Ingeniería sismo resistente',desc:'Estructura calculada y homologada para zonas sísmicas.'},
+      {n:'04',title:'Terminaciones premium',desc:'Materiales nobles y aislación de alto estándar.'},
+    ],
+    images:['assets/modulos/20260204_103237.webp','assets/modulos/20260204_102714.webp','assets/modulos/20260211_112857.webp','assets/modulos/20260211_112829.webp','assets/modulos/20260204_140942.webp','assets/modulos/20260204_140820.webp'],
+    waMsg:'Hola qBox, me interesa la línea de módulos habitables. Quisiera más información.',
+    seoTitle:'Módulos Habitacionales San Juan | Casas y Oficinas Modulares | qBox',
+    seoDesc:'Módulos habitacionales premium en San Juan. Viviendas, estudios y oficinas modulares llave en mano con ingeniería sismo resistente. Entrega en 45 días.',
+  },
+  stands: {
+    name:'Stands', kicker:'Eventos · Ferias · Empresas',
+    tagline:'Stands modulares reutilizables que proyectan tu marca con un estándar premium.',
+    heroBg:'assets/stands/20260506_014651.webp',
+    introTitle:'Tu marca, montada y desmontada sin fricción.',
+    introP1:'Diseñamos y construimos stands modulares para ferias, eventos y espacios corporativos. Sistema reutilizable, transportable y de armado rápido, con la estética cuidada que tu marca merece.',
+    introP2:'Integramos iluminación, mobiliario y gráfica para que el espacio comunique desde el primer minuto.',
+    features:[
+      {n:'01',title:'Armado y desarme rápido',desc:'Sistema modular pensado para la logística de eventos.'},
+      {n:'02',title:'Reutilizable',desc:'Una inversión que sirve para múltiples ferias y activaciones.'},
+      {n:'03',title:'Identidad de marca',desc:'Gráfica, iluminación y materiales a medida.'},
+      {n:'04',title:'Estándar premium',desc:'Terminaciones de showroom, no de feria improvisada.'},
+    ],
+    images:['assets/stands/20260506_014651.webp','assets/stands/20260505_204724.webp','assets/stands/20260505_230503.webp','assets/stands/20260506_005732.webp','assets/stands/20260430_182019.webp','assets/stands/stand-caprimsa-01.webp','assets/stands/stand-caprimsa-02.webp','assets/stands/stand-heic-01.webp','assets/stands/stand-heic-02.webp'],
+    waMsg:'Hola qBox, me interesa la línea de stands modulares. Quisiera más información.',
+    seoTitle:'Stands Modulares para Eventos y Ferias San Juan | qBox',
+    seoDesc:'Stands modulares premium para eventos y ferias en San Juan. Diseño, gráfica e iluminación a medida.',
+  },
+  'cocheras-galerias': {
+    name:'Cocheras y Galerías', kicker:'Semicubiertos',
+    tagline:'Cubiertas y semicubiertos de líneas puras, integrados a tu espacio.',
+    heroBg:'assets/cocheras/cochera_chapa_perforada.webp',
+    introTitle:'Sumá metros cubiertos con diseño, no con un techo más.',
+    introP1:'Cocheras, galerías y semicubiertos resueltos con estructura modular y terminaciones que dialogan con tu vivienda. Protección real con una estética minimalista y cálida.',
+    introP2:'Se contempla un mínimo de 20 m² para optimizar la estructura y el valor por metro cuadrado.',
+    features:[
+      {n:'01',title:'Líneas puras',desc:'Voladizos limpios y cielorrasos de madera o chapa premium.'},
+      {n:'02',title:'Estructura sismo resistente',desc:'Cálculo homologado para vientos y cargas de la región.'},
+      {n:'03',title:'Integración total',desc:'Materiales y proporciones que continúan tu vivienda.'},
+      {n:'04',title:'Desde 20 m²',desc:'Superficie mínima que optimiza el costo por metro.'},
+    ],
+    images:['assets/cocheras/cochera-01-nocturna.webp','assets/cocheras/cochera-02-galeria-dia.webp','assets/cocheras/cochera-03-motos.webp','assets/cocheras/cochera-04-construccion.webp','assets/cocheras/cochera-05-blanca.webp','assets/cocheras/cochera-06-terraza-deck.webp','assets/cocheras/cochera-07-galeria-jardin.webp','assets/cocheras/cochera-08-pergola-listones.webp'],
+    waMsg:'Hola qBox, me interesa la línea de cocheras y galerías. Quisiera más información.',
+    seoTitle:'Cocheras y Galerías Modulares San Juan | Semicubiertos | qBox',
+    seoDesc:'Cocheras, galerías y semicubiertos modulares de diseño en San Juan. Estructura sismo resistente y terminaciones premium.',
+  },
+  ampliaciones: {
+    name:'Ampliaciones', kicker:'Construcción en seco',
+    tagline:'Sumá metros a tu hogar o empresa sin obras eternas ni escombros.',
+    heroBg:'assets/ampliaciones.webp',
+    introTitle:'Más espacio, sin la obra húmeda de siempre.',
+    introP1:'Ampliamos viviendas y locales con sistemas de construcción en seco: rápido, limpio y con mínima interrupción de tu día a día. Dormitorios, oficinas, entrepisos y más.',
+    introP2:'Coordinamos cada etapa para que el resultado se integre sin costuras a lo existente.',
+    features:[
+      {n:'01',title:'Construcción en seco',desc:'Sin escombros ni tiempos de fragüe. Obra limpia.'},
+      {n:'02',title:'Mínima interrupción',desc:'Seguís usando tu casa o local mientras avanzamos.'},
+      {n:'03',title:'Integración perfecta',desc:'Terminaciones que continúan lo construido.'},
+      {n:'04',title:'Plazos cortos',desc:'Prefabricación que acelera cada etapa.'},
+    ],
+    images:['assets/ampliaciones/amp-01-pared-listones.webp','assets/ampliaciones/amp-02-frente-nocturno.webp','assets/ampliaciones/amp-03-chapa-perforada.webp','assets/ampliaciones/amp-04-cielorraso-madera.webp','assets/ampliaciones/amp-05-voladizo-obra.webp','assets/ampliaciones/amp-06-pergola-vidrio.webp'],
+    waMsg:'Hola qBox, me interesa ampliar mi hogar o local en construcción en seco. Quisiera más información.',
+    seoTitle:'Ampliaciones en Seco San Juan | Rápidas y Sin Obra Húmeda | qBox',
+    seoDesc:'Ampliaciones de viviendas y locales en construcción en seco en San Juan. Obra rápida, limpia y sin interrupciones.',
+  },
+  locales: {
+    name:'Locales comerciales', kicker:'Retail · Showrooms',
+    tagline:'Locales y showrooms modulares listos para abrir, con identidad de marca.',
+    heroBg:'assets/locales/local_2_fachada_completa.webp',
+    introTitle:'Abrí tu local antes y mejor.',
+    introP1:'Locales comerciales y showrooms modulares pensados para retail: vidriera, layout y terminaciones que potencian la experiencia de compra. Listos para operar en tiempo récord.',
+    introP2:'Soluciones escalables y replicables si tu marca crece o suma puntos de venta.',
+    features:[
+      {n:'01',title:'Listo para operar',desc:'Vidriera, instalaciones y terminaciones resueltas.'},
+      {n:'02',title:'Replicable',desc:'Ideal para cadenas y multipunto con imagen consistente.'},
+      {n:'03',title:'Experiencia de compra',desc:'Layout e iluminación pensados para retail.'},
+      {n:'04',title:'Tiempo récord',desc:'Abrís meses antes que con obra tradicional.'},
+    ],
+    images:['assets/locales/local_2_fachada_completa.webp','assets/locales/local_3_porton_grande.webp','assets/locales/local_1_detalle_ventanas.webp','assets/locales/local_4_calle_arbol.webp','assets/locales/local_5_lateral_camioneta.webp'],
+    waMsg:'Hola qBox, me interesa la línea de locales comerciales. Quisiera más información.',
+    seoTitle:'Locales Comerciales y Showrooms Modulares San Juan | qBox',
+    seoDesc:'Locales comerciales y showrooms modulares premium en San Juan, listos para operar.',
+  },
+};
+
+/* Init */
+const slug = (()=>{ try{ const q=new URLSearchParams(window.location.search).get('cat'); if(q&&CATS[q])return q; }catch(e){} return 'modulos'; })();
+const cat = CATS[slug];
+
+/* SEO */
+document.title = cat.seoTitle;
+let m=document.querySelector('meta[name="description"]');
+if(!m){m=document.createElement('meta');m.setAttribute('name','description');document.head.appendChild(m);}
+m.setAttribute('content',cat.seoDesc);
+
+/* Hero */
+document.getElementById('hero-bg').style.backgroundImage = `url(${cat.heroBg})`;
+document.getElementById('cat-kicker').textContent = cat.kicker;
+document.getElementById('cat-title').innerHTML = cat.name;
+document.getElementById('cat-tagline').textContent = cat.tagline;
+
+/* Intro */
+document.getElementById('intro-title').textContent = cat.introTitle;
+document.getElementById('intro-p1').textContent = cat.introP1;
+document.getElementById('intro-p2').textContent = cat.introP2;
+
+/* Features */
+document.getElementById('features').innerHTML = cat.features.map(f=>
+  `<div class="feat"><div class="feat-n">${f.n}</div><div class="feat-t">${f.title}</div><div class="feat-d">${f.desc}</div></div>`
+).join('');
+
+/* Gallery — defaults first, hydrated from admin config below */
+let imgs = cat.images;
+function renderGallery(){
+  document.getElementById('gal-count').textContent = imgs.length + ' proyectos';
+  document.getElementById('gallery').innerHTML = imgs.map((src,i)=>
+    `<div class="gal-item" onclick="openLb(${i})">
+      <img src="${src}" alt="${cat.name} qBox ${i+1}" loading="${i<4?'eager':'lazy'}">
+    </div>`
+  ).join('');
+}
+renderGallery();
+
+/* CTA */
+document.getElementById('cta-title').textContent = '¿Querés saber más sobre nuestros '+cat.name.toLowerCase()+'?';
+document.getElementById('cta-p').textContent = 'Contactanos por WhatsApp o agendá una visita al showroom para conocer el sistema constructivo en persona.';
+document.getElementById('cta-wa').href = 'https://wa.me/5492644431309?text='+encodeURIComponent(cat.waMsg);
+
+/* Menu */
+let menuOpen=false;
+function toggleMenu(){menuOpen=!menuOpen;document.getElementById('nav').classList.toggle('open',menuOpen);}
+function closeMenu(){menuOpen=false;document.getElementById('nav').classList.remove('open');}
+
+/* Lightbox */
+let lbIdx=0;
+function openLb(i){lbIdx=i;document.getElementById('lb-img').src=imgs[i];document.getElementById('lb').classList.add('open');document.body.style.overflow='hidden';}
+function closeLb(){document.getElementById('lb').classList.remove('open');document.body.style.overflow='';}
+function lbNav(dir){lbIdx=(lbIdx+dir+imgs.length)%imgs.length;document.getElementById('lb-img').src=imgs[lbIdx];}
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('lb').classList.contains('open'))return;
+  if(e.key==='ArrowRight')lbNav(1);
+  if(e.key==='ArrowLeft')lbNav(-1);
+  if(e.key==='Escape')closeLb();
+});
+
+/* Reveals */
+const ro=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');ro.unobserve(e.target);}});},{threshold:.1});
+document.querySelectorAll('.rv').forEach(el=>ro.observe(el));
+
+/* Hydrate gallery + SEO from admin config */
+(async function hydrateConfig(){
+  let cfg;
+  try {
+    const r = await fetch('/api/config');
+    if(!r.ok) return;
+    cfg = await r.json();
+  } catch { return; }
+  if(!cfg || typeof cfg !== 'object') return;
+
+  const media = (cfg.media || {})[slug];
+  if(Array.isArray(media) && media.length){
+    imgs = media;
+    renderGallery();
+  }
+
+  const seo = (cfg.seo || {})[slug];
+  if(seo){
+    if(seo.title) document.title = seo.title;
+    if(seo.desc) m.setAttribute('content', seo.desc);
+    if(seo.keywords){
+      let k=document.querySelector('meta[name="keywords"]');
+      if(!k){k=document.createElement('meta');k.setAttribute('name','keywords');document.head.appendChild(k);}
+      k.setAttribute('content', seo.keywords);
+    }
+  }
+})();
+</script>
+</body>
+</html>
