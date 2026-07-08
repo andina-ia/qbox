@@ -11,7 +11,7 @@
   "clients": [
     {
       "name": "Mapal",
-      "active": true
+      "active": false
     },
     {
       "name": "Sigma",
