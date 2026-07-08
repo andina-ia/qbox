@@ -11,7 +11,7 @@
   "clients": [
     {
       "name": "Mapal",
-      "active": false
+      "active": true
     },
     {
       "name": "Sigma",
@@ -43,19 +43,19 @@
     },
     {
       "name": "Linked",
-      "active": true
+      "active": false
     },
     {
       "name": "Tip Top",
-      "active": true
+      "active": false
     },
     {
       "name": "Starlink Monitoreo",
-      "active": true
+      "active": false
     },
     {
       "name": "Grupo Cuyano",
-      "active": true
+      "active": false
     }
   ],
   "seo": {
