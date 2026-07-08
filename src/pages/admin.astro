@@ -294,8 +294,10 @@ const CONFIG_SEED = config;
 
     <div id="toast">✓ Guardado</div>
 
-    <script is:inline define:vars={{ CONFIG_SEED }}>
+    <script type="application/json" id="admin-data" set:html={JSON.stringify(CONFIG_SEED)}></script>
+    <script is:inline>
       /* ===== CONFIG ===== */
+      const CONFIG_SEED = JSON.parse(document.getElementById('admin-data').textContent);
       const PASS = 'qbox2026';
       const EMAIL = 'comercial@qboxmodular.com.ar';
 

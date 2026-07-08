@@ -374,8 +374,10 @@ const schema = {
     </div>
   </div>
 
-  <script is:inline define:vars={{ rateModulo, rateSemi }}>
+  <script type="application/json" id="index-data" set:html={JSON.stringify({ rateModulo, rateSemi })}></script>
+  <script is:inline>
     /* ===== COTIZADOR ===== */
+    const { rateModulo, rateSemi } = JSON.parse(document.getElementById('index-data').textContent);
     const TYPES = {
       modulo: { label: 'Módulo habitable', short: 'Módulo habitable', base: rateModulo, min: 15, max: 200, pills: [24, 48, 80, 120] },
       semi: { label: 'Semicubierto', short: 'Cocheras y galerías', base: rateSemi, min: 20, max: 150, pills: [20, 40, 60, 90] }

@@ -165,7 +165,9 @@ const siteConfig = { media: config.media || {}, seo: config.seo || {} };
     <button class="lb-nav lb-next" onclick="lbNav(1)">›</button>
   </div>
 
-  <script is:inline define:vars={{ CATS, siteConfig }}>
+  <script type="application/json" id="categoria-data" set:html={JSON.stringify({ CATS, siteConfig })}></script>
+  <script is:inline>
+    const { CATS, siteConfig } = JSON.parse(document.getElementById('categoria-data').textContent);
     const slug = (() => { try { const q = new URLSearchParams(window.location.search).get('cat'); if (q && CATS[q]) return q; } catch (e) {} return 'modulos'; })();
     const cat = CATS[slug];
 
