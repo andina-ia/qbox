@@ -1,6 +1,6 @@
 {
   "content": {
-    "heroSub": "Cocheras · Galerías · Stands · Módulos · Oficinas · Ampliaciones",
+    "heroSub": "Cocheras · Galerías · Stands · Módulos · Oficinas ·",
     "nosotrosP1": "En qBox adaptamos y flexibilizamos la forma de construir. Nacimos en San Juan durante la pandemia con un objetivo claro: ofrecer espacios habitables en tiempo récord, en lugares con desafíos logísticos y con la mejor relación precio–calidad.",
     "nosotrosP2": "Nos diferenciamos por nuestra localía, compromiso y transparencia. Cada proyecto lo desarrollamos en conjunto con nuestros clientes, asegurando soluciones eficientes y personalizadas."
   },
@@ -9,18 +9,54 @@
     "rateSemi": 135
   },
   "clients": [
-    { "name": "Mapal", "active": true },
-    { "name": "Sigma", "active": true },
-    { "name": "MTZ Transporte", "active": true },
-    { "name": "Logística Empresaria", "active": true },
-    { "name": "Bulonería Mitre", "active": true },
-    { "name": "Proyecto Altar", "active": true },
-    { "name": "Austral Gold", "active": true },
-    { "name": "Caposo", "active": true },
-    { "name": "Linked", "active": true },
-    { "name": "Tip Top", "active": true },
-    { "name": "Starlink Monitoreo", "active": true },
-    { "name": "Grupo Cuyano", "active": true }
+    {
+      "name": "Mapal",
+      "active": false
+    },
+    {
+      "name": "Sigma",
+      "active": true
+    },
+    {
+      "name": "MTZ Transporte",
+      "active": true
+    },
+    {
+      "name": "Logística Empresaria",
+      "active": true
+    },
+    {
+      "name": "Bulonería Mitre",
+      "active": true
+    },
+    {
+      "name": "Proyecto Altar",
+      "active": true
+    },
+    {
+      "name": "Austral Gold",
+      "active": true
+    },
+    {
+      "name": "Caposo",
+      "active": true
+    },
+    {
+      "name": "Linked",
+      "active": true
+    },
+    {
+      "name": "Tip Top",
+      "active": true
+    },
+    {
+      "name": "Starlink Monitoreo",
+      "active": true
+    },
+    {
+      "name": "Grupo Cuyano",
+      "active": true
+    }
   ],
   "seo": {
     "inicio": {
