@@ -90,5 +90,9 @@
       "keywords": "locales comerciales modulares San Juan, showroom modular San Juan, locales prefabricados San Juan, construcción local comercial San Juan, tienda modular San Juan, espacio comercial modular Cuyo, local llave en mano San Juan, retail modular San Juan"
     }
   },
-  "media": {}
+  "media": {
+    "modulos": [
+      "https://raw.githubusercontent.com/andina-ia/qbox/main/public/assets/media/modulos/1783514169101_IMG_6978.jpeg"
+    ]
+  }
 }
