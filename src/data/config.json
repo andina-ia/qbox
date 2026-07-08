@@ -1,6 +1,6 @@
 {
   "content": {
-    "heroSub": "Cocheras · Galerías · Stands · Módulos · Oficinas ·",
+    "heroSub": "Cocheras · Galerías · Stands · Módulos · Oficinas",
     "nosotrosP1": "En qBox adaptamos y flexibilizamos la forma de construir. Nacimos en San Juan durante la pandemia con un objetivo claro: ofrecer espacios habitables en tiempo récord, en lugares con desafíos logísticos y con la mejor relación precio–calidad.",
     "nosotrosP2": "Nos diferenciamos por nuestra localía, compromiso y transparencia. Cada proyecto lo desarrollamos en conjunto con nuestros clientes, asegurando soluciones eficientes y personalizadas."
   },
@@ -11,7 +11,7 @@
   "clients": [
     {
       "name": "Mapal",
-      "active": false
+      "active": true
     },
     {
       "name": "Sigma",
@@ -43,19 +43,19 @@
     },
     {
       "name": "Linked",
-      "active": true
+      "active": false
     },
     {
       "name": "Tip Top",
-      "active": true
+      "active": false
     },
     {
       "name": "Starlink Monitoreo",
-      "active": true
+      "active": false
     },
     {
       "name": "Grupo Cuyano",
-      "active": true
+      "active": false
     }
   ],
   "seo": {
@@ -90,5 +90,7 @@
       "keywords": "locales comerciales modulares San Juan, showroom modular San Juan, locales prefabricados San Juan, construcción local comercial San Juan, tienda modular San Juan, espacio comercial modular Cuyo, local llave en mano San Juan, retail modular San Juan"
     }
   },
-  "media": {}
+  "media": {
+    "modulos": []
+  }
 }
