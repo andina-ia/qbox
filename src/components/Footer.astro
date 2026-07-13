@@ -20,7 +20,9 @@ const { home = false } = Astro.props;
             <span>Rivadavia, San Juan<br />Argentina</span>
           </a>
           <span class="foot-hrs">Lun a Sáb · 09 a 18 h</span>
-          {home && <button class="foot-vis" onclick="openModal()">Agendar visita</button>}
+          {home && (
+            <a href="https://calendly.com/gambettadiegooscar/30min" target="_blank" rel="noopener" class="foot-vis">Agendar visita</a>
+          )}
         </div>
       </div>
     </div>

@@ -22,13 +22,16 @@ const prefix = home ? '' : '/';
   <a href={`${prefix}#precios`} onclick="closeMenu()">Cotizador</a>
   <a href={`${prefix}#showroom`} onclick="closeMenu()">Showroom</a>
   {home && (
-    <button
+    <a
+      href="https://calendly.com/gambettadiegooscar/30min"
+      target="_blank"
+      rel="noopener"
       class="btn-p"
       style="margin-top:20px;align-self:flex-start;background:var(--ink);color:#FAF9F5;"
-      onclick="openModal();closeMenu()"
+      onclick="closeMenu()"
     >
       Agendar visita al showroom
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-    </button>
+    </a>
   )}
 </nav>

@@ -5,6 +5,7 @@
 **qBox** is a static marketing website built with [Astro](https://astro.build/) and deployed on Vercel. It has no database—instead, it uses a **configuration-driven CMS** where editable content lives in `src/data/config.json`, baked into the build. An admin panel at `/admin` allows non-developers to edit content and upload images via serverless functions that commit directly to GitHub.
 
 **Key Points:**
+
 - **SSG Only**: All pages pre-rendered at build time; no SSR adapter
 - **Config-Driven**: Single source of truth in `src/data/config.json`
 - **GitHub as CMS**: Admin changes commit via GitHub API, triggering automatic Vercel redeploy (~1 min)
@@ -28,24 +29,24 @@ npm run astro [command] # Run raw Astro commands
 
 ### Pages & Routes
 
-| File | Purpose | Key Pattern |
-|------|---------|------------|
-| `src/pages/index.astro` | Home (hero, solutions, projects, testimonials) | Hardcoded sections with config text |
-| `src/pages/soluciones.astro` | Solutions by type (residencial/corporativo) | Query-param driven: `?tipo=residencial` |
-| `src/pages/categoria.astro` | Product categories (módulos, stands, cocheras, etc.) | Dynamic with `CATS` data constant |
-| `src/pages/admin.astro` | Admin panel (login, edit content/prices, upload media) | Embedded UI with inline styles & scripts |
-| `src/layouts/BaseLayout.astro` | Main layout (nav + slot + footer + analytics) | Wraps all pages; accepts `seo` and `home` props |
+| File                           | Purpose                                                | Key Pattern                                     |
+| ------------------------------ | ------------------------------------------------------ | ----------------------------------------------- |
+| `src/pages/index.astro`        | Home (hero, solutions, projects, testimonials)         | Hardcoded sections with config text             |
+| `src/pages/soluciones.astro`   | Solutions by type (residencial/corporativo)            | Query-param driven: `?tipo=residencial`         |
+| `src/pages/categoria.astro`    | Product categories (módulos, stands, cocheras, etc.)   | Dynamic with `CATS` data constant               |
+| `src/pages/admin.astro`        | Admin panel (login, edit content/prices, upload media) | Embedded UI with inline styles & scripts        |
+| `src/layouts/BaseLayout.astro` | Main layout (nav + slot + footer + analytics)          | Wraps all pages; accepts `seo` and `home` props |
 
 ### Components
 
 All components are `.astro` files (server-side only, no client state):
 
-| Component | Role | Props |
-|-----------|------|-------|
-| `BaseHead.astro` | Meta tags, fonts, favicons | — |
-| `Nav.astro` | Header with hamburger menu | `home` (bool) |
-| `Footer.astro` | Footer with showroom info | `home` (bool) |
-| `WhatsAppButton.astro` | Fixed FAB link to WhatsApp | — |
+| Component              | Role                       | Props         |
+| ---------------------- | -------------------------- | ------------- |
+| `BaseHead.astro`       | Meta tags, fonts, favicons | —             |
+| `Nav.astro`            | Header with hamburger menu | `home` (bool) |
+| `Footer.astro`         | Footer with showroom info  | `home` (bool) |
+| `WhatsAppButton.astro` | Fixed FAB link to WhatsApp | —             |
 
 **Pattern:** Pages use `<BaseLayout seo={seo} home={true}>` which auto-includes all components.
 
@@ -54,11 +55,13 @@ All components are `.astro` files (server-side only, no client state):
 **Single file:** `src/styles/global.css` (~400 lines, no Tailwind/CSS-in-JS)
 
 **Design tokens** (CSS variables in `:root`):
+
 - Colors: `--bg` (light), `--ink` (dark), `--accent` (brown)
 - Fonts: `--serif` (Newsreader), `--sans` (Hanken Grotesk)
 - Layout: `--max` (1240px), `--px` (responsive padding via clamp)
 
 **Key classes:**
+
 - `.rv` + `.in` — reveal-on-scroll animation (via IntersectionObserver in BaseLayout)
 - `.d1`, `.d2`, `.d3` — stagger delays for cascading reveals
 - `.btn-p`, `.btn-s` — primary/secondary buttons
@@ -69,6 +72,7 @@ All components are `.astro` files (server-side only, no client state):
 ### Configuration & Data Flow
 
 **`src/data/config.json`** contains:
+
 ```json
 {
   "content": { "heroSub": "...", "nosotrosP1": "...", ... },
@@ -84,8 +88,9 @@ All components are `.astro` files (server-side only, no client state):
 ```
 
 **Pattern:** Import in pages and destructure what you need:
+
 ```javascript
-import config from '../data/config.json';
+import config from "../data/config.json";
 const seo = config.seo.inicio;
 const content = config.content;
 ```
@@ -97,29 +102,36 @@ const content = config.content;
 ## API & Serverless Functions
 
 **Environment variables** (required in Vercel):
+
 - `ADMIN_PASS` — admin panel password
 - `GITHUB_TOKEN` — repo write access
 - `GITHUB_OWNER`, `GITHUB_REPO`, `GITHUB_BRANCH` — repo details
 
 ### GET `/api/config`
+
 Returns current `src/data/config.json` (public, cached 60s).
 
 ### POST `/api/config`
+
 Admin-only. Updates a config section and commits to GitHub via GitHub API.
+
 ```javascript
 POST /api/config
 Authorization: Bearer <ADMIN_PASS>
 { section: 'content'|'cotizador'|'clients'|'seo'|'media', value: {...} }
 ```
+
 Triggers Vercel redeploy; changes live in ~1 min.
 
 ### POST `/api/upload`
+
 Admin-only. Uploads images to `public/assets/media/{category}/{filename}`.
+
 ```javascript
-POST /api/upload
-Authorization: Bearer <ADMIN_PASS>
-{ filename, contentBase64, category }
+POST / api / upload;
+Authorization: Bearer < ADMIN_PASS > { filename, contentBase64, category };
 ```
+
 Returns GitHub URL (available on CDN immediately).
 
 ---
@@ -130,12 +142,14 @@ Returns GitHub URL (available on CDN immediately).
 
 1. Create `src/pages/mypage.astro`
 2. Import config and lib constants:
+
    ```javascript
-   import BaseLayout from '../layouts/BaseLayout.astro';
-   import config from '../data/config.json';
-   
+   import BaseLayout from "../layouts/BaseLayout.astro";
+   import config from "../data/config.json";
+
    const seo = config.seo.mypage; // add to config.json first
    ```
+
 3. Wrap with `<BaseLayout>` and use `<slot />`
 4. Reference config.content, clients, cotizador as needed
 5. Use `.rv` + `.d1/.d2/.d3` classes for reveal animations
@@ -154,11 +168,11 @@ Returns GitHub URL (available on CDN immediately).
 ### Query-Based Pages
 
 For dynamic routes (e.g., `?tipo=residencial`), parse on the client:
+
 ```javascript
 <script>
-  const params = new URLSearchParams(window.location.search);
-  const tipo = params.get('tipo');
-  // Show/hide sections based on tipo
+  const params = new URLSearchParams(window.location.search); const tipo =
+  params.get('tipo'); // Show/hide sections based on tipo
 </script>
 ```
 
@@ -188,16 +202,16 @@ For dynamic routes (e.g., `?tipo=residencial`), parse on the client:
 
 ## Project Files at a Glance
 
-| Path | Purpose |
-|------|---------|
-| `src/pages/` | All page routes (.astro files) |
-| `src/components/` | Reusable components (Nav, Footer, etc.) |
-| `src/layouts/BaseLayout.astro` | Main layout wrapper |
-| `src/styles/global.css` | All site styles (no CSS modules/Tailwind) |
-| `src/data/config.json` | **Editable CMS content** |
-| `src/lib/site.js` | Shared constants & utilities |
-| `api/config.js` | Serverless: config read/write via GitHub API |
-| `api/upload.js` | Serverless: image upload to GitHub |
-| `public/assets/` | Static images, videos, favicons |
-| `astro.config.mjs` | Astro configuration (minimal, SSG only) |
-| `package.json` | Dependencies (just Astro) |
+| Path                           | Purpose                                      |
+| ------------------------------ | -------------------------------------------- |
+| `src/pages/`                   | All page routes (.astro files)               |
+| `src/components/`              | Reusable components (Nav, Footer, etc.)      |
+| `src/layouts/BaseLayout.astro` | Main layout wrapper                          |
+| `src/styles/global.css`        | All site styles (no CSS modules/Tailwind)    |
+| `src/data/config.json`         | **Editable CMS content**                     |
+| `src/lib/site.js`              | Shared constants & utilities                 |
+| `api/config.js`                | Serverless: config read/write via GitHub API |
+| `api/upload.js`                | Serverless: image upload to GitHub           |
+| `public/assets/`               | Static images, videos, favicons              |
+| `astro.config.mjs`             | Astro configuration (minimal, SSG only)      |
+| `package.json`                 | Dependencies (just Astro)                    |
