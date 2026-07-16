@@ -1,6 +1,7 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
 import config from '../data/config.json';
+import { withBase } from '../lib/site.js';
 
 const CONFIG_SEED = config;
 ---
@@ -117,7 +118,7 @@ const CONFIG_SEED = config;
     <!-- LOGIN -->
     <div id="login-screen" class="login-wrap" style="display:none;">
       <div class="login-box">
-        <img src="/assets/qbox-logo-ink.webp" alt="qBox" class="login-logo" />
+        <img src={withBase('/assets/qbox-logo-ink.webp')} alt="qBox" class="login-logo" />
         <h1 class="login-title">Panel de administración</h1>
         <p class="login-sub">Ingresá tu correo y la clave de acceso para editar el contenido del sitio.</p>
         <div id="login-err" class="login-err" style="display:none;">Correo o clave incorrectos. Intentá de nuevo.</div>
@@ -130,7 +131,7 @@ const CONFIG_SEED = config;
           <input type="password" id="inp-pass" placeholder="••••••••" onkeydown="onEnter(event)" />
         </div>
         <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:4px;" onclick="doLogin()">Ingresar</button>
-        <a href="/" style="display:block;text-align:center;margin-top:16px;font-size:13.5px;color:var(--accent);text-decoration:none;">← Volver al sitio</a>
+        <a href={withBase('/')} style="display:block;text-align:center;margin-top:16px;font-size:13.5px;color:var(--accent);text-decoration:none;">← Volver al sitio</a>
       </div>
     </div>
 
@@ -139,11 +140,11 @@ const CONFIG_SEED = config;
       <header id="hdr">
         <div class="hdr-in">
           <div class="hdr-left">
-            <img src="/assets/qbox-logo-ink.webp" alt="qBox" class="hdr-logo" />
+            <img src={withBase('/assets/qbox-logo-ink.webp')} alt="qBox" class="hdr-logo" />
             <span class="hdr-title">Administración</span>
           </div>
           <div class="hdr-right">
-            <a href="/" target="_blank" rel="noopener" class="btn btn-outline" style="font-size:13.5px;padding:8px 16px;">Ver sitio ↗</a>
+            <a href={withBase('/')} target="_blank" rel="noopener" class="btn btn-outline" style="font-size:13.5px;padding:8px 16px;">Ver sitio ↗</a>
             <button class="btn btn-outline" style="font-size:13.5px;padding:8px 16px;" onclick="doLogout()">Salir</button>
           </div>
         </div>

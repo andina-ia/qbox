@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { waLink } from '../lib/site.js';
+import { waLink, withBase } from '../lib/site.js';
 
 const DATA = {
   residencial: {
@@ -12,7 +12,7 @@ const DATA = {
     introTitle: 'Una vivienda completa, lista para usar.',
     introBody:
       'Resolvemos casas, estudios, ampliaciones y espacios de recreación con la misma ingeniería sismo resistente y terminaciones premium. Diseño, gestión y construcción en un único canal de responsabilidad, sin intermediarios.',
-    image: '/assets/residencial.webp',
+    image: withBase('/assets/residencial.webp'),
     imageAlt: 'Desarrollos residenciales modulares qBox',
     features: [
       { title: 'Viviendas llave en mano', desc: 'Casas y dúplex completos, listos para mudarse.' },
@@ -32,7 +32,7 @@ const DATA = {
     introTitle: 'Infraestructura que se adapta a tu operación.',
     introBody:
       'Oficinas, obradores, módulos para minería, locales y stands resueltos con sistema modular: rápidos de montar, reubicables y calculados con ingeniería sismo resistente para los entornos más exigentes.',
-    image: '/assets/corporativo-modulo-negro.webp',
+    image: withBase('/assets/corporativo-modulo-negro.webp'),
     imageAlt: 'Soluciones corporativas modulares qBox',
     features: [
       { title: 'Oficinas y co-working', desc: 'Espacios de trabajo escalables y reubicables.' },
@@ -55,8 +55,8 @@ const seo = {
   <main class="sol">
     <section class="sol-hero">
       <div class="sol-crumb">
-        <a href="/">Inicio</a><span>/</span>
-        <a href="/#soluciones">Soluciones</a><span>/</span>
+        <a href={withBase('/')}>Inicio</a><span>/</span>
+        <a href={withBase('/#soluciones')}>Soluciones</a><span>/</span>
         <span class="sol-crumb-cur" data-field="name">Residencial</span>
       </div>
       <div class="sol-kick">

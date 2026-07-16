@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { waLink } from '../lib/site.js';
+import { waLink, withBase } from '../lib/site.js';
 import config from '../data/config.json';
 
 const CATS = {
@@ -17,13 +17,13 @@ const CATS = {
       { n: '03', title: 'Ingeniería sismo resistente', desc: 'Estructura calculada y homologada para zonas sísmicas.' },
       { n: '04', title: 'Terminaciones premium', desc: 'Materiales nobles y aislación de alto estándar.' }
     ],
-    images: ['/assets/modulos/20260204_103237.webp', '/assets/modulos/20260204_102714.webp', '/assets/modulos/20260211_112857.webp', '/assets/modulos/20260211_112829.webp', '/assets/modulos/20260204_140942.webp', '/assets/modulos/20260204_140820.webp'],
+    images: [withBase('/assets/modulos/20260204_103237.webp'), withBase('/assets/modulos/20260204_102714.webp'), withBase('/assets/modulos/20260211_112857.webp'), withBase('/assets/modulos/20260211_112829.webp'), withBase('/assets/modulos/20260204_140942.webp'), withBase('/assets/modulos/20260204_140820.webp')],
     waMsg: 'Hola qBox, me interesa la línea de módulos habitables. Quisiera más información.'
   },
   stands: {
     name: 'Stands', kicker: 'Eventos · Ferias · Empresas',
     tagline: 'Stands modulares reutilizables que proyectan tu marca con un estándar premium.',
-    heroBg: '/assets/stands/20260506_014651.webp',
+    heroBg: withBase('/assets/stands/20260506_014651.webp'),
     introTitle: 'Tu marca, montada y desmontada sin fricción.',
     introP1: 'Diseñamos y construimos stands modulares para ferias, eventos y espacios corporativos. Sistema reutilizable, transportable y de armado rápido, con la estética cuidada que tu marca merece.',
     introP2: 'Integramos iluminación, mobiliario y gráfica para que el espacio comunique desde el primer minuto.',
@@ -33,13 +33,13 @@ const CATS = {
       { n: '03', title: 'Identidad de marca', desc: 'Gráfica, iluminación y materiales a medida.' },
       { n: '04', title: 'Estándar premium', desc: 'Terminaciones de showroom, no de feria improvisada.' }
     ],
-    images: ['/assets/stands/20260506_014651.webp', '/assets/stands/20260505_204724.webp', '/assets/stands/20260505_230503.webp', '/assets/stands/20260506_005732.webp', '/assets/stands/20260430_182019.webp', '/assets/stands/stand-caprimsa-01.webp', '/assets/stands/stand-caprimsa-02.webp', '/assets/stands/stand-heic-01.webp', '/assets/stands/stand-heic-02.webp'],
+    images: [withBase('/assets/stands/20260506_014651.webp'), withBase('/assets/stands/20260505_204724.webp'), withBase('/assets/stands/20260505_230503.webp'), withBase('/assets/stands/20260506_005732.webp'), withBase('/assets/stands/20260430_182019.webp'), withBase('/assets/stands/stand-caprimsa-01.webp'), withBase('/assets/stands/stand-caprimsa-02.webp'), withBase('/assets/stands/stand-heic-01.webp'), withBase('/assets/stands/stand-heic-02.webp')],
     waMsg: 'Hola qBox, me interesa la línea de stands modulares. Quisiera más información.'
   },
   'cocheras-galerias': {
     name: 'Cocheras y Galerías', kicker: 'Semicubiertos',
     tagline: 'Cubiertas y semicubiertos de líneas puras, integrados a tu espacio.',
-    heroBg: '/assets/cocheras/cochera_chapa_perforada.webp',
+    heroBg: withBase('/assets/cocheras/cochera_chapa_perforada.webp'),
     introTitle: 'Sumá metros cubiertos con diseño, no con un techo más.',
     introP1: 'Cocheras, galerías y semicubiertos resueltos con estructura modular y terminaciones que dialogan con tu vivienda. Protección real con una estética minimalista y cálida.',
     introP2: 'Se contempla un mínimo de 20 m² para optimizar la estructura y el valor por metro cuadrado.',
@@ -49,13 +49,13 @@ const CATS = {
       { n: '03', title: 'Integración total', desc: 'Materiales y proporciones que continúan tu vivienda.' },
       { n: '04', title: 'Desde 20 m²', desc: 'Superficie mínima que optimiza el costo por metro.' }
     ],
-    images: ['/assets/cocheras/cochera-01-nocturna.webp', '/assets/cocheras/cochera-02-galeria-dia.webp', '/assets/cocheras/cochera-03-motos.webp', '/assets/cocheras/cochera-04-construccion.webp', '/assets/cocheras/cochera-05-blanca.webp', '/assets/cocheras/cochera-06-terraza-deck.webp', '/assets/cocheras/cochera-07-galeria-jardin.webp', '/assets/cocheras/cochera-08-pergola-listones.webp'],
+    images: [withBase('/assets/cocheras/cochera-01-nocturna.webp'), withBase('/assets/cocheras/cochera-02-galeria-dia.webp'), withBase('/assets/cocheras/cochera-03-motos.webp'), withBase('/assets/cocheras/cochera-04-construccion.webp'), withBase('/assets/cocheras/cochera-05-blanca.webp'), withBase('/assets/cocheras/cochera-06-terraza-deck.webp'), withBase('/assets/cocheras/cochera-07-galeria-jardin.webp'), withBase('/assets/cocheras/cochera-08-pergola-listones.webp')],
     waMsg: 'Hola qBox, me interesa la línea de cocheras y galerías. Quisiera más información.'
   },
   ampliaciones: {
     name: 'Ampliaciones', kicker: 'Construcción en seco',
     tagline: 'Sumá metros a tu hogar o empresa sin obras eternas ni escombros.',
-    heroBg: '/assets/ampliaciones.webp',
+    heroBg: withBase('/assets/ampliaciones.webp'),
     introTitle: 'Más espacio, sin la obra húmeda de siempre.',
     introP1: 'Ampliamos viviendas y locales con sistemas de construcción en seco: rápido, limpio y con mínima interrupción de tu día a día. Dormitorios, oficinas, entrepisos y más.',
     introP2: 'Coordinamos cada etapa para que el resultado se integre sin costuras a lo existente.',
@@ -65,13 +65,13 @@ const CATS = {
       { n: '03', title: 'Integración perfecta', desc: 'Terminaciones que continúan lo construido.' },
       { n: '04', title: 'Plazos cortos', desc: 'Prefabricación que acelera cada etapa.' }
     ],
-    images: ['/assets/ampliaciones/amp-01-pared-listones.webp', '/assets/ampliaciones/amp-02-frente-nocturno.webp', '/assets/ampliaciones/amp-03-chapa-perforada.webp', '/assets/ampliaciones/amp-04-cielorraso-madera.webp', '/assets/ampliaciones/amp-05-voladizo-obra.webp', '/assets/ampliaciones/amp-06-pergola-vidrio.webp'],
+    images: [withBase('/assets/ampliaciones/amp-01-pared-listones.webp'), withBase('/assets/ampliaciones/amp-02-frente-nocturno.webp'), withBase('/assets/ampliaciones/amp-03-chapa-perforada.webp'), withBase('/assets/ampliaciones/amp-04-cielorraso-madera.webp'), withBase('/assets/ampliaciones/amp-05-voladizo-obra.webp'), withBase('/assets/ampliaciones/amp-06-pergola-vidrio.webp')],
     waMsg: 'Hola qBox, me interesa ampliar mi hogar o local en construcción en seco. Quisiera más información.'
   },
   locales: {
     name: 'Locales comerciales', kicker: 'Retail · Showrooms',
     tagline: 'Locales y showrooms modulares listos para abrir, con identidad de marca.',
-    heroBg: '/assets/locales/local_2_fachada_completa.webp',
+    heroBg: withBase('/assets/locales/local_2_fachada_completa.webp'),
     introTitle: 'Abrí tu local antes y mejor.',
     introP1: 'Locales comerciales y showrooms modulares pensados para retail: vidriera, layout y terminaciones que potencian la experiencia de compra. Listos para operar en tiempo récord.',
     introP2: 'Soluciones escalables y replicables si tu marca crece o suma puntos de venta.',
@@ -81,7 +81,7 @@ const CATS = {
       { n: '03', title: 'Experiencia de compra', desc: 'Layout e iluminación pensados para retail.' },
       { n: '04', title: 'Tiempo récord', desc: 'Abrís meses antes que con obra tradicional.' }
     ],
-    images: ['/assets/locales/local_2_fachada_completa.webp', '/assets/locales/local_3_porton_grande.webp', '/assets/locales/local_1_detalle_ventanas.webp', '/assets/locales/local_4_calle_arbol.webp', '/assets/locales/local_5_lateral_camioneta.webp'],
+    images: [withBase('/assets/locales/local_2_fachada_completa.webp'), withBase('/assets/locales/local_3_porton_grande.webp'), withBase('/assets/locales/local_1_detalle_ventanas.webp'), withBase('/assets/locales/local_4_calle_arbol.webp'), withBase('/assets/locales/local_5_lateral_camioneta.webp')],
     waMsg: 'Hola qBox, me interesa la línea de locales comerciales. Quisiera más información.'
   }
 };
@@ -95,7 +95,7 @@ const siteConfig = { media: config.media || {}, seo: config.seo || {} };
     <div class="cat-hero-bg" id="hero-bg"></div>
     <div class="cat-hero-ov"></div>
     <div class="cat-hero-cnt">
-      <a href="/" class="back-link">
+      <a href={withBase('/')} class="back-link">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         Volver al inicio
       </a>

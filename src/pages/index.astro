@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import config from '../data/config.json';
+import { withBase } from '../lib/site.js';
 
 const seo = config.seo.inicio;
 const content = config.content;
@@ -64,8 +65,8 @@ const schema = {
 
   <!-- HERO -->
   <section id="hero">
-    <video id="hero-vid" autoplay muted loop playsinline preload="none" poster="/assets/modulo-nosotros.webp">
-      <source src="/assets/hero.mp4" type="video/mp4" />
+    <video id="hero-vid" autoplay muted loop playsinline preload="none" poster={withBase('/assets/modulo-nosotros.webp')}>
+      <source src={withBase('/assets/hero.mp4')} type="video/mp4" />
     </video>
     <div id="hero-vid-fade"></div>
     <div class="hero-ov"></div>
@@ -97,8 +98,8 @@ const schema = {
       <p>Dos caminos, un mismo estándar premium.</p>
     </div>
     <div class="pub-grid">
-      <a href="/soluciones?tipo=residencial" class="pub-card rv d1">
-        <div class="pub-img"><img src="/assets/residencial.webp" alt="Desarrollos residenciales" loading="lazy" /></div>
+      <a href={withBase('/soluciones?tipo=residencial')} class="pub-card rv d1">
+        <div class="pub-img"><img src={withBase('/assets/residencial.webp')} alt="Desarrollos residenciales" loading="lazy" /></div>
         <div class="pub-body">
           <p class="pub-kicker">Para vivir</p>
           <h3>Desarrollos Residenciales</h3>
@@ -106,8 +107,8 @@ const schema = {
           <span class="pub-link">Ver soluciones <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </div>
       </a>
-      <a href="/soluciones?tipo=corporativo" class="pub-card rv d2">
-        <div class="pub-img"><img src="/assets/corporativo-modulo-negro.webp" alt="Soluciones corporativas" loading="lazy" /></div>
+      <a href={withBase('/soluciones?tipo=corporativo')} class="pub-card rv d2">
+        <div class="pub-img"><img src={withBase('/assets/corporativo-modulo-negro.webp')} alt="Soluciones corporativas" loading="lazy" /></div>
         <div class="pub-body">
           <p class="pub-kicker">Para operar</p>
           <h3>Soluciones Corporativas</h3>
@@ -147,7 +148,7 @@ const schema = {
           </ul>
         </div>
         <div class="about-img rv d2">
-          <img src="/assets/modulo-nosotros-clean.webp" alt="Módulo qBox al atardecer" loading="lazy" />
+          <img src={withBase('/assets/modulo-nosotros-clean.webp')} alt="Módulo qBox al atardecer" loading="lazy" />
           <div class="about-img-ov"></div>
         </div>
       </div>
@@ -170,7 +171,7 @@ const schema = {
       <p style="font-size:15px;">Explorá cada línea de trabajo.</p>
     </div>
     <div class="bento-grid">
-      <a href="/categoria?cat=modulos" class="bento-card bento-big rv d1" style="background-image:url(https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1300&auto=format&fit=crop)">
+      <a href={withBase('/categoria?cat=modulos')} class="bento-card bento-big rv d1" style="background-image:url(https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1300&auto=format&fit=crop)">
         <div class="bento-ov"></div>
         <div class="bento-body">
           <p class="bento-kicker">Viviendas · Oficinas</p>
@@ -178,7 +179,7 @@ const schema = {
           <span class="bento-link">Ver proyectos <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </div>
       </a>
-      <a href="/categoria?cat=stands" class="bento-card bento-sm rv d2" style="background-image:url(/assets/stand-emergencias.webp)">
+      <a href={withBase('/categoria?cat=stands')} class="bento-card bento-sm rv d2" style={`background-image:url(${withBase('/assets/stand-emergencias.webp')})`}>
         <div class="bento-ov"></div>
         <div class="bento-body">
           <p class="bento-kicker">Eventos · Ferias</p>
@@ -186,7 +187,7 @@ const schema = {
           <span class="bento-link">Ver proyectos <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </div>
       </a>
-      <a href="/categoria?cat=cocheras-galerias" class="bento-card bento-sm rv d3" style="background-image:url(/assets/cochera-bento.webp)">
+      <a href={withBase('/categoria?cat=cocheras-galerias')} class="bento-card bento-sm rv d3" style={`background-image:url(${withBase('/assets/cochera-bento.webp')})`}>
         <div class="bento-ov"></div>
         <div class="bento-body">
           <p class="bento-kicker">Semicubiertos</p>
@@ -194,7 +195,7 @@ const schema = {
           <span class="bento-link">Ver proyectos <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </div>
       </a>
-      <a href="/categoria?cat=ampliaciones" class="bento-card bento-sm rv d1" style="background-image:url(/assets/ampliaciones.webp)">
+      <a href={withBase('/categoria?cat=ampliaciones')} class="bento-card bento-sm rv d1" style={`background-image:url(${withBase('/assets/ampliaciones.webp')})`}>
         <div class="bento-ov"></div>
         <div class="bento-body">
           <p class="bento-kicker">Construcción en seco</p>
@@ -202,7 +203,7 @@ const schema = {
           <span class="bento-link">Ver proyectos <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </div>
       </a>
-      <a href="/categoria?cat=locales" class="bento-card bento-sm rv d2" style="background-image:url(/assets/locales-comerciales.webp)">
+      <a href={withBase('/categoria?cat=locales')} class="bento-card bento-sm rv d2" style={`background-image:url(${withBase('/assets/locales-comerciales.webp')})`}>
         <div class="bento-ov"></div>
         <div class="bento-body">
           <p class="bento-kicker">Retail · Showrooms</p>
@@ -321,7 +322,7 @@ const schema = {
     <div class="m-box" onclick="event.stopPropagation()">
       <div class="m-hdr">
         <div class="m-hdr-l">
-          <img src="/assets/qbox-logo-ink.webp" alt="qBox" class="m-logo" />
+          <img src={withBase('/assets/qbox-logo-ink.webp')} alt="qBox" class="m-logo" />
           <span class="m-brand">Calendly</span>
         </div>
         <button class="m-close" onclick="closeModal()">
