@@ -1,6 +1,4 @@
 ---
-import { withBase } from '../lib/site.js';
-
 interface Props {
   title: string;
   description?: string;
@@ -13,9 +11,9 @@ const { title, description, keywords } = Astro.props;
 <title>{title}</title>
 {description && <meta name="description" content={description} />}
 {keywords && <meta name="keywords" content={keywords} />}
-<link rel="icon" type="image/png" sizes="32x32" href={withBase('/assets/favicon-32.png')} />
-<link rel="icon" type="image/png" sizes="192x192" href={withBase('/assets/favicon-192.png')} />
-<link rel="apple-touch-icon" sizes="180x180" href={withBase('/assets/favicon-180.png')} />
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon-180.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link

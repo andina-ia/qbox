@@ -1,15 +1,13 @@
 ---
-import { withBase } from '../lib/site.js';
-
 interface Props {
   home?: boolean;
 }
 const { home = false } = Astro.props;
-const prefix = home ? '' : `${withBase('/')}`;
+const prefix = home ? '' : '/';
 ---
 <header id="hdr">
   <div class="hdr-in">
-    <a href={withBase('/')}><img src={withBase('/assets/qbox-logo-white.webp')} alt="qBox" class="hdr-logo" /></a>
+    <a href="/"><img src="/assets/qbox-logo-white.webp" alt="qBox" class="hdr-logo" /></a>
     <button class="hdr-btn" onclick="toggleMenu()" aria-label="Menú">
       <span></span><span></span><span></span>
     </button>
