@@ -6,5 +6,5 @@ import { defineConfig } from "astro/config";
 // static hosting without extra rewrites.
 export default defineConfig({
   site: "https://qboxmodular.com.ar",
-  base: "/sanjuan",
+  base: "/",
 });
