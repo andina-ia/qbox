@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>qBox</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/favicon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#F5F4F0; --ink:#1E2022; --accent:#8C7E74; --card:#FAF9F5;
+  --border:rgba(30,32,34,.12); --max:1240px;
+  --serif:'Newsreader',Georgia,serif; --sans:'Hanken Grotesk',system-ui,sans-serif;
+  --px:clamp(20px,4vw,60px);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.7;}
+::selection{background:rgba(140,126,116,.28);}
+img{display:block;max-width:100%;}
+a{color:inherit;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;}
+
+/* TYPOGRAPHY — identical to index */
+.eye{font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);}
+h1{font-family:var(--serif);font-size:clamp(36px,4.6vw,64px);font-weight:400;line-height:1.08;}
+h2{font-family:var(--serif);font-size:clamp(28px,3.6vw,52px);font-weight:400;line-height:1.12;}
+h3{font-family:var(--serif);font-size:clamp(20px,2.2vw,32px);font-weight:400;line-height:1.25;}
+
+/* HEADER */
+#hdr{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(18,16,12,.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(245,238,220,.08);}
+.hdr-in{max-width:100%;padding:0 var(--px);height:68px;display:flex;align-items:center;justify-content:space-between;}
+.hdr-logo{height:50px;width:auto;}
+.hdr-btn{display:flex;flex-direction:column;gap:5px;padding:10px 12px;border-radius:8px;border:1.5px solid rgba(245,238,220,.2);background:transparent;transition:.2s;}
+.hdr-btn:hover{border-color:rgba(245,238,220,.5);background:rgba(245,238,220,.06);}
+.hdr-btn span{display:block;width:20px;height:1.5px;background:#F5EEDC;}
+
+/* NAV */
+#nav{display:none;position:fixed;top:68px;left:0;right:0;bottom:0;z-index:99;background:rgba(245,244,240,.98);backdrop-filter:blur(12px);padding:32px var(--px);flex-direction:column;gap:4px;}
+#nav.open{display:flex;}
+#nav a{font-family:var(--serif);font-size:28px;color:var(--ink);text-decoration:none;padding:10px 0;transition:.2s;}
+#nav a:hover{color:var(--accent);}
+
+/* HERO — dark same as index */
+#cat-hero{position:relative;min-height:36vh;display:flex;align-items:flex-end;overflow:hidden;padding-top:68px;background:#0E0C0A;}
+.cat-hero-bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.45;z-index:0;}
+.cat-hero-ov{position:absolute;inset:0;background:linear-gradient(to right,rgba(14,12,10,.98) 0%,rgba(14,12,10,.75) 45%,rgba(14,12,10,.2) 100%);z-index:1;}
+.cat-hero-cnt{position:relative;z-index:2;padding:clamp(28px,4vw,48px) var(--px) clamp(28px,4vw,48px);width:100%;}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:600;color:rgba(245,238,220,.45);text-decoration:none;margin-bottom:16px;transition:.2s;}
+.back-link:hover{color:rgba(245,238,220,.8);}
+.cat-kicker{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,238,220,.5);margin-bottom:10px;}
+#cat-hero h1{color:#F5EEDC;font-size:clamp(28px,3.5vw,48px);line-height:1.1;margin-bottom:10px;}
+#cat-hero h1 em{font-style:normal;color:#A0917F;}
+.cat-tagline{color:rgba(245,238,220,.55);font-size:clamp(14px,1.4vw,16px);max-width:480px;}
+
+/* MAIN */
+.sec{padding:clamp(48px,6vw,80px) var(--px);max-width:var(--max);margin:0 auto;}
+
+/* INTRO */
+.intro-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:clamp(32px,5vw,64px);align-items:start;}
+.intro-title{font-family:var(--serif);font-size:clamp(20px,2.6vw,34px);line-height:1.22;margin-bottom:18px;}
+.intro-p{font-size:16.5px;line-height:1.75;color:rgba(30,32,34,.75);margin-bottom:12px;}
+.features{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:4px;}
+.feat{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:18px 20px;transition:.2s;}
+.feat:hover{border-color:rgba(30,32,34,.22);box-shadow:0 8px 24px -10px rgba(30,32,34,.12);}
+.feat-n{font-family:var(--serif);font-size:22px;color:var(--accent);margin-bottom:8px;}
+.feat-t{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.feat-d{font-size:14px;color:var(--accent);line-height:1.55;}
+
+/* GALLERY */
+.gal-hd{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:8px;}
+.gal-count{font-size:15px;color:var(--accent);}
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.gal-item{border-radius:16px;overflow:hidden;aspect-ratio:4/5;cursor:zoom-in;position:relative;}
+.gal-item:first-child{grid-column:1/3;aspect-ratio:16/9;}
+.gal-item img{width:100%;height:100%;object-fit:cover;transition:.4s;}
+.gal-item:hover img{transform:scale(1.04);}
+.gal-item::after{content:'';position:absolute;inset:0;background:rgba(30,32,34,0);transition:.2s;}
+.gal-item:hover::after{background:rgba(30,32,34,.06);}
+
+/* LIGHTBOX */
+.lb{display:none;position:fixed;inset:0;z-index:300;background:rgba(14,12,10,.96);align-items:center;justify-content:center;}
+.lb.open{display:flex;}
+.lb img{max-height:90vh;max-width:88vw;border-radius:10px;object-fit:contain;}
+.lb-close{position:absolute;top:20px;right:24px;color:#F5EEDC;font-size:34px;cursor:pointer;opacity:.65;transition:.2s;background:none;border:none;line-height:1;}
+.lb-close:hover{opacity:1;}
+.lb-nav{position:absolute;top:50%;transform:translateY(-50%);color:#F5EEDC;font-size:30px;cursor:pointer;background:rgba(245,238,220,.1);border:none;border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;transition:.2s;}
+.lb-nav:hover{background:rgba(245,238,220,.2);}
+.lb-prev{left:20px;}
+.lb-next{right:20px;}
+
+/* CTA BOX — same as showroom-box in index */
+.cta-box{background:var(--ink);border-radius:24px;padding:clamp(48px,6vw,64px) clamp(32px,4vw,56px);display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap;margin-top:clamp(48px,6vw,80px);}
+.cta-box h2{color:#FAF9F5;max-width:520px;margin-top:10px;}
+.cta-box p{color:rgba(245,244,240,.65);margin-top:10px;font-size:15px;max-width:460px;line-height:1.65;}
+.cta-btns{display:flex;gap:12px;flex-wrap:wrap;flex-shrink:0;}
+.btn-p{display:inline-flex;align-items:center;gap:8px;background:#F5EEDC;color:#1A1814;font-size:15.5px;font-weight:700;padding:15px 26px;border-radius:100px;text-decoration:none;border:none;cursor:pointer;transition:.2s;letter-spacing:.01em;}
+.btn-p:hover{background:#fff;transform:translateY(-2px);}
+.btn-s{display:inline-flex;align-items:center;gap:8px;background:transparent;color:#F5EEDC;font-size:15px;font-weight:500;padding:14px 22px;border-radius:100px;border:1.5px solid rgba(245,238,220,.25);text-decoration:none;transition:.2s;cursor:pointer;}
+.btn-s:hover{border-color:rgba(245,238,220,.6);}
+
+/* SISMO BANNER (reutilizado) */
+.sismo{background:var(--ink);border-radius:16px;padding:22px 26px;display:flex;gap:18px;align-items:flex-start;margin-top:32px;}
+.sismo-icon{width:42px;height:42px;border-radius:50%;background:rgba(245,244,240,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sismo-title{font-size:16px;font-weight:600;color:#FAF9F5;margin-bottom:6px;}
+.sismo-body{font-size:15px;line-height:1.65;color:rgba(245,244,240,.65);}
+
+/* FOOTER */
+footer{background:var(--card);border-top:1px solid var(--border);padding:clamp(36px,4vw,56px) var(--px) 28px;}
+.foot-in{max-width:var(--max);margin:0 auto;}
+.foot-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:40px;margin-bottom:36px;}
+.foot-logo{height:30px;margin-bottom:18px;}
+.foot-desc{font-size:16px;line-height:1.6;max-width:300px;color:rgba(30,32,34,.75);}
+.foot-r{text-align:right;}
+.foot-sh-title{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;}
+.foot-info{display:flex;flex-direction:column;gap:10px;align-items:flex-end;}
+.foot-addr{display:inline-flex;align-items:center;gap:6px;font-size:15px;text-decoration:none;border-bottom:1px solid transparent;transition:.2s;}
+.foot-addr:hover{border-bottom-color:var(--ink);}
+.foot-hrs{font-size:14.5px;color:var(--accent);}
+.foot-bot{border-top:1px solid var(--border);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.foot-bot span,.foot-bot a{font-size:14px;color:var(--accent);text-decoration:none;}
+.foot-bot a:hover{color:var(--ink);}
+
+/* WA FAB */
+.wa{position:fixed;bottom:28px;right:28px;z-index:90;width:54px;height:54px;background:var(--ink);color:#FAF9F5;border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;box-shadow:0 4px 24px rgba(30,32,34,.25);transition:.2s;}
+.wa:hover{background:#000;transform:translateY(-3px);}
+
+/* REVEAL */
+.rv{opacity:0;transform:translateY(28px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1);}
+.rv.in{opacity:1;transform:none;}
+.d1{transition-delay:.08s;}.d2{transition-delay:.16s;}.d3{transition-delay:.24s;}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;}}
+
+/* RESPONSIVE */
+/* === TABLET (≤900px) === */
+@media(max-width:900px){
+  :root{--px:clamp(16px,4vw,28px);}
+  .intro-grid{grid-template-columns:1fr;}
+  .gallery{grid-template-columns:repeat(2,1fr);}
+  .foot-grid{grid-template-columns:1fr;gap:24px;}
+  .foot-r{text-align:left;}
+  .foot-info{align-items:flex-start;}
+  .cta-box{flex-direction:column;align-items:flex-start;}
+  .features{grid-template-columns:1fr 1fr;}
+}
+
+/* === MOBILE (≤640px) === */
+@media(max-width:640px){
+  :root{--px:16px;}
+  html,body{font-size:15.5px;}
+
+  /* Hero */
+  #cat-hero{min-height:30vh;}
+  .cat-hero-cnt{padding:24px var(--px) 28px;}
+  .back-link{font-size:12.5px;margin-bottom:12px;}
+  .cat-kicker{font-size:10.5px;margin-bottom:8px;}
+  #cat-hero h1{font-size:clamp(26px,8vw,34px);margin-bottom:8px;}
+  .cat-tagline{font-size:13.5px;}
+
+  /* Sections */
+  .sec{padding:32px var(--px);}
+  h2{font-size:clamp(22px,7vw,28px);}
+
+  /* Gallery */
+  .gal-hd{flex-direction:column;align-items:flex-start;gap:6px;margin-bottom:16px;}
+  .gal-count{font-size:13px;}
+  .gallery{grid-template-columns:repeat(2,1fr);gap:8px;}
+  .gal-item{border-radius:10px;}
+
+  /* Intro */
+  .intro-title{font-size:clamp(18px,5.5vw,22px);}
+  .intro-p{font-size:14.5px;}
+  .features{grid-template-columns:1fr;gap:10px;}
+  .feat{padding:14px 16px;}
+  .feat-n{font-size:18px;margin-bottom:5px;}
+  .feat-t{font-size:14px;}
+  .feat-d{font-size:13px;}
+
+  /* Sismo banner */
+  .sismo{flex-direction:column;gap:12px;padding:16px;border-radius:14px;}
+  .sismo-title{font-size:14.5px;}
+  .sismo-body{font-size:13.5px;}
+
+  /* CTA */
+  .cta-box{padding:28px var(--px);border-radius:18px;gap:20px;}
+  .cta-box h2{font-size:clamp(20px,6.5vw,26px);}
+  .cta-box p{font-size:13.5px;}
+  .cta-btns{flex-direction:column;width:100%;}
+  .btn-p,.btn-s{justify-content:center;width:100%;font-size:14px;padding:13px 20px;}
+
+  /* Footer */
+  footer{padding:28px var(--px) 20px;}
+  .foot-logo{height:24px;}
+  .foot-desc{font-size:13.5px;}
+  .foot-sh-title{font-size:11px;}
+  .foot-addr{font-size:13px;}
+  .foot-hrs{font-size:12.5px;}
+  .foot-bot{flex-direction:column;align-items:flex-start;gap:8px;}
+  .foot-bot span,.foot-bot a{font-size:12.5px;}
+
+  /* WA fab */
+  .wa{width:46px;height:46px;bottom:18px;right:18px;}
+
+  /* Lightbox */
+  .lb-nav{width:40px;height:40px;font-size:24px;}
+  .lb-prev{left:10px;}
+  .lb-next{right:10px;}
+  .lb-close{top:14px;right:16px;font-size:28px;}
+}
+
+@media(max-width:380px){
+  .gallery{grid-template-columns:1fr 1fr;gap:6px;}
+}
+
+/* ===== PROTOTIPOS ===== */
+#proto-section { display:none; }
+#proto-section.show { display:block; }
+.proto-header { text-align:center; margin-bottom:clamp(24px,4vw,48px); }
+.proto-header h2 { font-size:clamp(1.6rem,3.5vw,2.4rem); font-weight:400; color:var(--ink); margin-bottom:8px; }
+.proto-header p { color:var(--muted); font-size:clamp(14px,1.5vw,16px); }
+.proto-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:20px; }
+.proto-card { background:var(--card); border:1px solid var(--border); border-radius:12px; overflow:hidden; transition:box-shadow .2s, transform .2s; }
+.proto-card:hover { box-shadow:0 8px 32px rgba(0,0,0,.12); transform:translateY(-2px); }
+.proto-card-img { width:100%; height:200px; object-fit:cover; display:block; }
+.proto-card-badge { background:var(--accent); color:#fff; font-size:11px; font-weight:600; letter-spacing:.08em; padding:4px 10px; display:inline-block; border-radius:0 0 8px 0; }
+.proto-card-body { padding:20px; }
+.proto-card-num { font-size:11px; color:var(--muted); letter-spacing:.1em; margin-bottom:4px; }
+.proto-card-title { font-size:1.1rem; font-weight:600; color:var(--ink); margin-bottom:4px; }
+.proto-card-sub { font-size:13px; color:var(--muted); margin-bottom:16px; line-height:1.5; }
+.proto-card-specs { display:flex; gap:16px; margin-bottom:16px; padding:12px; background:var(--bg); border-radius:8px; }
+.proto-spec { text-align:center; flex:1; }
+.proto-spec-val { font-size:1.1rem; font-weight:700; color:var(--ink); display:block; }
+.proto-spec-lbl { font-size:11px; color:var(--muted); }
+.proto-card-price { font-size:1.4rem; font-weight:700; color:var(--ink); margin-bottom:4px; }
+.proto-card-price span { font-size:13px; font-weight:400; color:var(--muted); }
+.proto-card-includes { list-style:none; padding:0; margin:12px 0 20px; display:flex; flex-direction:column; gap:6px; }
+.proto-card-includes li { font-size:13px; color:var(--muted); display:flex; align-items:center; gap:6px; }
+.proto-card-includes li::before { content:'✓'; color:var(--accent); font-weight:700; font-size:12px; flex-shrink:0; }
+.proto-card-cta { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:11px; background:var(--ink); color:var(--bg); border:none; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; text-decoration:none; transition:opacity .15s; }
+.proto-card-cta:hover { opacity:.85; }
+.proto-entrega { display:inline-flex; align-items:center; gap:5px; background:#16a34a1a; color:#16a34a; font-size:11px; font-weight:600; padding:3px 8px; border-radius:20px; margin-bottom:12px; }
+
+/* ===== MÓDULOS LANDING ===== */
+
+.mod-sec { padding: clamp(48px,6vw,80px) var(--px); }
+
+/* Main 2-col layout */
+.mod-main-sec { background:var(--bg); padding:clamp(48px,6vw,72px) var(--px); }
+.mod-main-grid { display:grid; grid-template-columns:1fr 1fr; gap:clamp(40px,5vw,80px); max-width:var(--max); margin:0 auto; align-items:start; }
+@media(max-width:800px){ .mod-main-grid { grid-template-columns:1fr; } }
+
+/* Columna izquierda */
+.mod-left-h2 { font-family:var(--serif); font-size:clamp(1.5rem,2.8vw,2.2rem); font-weight:400; line-height:1.2; color:var(--ink); margin-bottom:18px; }
+.mod-left-h2 em { font-style:italic; color:var(--accent); }
+.mod-left-p { font-family:var(--sans); font-size:14px; color:#6b6560; line-height:1.7; margin-bottom:12px; }
+.mod-stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:0; margin-top:24px; border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+.mod-stat { text-align:center; padding:16px 8px; border-right:1px solid var(--border); background:var(--card); }
+.mod-stat:last-child { border-right:none; }
+.mod-stat-val { display:block; font-family:var(--serif); font-size:clamp(1.1rem,2vw,1.5rem); font-weight:400; color:var(--ink); margin-bottom:4px; }
+.mod-stat-lbl { font-family:var(--sans); font-size:10px; color:var(--accent); letter-spacing:.02em; }
+.mod-ficha-btn { display:inline-flex; align-items:center; gap:8px; margin-top:20px; font-family:var(--sans); font-size:13px; font-weight:600; color:var(--ink); border:1.5px solid var(--ink); border-radius:8px; padding:10px 18px; text-decoration:none; transition:background .15s, color .15s; }
+.mod-ficha-btn:hover { background:var(--ink); color:var(--bg); }
+
+/* Columna derecha */
+.mod-right-h2 { font-family:var(--serif); font-size:clamp(1.4rem,2.5vw,2rem); font-weight:400; color:var(--ink); margin-bottom:6px; }
+.mod-right-sub { font-family:var(--sans); font-size:13px; color:#6b6560; margin-bottom:20px; }
+
+.mod-section-header { text-align:center; margin-bottom:clamp(28px,4vw,48px); max-width:var(--max); margin-left:auto; margin-right:auto; }
+.mod-section-header h2 { font-family:var(--serif); font-size:clamp(1.6rem,3vw,2.4rem); font-weight:400; color:var(--ink); margin-bottom:8px; }
+.mod-section-header p { font-family:var(--sans); font-size:15px; color:var(--muted,#6b6560); }
+
+/* PROTO SELECTOR GRID */
+.proto-selector-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.proto-sel-card { background:var(--bg); border:1px solid var(--border); border-radius:14px; overflow:hidden; cursor:pointer; transition:transform .2s, box-shadow .2s; }
+.proto-sel-card:hover { transform:translateY(-4px); box-shadow:0 12px 40px rgba(0,0,0,.12); }
+.proto-sel-img { position:relative; aspect-ratio:4/3; overflow:hidden; }
+.proto-sel-img img { width:100%; height:100%; object-fit:cover; transition:transform .4s; }
+.proto-sel-card:hover .proto-sel-img img { transform:scale(1.04); }
+.proto-sel-overlay { position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,.75) 0%, rgba(0,0,0,.05) 55%, transparent 100%); display:flex; align-items:flex-end; transition:background .3s; }
+.proto-sel-card:hover .proto-sel-overlay { background:linear-gradient(to top, rgba(0,0,0,.88) 0%, rgba(0,0,0,.2) 60%, transparent 100%); }
+.proto-sel-label { padding:18px 20px 22px; }
+.proto-sel-num { font-family:var(--sans); font-size:10px; letter-spacing:.14em; color:rgba(255,255,255,.65); font-weight:600; margin-bottom:5px; }
+.proto-sel-title { font-family:var(--serif); font-size:1.2rem; font-weight:400; color:#fff; line-height:1.2; }
+.proto-sel-badge { display:none; }
+
+
+.mod-cta-sec { background:var(--ink); color:#F5F4F0; }
+.mod-cta-sec h2 { font-family:var(--serif); font-size:clamp(1.6rem,3vw,2.4rem); font-weight:400; margin-bottom:14px; }
+
+/* PROTO MODAL */
+#proto-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:1000; overflow-y:auto; padding:20px; }
+#proto-modal.open { display:flex; align-items:flex-start; justify-content:center; }
+.proto-modal-inner { background:var(--bg); border-radius:16px; max-width:860px; width:100%; position:relative; margin:auto; overflow:hidden; }
+.proto-modal-close { position:absolute; top:16px; right:16px; width:36px; height:36px; border-radius:50%; background:rgba(0,0,0,.12); border:none; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; z-index:10; color:var(--ink); }
+.proto-modal-close:hover { background:rgba(0,0,0,.2); }
+.pmod-hero { position:relative; aspect-ratio:16/7; overflow:hidden; }
+.pmod-hero img { width:100%; height:100%; object-fit:cover; }
+.pmod-hero-ov { position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,.65) 0%, transparent 60%); }
+.pmod-hero-txt { position:absolute; bottom:0; left:0; padding:28px 32px; color:#fff; }
+.pmod-hero-txt p { font-family:var(--sans); font-size:11px; letter-spacing:.12em; color:rgba(255,255,255,.7); margin-bottom:4px; }
+.pmod-hero-txt h2 { font-family:var(--serif); font-size:clamp(1.4rem,3vw,2rem); font-weight:400; }
+.pmod-body { padding:28px 32px 36px; }
+.pmod-price-row { display:flex; align-items:baseline; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
+.pmod-price { font-family:var(--serif); font-size:2rem; color:var(--ink); }
+.pmod-price-sub { font-family:var(--sans); font-size:13px; color:var(--muted,#6b6560); }
+.pmod-entrega { display:inline-flex; align-items:center; gap:5px; background:#16a34a18; color:#16a34a; font-family:var(--sans); font-size:11px; font-weight:700; padding:4px 10px; border-radius:20px; }
+.pmod-specs-row { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:24px; }
+.pmod-spec { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:10px 14px; text-align:center; flex:1; min-width:80px; }
+.pmod-spec-val { display:block; font-family:var(--sans); font-size:1rem; font-weight:700; color:var(--ink); }
+.pmod-spec-lbl { font-family:var(--sans); font-size:10px; color:var(--muted,#6b6560); display:block; margin-top:2px; }
+.pmod-usos { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:24px; }
+.pmod-uso { font-family:var(--sans); font-size:11px; background:var(--ink); color:#F5F4F0; padding:4px 12px; border-radius:20px; }
+.pmod-grid2 { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:24px; }
+@media(max-width:560px){ .pmod-grid2 { grid-template-columns:1fr; } }
+.pmod-block h4 { font-family:var(--sans); font-size:12px; font-weight:700; letter-spacing:.08em; color:var(--accent); margin-bottom:10px; text-transform:uppercase; }
+.pmod-block ul { list-style:none; padding:0; display:flex; flex-direction:column; gap:6px; }
+.pmod-block li { font-family:var(--sans); font-size:13px; color:var(--ink); display:flex; gap:8px; align-items:flex-start; }
+.pmod-block li::before { content:'✓'; color:var(--accent); font-weight:700; flex-shrink:0; margin-top:1px; }
+.pmod-nota { font-family:var(--sans); font-size:12px; color:var(--accent); background:rgba(140,126,116,.08); border:1px solid rgba(140,126,116,.2); border-radius:8px; padding:10px 14px; margin-bottom:24px; }
+/* Galería modal */
+.pmod-gallery { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:28px; }
+@media(max-width:480px){ .pmod-gallery { grid-template-columns:repeat(2,1fr); } }
+.pmod-gal-item { aspect-ratio:4/3; overflow:hidden; border-radius:8px; cursor:pointer; }
+.pmod-gal-item img { width:100%; height:100%; object-fit:cover; transition:transform .3s; }
+.pmod-gal-item:hover img { transform:scale(1.06); }
+.pmod-cta { display:flex; align-items:center; justify-content:center; gap:8px; padding:14px 24px; background:var(--ink); color:#F5F4F0; border-radius:10px; font-family:var(--sans); font-size:15px; font-weight:600; text-decoration:none; transition:opacity .15s; }
+.pmod-cta:hover { opacity:.85; }
+
+</style>
+</head>
+<body>
+<!-- HEADER -->
+<header id="hdr">
+  <div class="hdr-in">
+    <a href="index.html"><img src="assets/qbox-logo-white.webp" alt="qBox" class="hdr-logo"></a>
+    <button class="hdr-btn" onclick="toggleMenu()" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="index.html#soluciones" onclick="closeMenu()">Soluciones</a>
+  <a href="index.html#nosotros" onclick="closeMenu()">Quiénes somos</a>
+  <a href="index.html#proyectos" onclick="closeMenu()">Proyectos</a>
+  <a href="index.html#precios" onclick="closeMenu()">Cotizador</a>
+  <a href="index.html#showroom" onclick="closeMenu()">Showroom</a>
+</nav>
+
+<!-- HERO -->
+<section id="cat-hero">
+  <div class="cat-hero-bg" style="background-image:url(assets/modulos/real-p1-11.webp);"></div>
+  <div class="cat-hero-ov"></div>
+  <div class="cat-hero-cnt">
+    <a href="index.html" class="back-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Volver al inicio
+    </a>
+    <p class="cat-kicker">VIVIENDAS · OFICINAS · LLAVE EN MANO</p>
+    <h1>Módulos</h1>
+    <p class="cat-tagline">Un módulo. Infinitas posibilidades. Vos elegís para qué usarlo, nosotros lo entregamos listo.</p>
+  </div>
+</section>
+
+
+<!-- INTRO + SELECTOR -->
+<section class="mod-main-sec">
+  <div class="wrap">
+    <div class="mod-main-grid">
+
+      <!-- COLUMNA IZQUIERDA: texto + stats -->
+      <div class="mod-left">
+        <h2 class="mod-left-h2">Espacios listos para habitar,<br><em>desde el primer día.</em></h2>
+        <p class="mod-left-p">Construimos con paneles sándwich de poliuretano expandido de alta densidad, estructura metálica y envolvente térmica continua. Sin puentes térmicos, sin sorpresas. Cada módulo sale de nuestro taller y llega listo para conectar agua, luz y usar.</p>
+        <p class="mod-left-p">Operan en condiciones severas: desde -15°C hasta +35°C, resistencia a vientos de 120 km/h y cargas de nieve en cubierta.</p>
+        <div class="mod-stats-grid">
+          <div class="mod-stat"><span class="mod-stat-val">120+</span><span class="mod-stat-lbl">Proyectos entregados</span></div>
+          <div class="mod-stat"><span class="mod-stat-val">60mm</span><span class="mod-stat-lbl">Panel aislante</span></div>
+          <div class="mod-stat"><span class="mod-stat-val">120km/h</span><span class="mod-stat-lbl">Resist. al viento</span></div>
+          <div class="mod-stat"><span class="mod-stat-val">-15°C</span><span class="mod-stat-lbl">Temp. mínima operación</span></div>
+        </div>
+        <a class="mod-ficha-btn" href="assets/modulos/FICHA_TECNICA_QBOX.pdf" download="Ficha_Tecnica_qBox.pdf">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="12" x2="12" y2="18"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          Descargar ficha técnica
+        </a>
+      </div>
+
+      <!-- COLUMNA DERECHA: selector -->
+      <div class="mod-right">
+        <h2 class="mod-right-h2">Elegí tu prototipo</h2>
+        <p class="mod-right-sub">Hacé click en el que te interesa para ver fotos, especificaciones y precio.</p>
+        <div class="proto-selector-grid">
+
+          <div class="proto-sel-card" onclick="openProto(1)">
+            <div class="proto-sel-img">
+              <img src="assets/modulos/real-p1-cover.webp" alt="Prototipo 1" loading="eager">
+              <div class="proto-sel-overlay">
+                <div class="proto-sel-label">
+                  <p class="proto-sel-num">PROTOTIPO 1</p>
+                  <h3 class="proto-sel-title">Módulo Premium con Galería</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="proto-sel-card" onclick="openProto(2)">
+            <div class="proto-sel-img">
+              <img src="assets/modulos/p2-01.webp" alt="Prototipo 2" loading="lazy">
+              <div class="proto-sel-overlay">
+                <div class="proto-sel-label">
+                  <p class="proto-sel-num">PROTOTIPO 2</p>
+                  <h3 class="proto-sel-title">Módulo Multipropósito</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="proto-sel-card" onclick="openProto(3)">
+            <div class="proto-sel-img">
+              <img src="assets/modulos/ficha-proto3.webp" alt="Prototipo 3" loading="lazy">
+              <div class="proto-sel-overlay">
+                <div class="proto-sel-label">
+                  <p class="proto-sel-num">PROTOTIPO 3</p>
+                  <h3 class="proto-sel-title">Módulo Condiciones Extremas</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="proto-sel-card" onclick="openProto(4)">
+            <div class="proto-sel-img">
+              <img src="assets/modulos/ficha-proto4.webp" alt="Prototipo 4" loading="lazy">
+              <div class="proto-sel-overlay">
+                <div class="proto-sel-label">
+                  <p class="proto-sel-num">PROTOTIPO 4</p>
+                  <h3 class="proto-sel-title">Módulo Vivienda Completa</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- CTA FINAL -->
+<section class="mod-sec mod-cta-sec">
+  <div class="wrap" style="text-align:center;">
+    <h2>¿Tenés un proyecto en mente?</h2>
+    <p style="color:var(--muted);max-width:480px;margin:0 auto 28px;">Contanos qué necesitás y te asesoramos sin compromiso. También podés visitar nuestro showroom en San Juan.</p>
+    <a href="https://wa.me/5492644431309?text=Hola+qBox,+me+interesa+conocer+más+sobre+los+módulos.+Quisiera+más+información." class="btn-p" target="_blank" rel="noopener">
+      Consultá por WhatsApp →
+    </a>
+  </div>
+</section>
+
+<!-- MODAL PROTOTIPO -->
+<div id="proto-modal" onclick="if(event.target===this)closeProto()">
+  <div class="proto-modal-inner">
+    <button class="proto-modal-close" onclick="closeProto()">✕</button>
+    <div id="proto-modal-content"></div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lb" id="lb" onclick="if(event.target===this)closeLb()">
+  <button class="lb-prev" onclick="lbNav(-1)">‹</button>
+  <img id="lb-img" src="" alt="">
+  <button class="lb-next" onclick="lbNav(1)">›</button>
+</div>
+
+
+<script>
+
+/* ===== DATOS PROTOTIPOS ===== */
+const PROTOS = {
+  1: {
+    num: 'PROTOTIPO 1',
+    title: 'Módulo Multipropósito Premium',
+    area: '35 m²',
+    dims: '9,50 × 3,70 m',
+    altura: '2,85 m',
+    panel: '60 mm PIR',
+    price: 'USD 35.000',
+    badge: 'MÁS COMPLETO',
+    usos: ['Vivienda','Oficina','Alquiler turístico','Espacio comercial','Espacio de trabajo'],
+    heroImg: 'assets/modulos/real-p1-11.webp',
+    gallery: [
+      'assets/modulos/real-p1-cover.webp',
+      'assets/modulos/real-p1-02.webp',
+      'assets/modulos/real-p1-09.webp',
+      'assets/modulos/real-p1-08.webp',
+      'assets/modulos/real-p1-06.webp',
+      'assets/modulos/real-p1-07.webp',
+      'assets/modulos/real-p1-05.webp',
+      'assets/modulos/real-p1-04.webp',
+      'assets/modulos/real-p1-03.webp',
+      'assets/modulos/real-p1-01.webp',
+      'assets/modulos/real-p1-10.webp',
+      'assets/modulos/real-p1-12.webp',
+    ],
+    incluye: ['Instalación eléctrica completa','Tablero con térmicas y disyuntor','Iluminación LED','Cocina con mesada y muebles','Baño completo','Piso SPC','Aberturas de aluminio','Módulo listo para conectar'],
+    caracteristicas: ['Diseño premium con galería integrada','Gran superficie cubierta de 35 m²','Amplias carpinterías de aluminio','Piso SPC de alta resistencia','Envolvente térmica continua','Aislación alta montaña -15°C a +35°C'],
+    waMsg: 'Hola qBox, me interesa el Prototipo 1 de 35m². Quisiera más información y un presupuesto.'
+  },
+  2: {
+    num: 'PROTOTIPO 2',
+    title: 'Módulo Multipropósito',
+    area: '21 m²',
+    dims: '6,46 × 3,36 m',
+    altura: '2,85 m',
+    panel: '60 mm PIR',
+    price: 'USD 22.500',
+    badge: null,
+    usos: ['Vivienda','Oficina','Alquiler turístico','Espacio comercial','Espacio de trabajo'],
+    heroImg: 'assets/modulos/p2-01.webp',
+    gallery: ['assets/modulos/p2-01.webp','assets/modulos/p2-06.webp','assets/modulos/p2-02.webp','assets/modulos/p2-03.webp','assets/modulos/p2-04.webp','assets/modulos/p2-05.webp'],
+    incluye: ['Instalación eléctrica completa','Tablero con térmicas y disyuntor','8 tomas eléctricos','Iluminación LED y luz de emergencia','2 ventanas de aluminio y puerta metálica','Mesada con estanterías','Piso vinílico alto tránsito','Módulo listo para conectar'],
+    caracteristicas: ['Diseñado para alta montaña','Envolvente térmica continua','Excelente eficiencia energética','Cubierta para nieve y condiciones extremas','Resistencia -15°C a +35°C · 120 km/h'],
+    waMsg: 'Hola qBox, me interesa el Prototipo 2 de 21m². Quisiera más información y un presupuesto.'
+  },
+  3: {
+    num: 'PROTOTIPO 3',
+    title: 'Módulo Condiciones Extremas',
+    area: '18 m²',
+    dims: '6,30 × 2,87 m',
+    altura: '2,95 m',
+    panel: '60 mm PIR',
+    price: 'USD 11.100',
+    badge: null,
+    usos: ['Vivienda','Oficina','Alquiler turístico','Espacio de trabajo'],
+    heroImg: 'assets/modulos/ficha-proto3.webp',
+    gallery: ['assets/modulos/ficha-proto3.webp'],
+    incluye: ['Instalación eléctrica completa','Tablero con térmicas y disyuntor','8 tomas eléctricos','Iluminación LED y luz de emergencia','Piso vinílico alto tránsito','Módulo listo para conectar'],
+    caracteristicas: ['Operación -15°C a +35°C','Resistencia a vientos 120 km/h','Cargas de nieve en cubierta','Envolvente térmica sin puentes térmicos','Sellado completo con poliuretano'],
+    waMsg: 'Hola qBox, me interesa el Prototipo 3 de 18m². Quisiera más información y un presupuesto.'
+  },
+  4: {
+    num: 'PROTOTIPO 4',
+    title: 'Módulo Vivienda Completa',
+    area: '18 m²',
+    dims: '6,30 × 2,87 m',
+    altura: '2,95 m',
+    panel: '50 mm EPS',
+    price: 'USD 16.500',
+    badge: null,
+    usos: ['Vivienda','Alquiler turístico','Espacio de trabajo'],
+    heroImg: 'assets/modulos/ficha-proto4.webp',
+    gallery: ['assets/modulos/ficha-proto4.webp'],
+    incluye: ['Instalación eléctrica y sanitaria completa','Baño completo equipado','Kitchenette con mesada de granito','Termotanque eléctrico 50L','Iluminación LED y luz de emergencia','11 tomas eléctricos','Piso vinílico · DVH Premium','Módulo listo para conectar'],
+    caracteristicas: ['Baño con inodoro, vanitory y ducha','Kitchenette con bacha y grifería','Puerta metálica hermética','DVH premium en ventanas','Excelente confort térmico y acústico'],
+    waMsg: 'Hola qBox, me interesa el Prototipo 4 de 18m². Quisiera más información y un presupuesto.'
+  }
+};
+
+/* ===== MODAL PROTOTIPO ===== */
+let lbImgs = [], lbIdx = 0;
+
+function openProto(n) {
+  const p = PROTOS[n];
+  const badgeHtml = p.badge ? `<span class="proto-sel-badge" style="position:static;margin-bottom:8px;display:inline-block;">${p.badge}</span>` : '';
+  const galleryHtml = p.gallery.length > 1
+    ? `<div class="pmod-gallery">${p.gallery.map((src,i)=>`<div class="pmod-gal-item" onclick="openLbModal(${i},${n})"><img src="${src}" alt="${p.title} ${i+1}" loading="lazy"></div>`).join('')}</div>`
+    : '';
+
+  document.getElementById('proto-modal-content').innerHTML = `
+    <div class="pmod-hero">
+      <img src="${p.heroImg}" alt="${p.title}">
+      <div class="pmod-hero-ov"></div>
+      <div class="pmod-hero-txt">
+        <p>${p.num}</p>
+        <h2>${p.title}</h2>
+      </div>
+    </div>
+    <div class="pmod-body">
+      ${badgeHtml}
+      <div class="pmod-price-row">
+        <span class="pmod-price">${p.price}</span>
+        <span class="pmod-price-sub">+ IVA · ${p.area}</span>
+        <span class="pmod-entrega">● Entrega inmediata</span>
+      </div>
+      <div class="pmod-specs-row">
+        <div class="pmod-spec"><span class="pmod-spec-val">${p.area}</span><span class="pmod-spec-lbl">Superficie</span></div>
+        <div class="pmod-spec"><span class="pmod-spec-val">${p.dims}</span><span class="pmod-spec-lbl">Dimensiones</span></div>
+        <div class="pmod-spec"><span class="pmod-spec-val">${p.altura}</span><span class="pmod-spec-lbl">Altura int.</span></div>
+        <div class="pmod-spec"><span class="pmod-spec-val">${p.panel}</span><span class="pmod-spec-lbl">Panel</span></div>
+      </div>
+      <div class="pmod-usos">${p.usos.map(u=>`<span class="pmod-uso">${u}</span>`).join('')}</div>
+      <div class="pmod-grid2">
+        <div class="pmod-block">
+          <h4>Características</h4>
+          <ul>${p.caracteristicas.map(c=>`<li>${c}</li>`).join('')}</ul>
+        </div>
+        <div class="pmod-block">
+          <h4>¿Qué incluye?</h4>
+          <ul>${p.incluye.map(i=>`<li>${i}</li>`).join('')}</ul>
+        </div>
+      </div>
+      <p class="pmod-nota">El valor corresponde al prototipo estándar. Terminaciones, equipamiento y personalizaciones se cotizan por separado.</p>
+      ${galleryHtml}
+      <a class="pmod-cta" href="https://wa.me/5492644431309?text=${encodeURIComponent(p.waMsg)}" target="_blank" rel="noopener">
+        Consultar por WhatsApp →
+      </a>
+    </div>
+  `;
+  lbImgs = p.gallery;
+  document.getElementById('proto-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeProto() {
+  document.getElementById('proto-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function openLbModal(i, n) {
+  lbImgs = PROTOS[n].gallery;
+  lbIdx = i;
+  document.getElementById('lb-img').src = lbImgs[i];
+  document.getElementById('lb').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function openLb(i) {
+  lbIdx = i;
+  document.getElementById('lb-img').src = lbImgs[i];
+  document.getElementById('lb').classList.add('open');
+}
+
+function closeLb() {
+  document.getElementById('lb').classList.remove('open');
+}
+
+function lbNav(dir) {
+  lbIdx = (lbIdx + dir + lbImgs.length) % lbImgs.length;
+  document.getElementById('lb-img').src = lbImgs[lbIdx];
+}
+
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape') { closeProto(); closeLb(); }
+  if(e.key === 'ArrowLeft') lbNav(-1);
+  if(e.key === 'ArrowRight') lbNav(1);
+});
+
+/* Menu */
+let menuOpen=false;
+function toggleMenu(){menuOpen=!menuOpen;document.getElementById('nav').classList.toggle('open',menuOpen);}
+function closeMenu(){menuOpen=false;document.getElementById('nav').classList.remove('open');}
+
+</script>
+</body>
+</html>
