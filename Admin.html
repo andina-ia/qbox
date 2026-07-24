@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>qBox · Panel de administración</title>
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/favicon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;1,400&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F5F4F0; --ink: #1E2022; --accent: #8C7E74;
+  --card: #FAF9F5; --border: rgba(30,32,34,.12);
+  --sans: 'Hanken Grotesk', system-ui, sans-serif;
+  --serif: 'Newsreader', Georgia, serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--bg); color: var(--ink); font-family: var(--sans); min-height: 100vh; }
+
+/* LOGIN */
+.login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.login-box { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 40px 36px; width: 100%; max-width: 420px; box-shadow: 0 8px 40px rgba(30,32,34,.08); }
+.login-logo { height: 28px; margin-bottom: 24px; }
+.login-title { font-family: var(--serif); font-size: 22px; margin-bottom: 6px; }
+.login-sub { font-size: 14px; color: var(--accent); margin-bottom: 28px; line-height: 1.5; }
+.login-err { font-size: 13.5px; color: #B4452F; margin-bottom: 14px; }
+
+/* HEADER */
+#hdr { position: sticky; top: 0; z-index: 50; background: rgba(245,244,240,.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+.hdr-in { max-width: 960px; margin: 0 auto; padding: 0 24px; height: 58px; display: flex; align-items: center; justify-content: space-between; }
+.hdr-left { display: flex; align-items: center; gap: 14px; }
+.hdr-logo { height: 26px; }
+.hdr-title { font-size: 13.5px; font-weight: 600; color: var(--accent); }
+.hdr-right { display: flex; gap: 8px; }
+
+/* LAYOUT */
+.admin-wrap { max-width: 960px; margin: 0 auto; padding: 32px 24px 80px; }
+
+/* TABS */
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 36px; }
+.tab { height: 40px; padding: 0 18px; border-radius: 100px; font-size: 13.5px; font-weight: 600; cursor: pointer; transition: .2s; border: 1.5px solid var(--border); background: transparent; color: var(--ink); }
+.tab.active { background: var(--ink); color: #FAF9F5; border-color: var(--ink); }
+.tab:hover:not(.active) { border-color: var(--ink); }
+
+/* SECTION HEADER */
+.sec-title { font-family: var(--serif); font-size: 22px; margin-bottom: 6px; }
+.sec-sub { font-size: 14px; color: var(--accent); line-height: 1.5; margin-bottom: 28px; }
+
+/* FORM ELEMENTS */
+.field { margin-bottom: 20px; }
+.lbl { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); margin-bottom: 7px; display: block; }
+input[type=text], input[type=email], input[type=password], input[type=number], textarea {
+  width: 100%; padding: 12px 16px; border-radius: 12px; border: 1.5px solid var(--border);
+  background: var(--card); font-family: var(--sans); font-size: 15px; color: var(--ink);
+  outline: none; transition: border-color .2s; resize: vertical;
+}
+input:focus, textarea:focus { border-color: var(--ink); }
+textarea { min-height: 100px; line-height: 1.6; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+/* BUTTONS */
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 24px; border-radius: 100px; font-size: 14.5px; font-weight: 600; cursor: pointer; border: none; transition: .2s; }
+.btn-primary { background: var(--ink); color: #FAF9F5; }
+.btn-primary:hover { background: #000; transform: translateY(-1px); }
+.btn-outline { background: transparent; color: var(--ink); border: 1.5px solid var(--border); }
+.btn-outline:hover { border-color: var(--ink); }
+.btn-sm { padding: 7px 14px; font-size: 13px; border-radius: 100px; font-weight: 600; cursor: pointer; border: none; transition: .2s; }
+.btn-danger { background: rgba(180,69,47,.1); color: #B4452F; }
+.btn-danger:hover { background: rgba(180,69,47,.18); }
+
+/* CLIENTS LIST */
+.clients-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.client-item {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--card); border: 1.5px solid var(--border);
+  border-radius: 12px; padding: 10px 14px; transition: .2s;
+}
+.client-item.inactive { opacity: .5; }
+.client-item.inactive .client-name { text-decoration: line-through; }
+.client-check {
+  width: 20px; height: 20px; border-radius: 6px; border: 1.5px solid var(--border);
+  background: transparent; cursor: pointer; flex-shrink: 0; transition: .2s;
+  display: flex; align-items: center; justify-content: center;
+}
+.client-check.checked { background: var(--ink); border-color: var(--ink); }
+.client-check.checked::after { content: ''; display: block; width: 5px; height: 9px; border: 2px solid #FAF9F5; border-top: none; border-left: none; transform: rotate(45deg) translateY(-1px); }
+.client-name { flex: 1; font-size: 15px; font-weight: 500; }
+.client-handle { cursor: grab; color: var(--accent); font-size: 16px; user-select: none; }
+
+/* ADD CLIENT */
+.add-row { display: flex; gap: 10px; }
+.add-row input { flex: 1; }
+
+/* PILLS */
+.pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+.pill { height: 34px; padding: 0 14px; border-radius: 100px; font-size: 13px; font-weight: 600; cursor: pointer; transition: .2s; border: 1.5px solid var(--border); background: transparent; color: var(--ink); }
+.pill.active { border-color: var(--accent); background: rgba(140,126,116,.12); }
+.pill:hover:not(.active) { border-color: var(--accent); }
+
+/* SAVE TOAST */
+#toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--ink); color: #FAF9F5; padding: 12px 24px; border-radius: 100px; font-size: 14px; font-weight: 600; transition: transform .3s cubic-bezier(.2,.7,.2,1); pointer-events: none; z-index: 999; white-space: nowrap; }
+#toast.show { transform: translateX(-50%) translateY(0); }
+
+/* PANEL */
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* KPI */
+.kpi-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:20px; display:flex; flex-direction:column; gap:4px; }
+.kpi-icon { font-size:24px; margin-bottom:4px; }
+.kpi-num { font-family:var(--serif); font-size:38px; font-weight:400; color:var(--ink); }
+.kpi-lbl { font-size:13px; color:var(--accent); font-weight:500; }
+@media(max-width:640px){ #kpi-grid{ grid-template-columns:repeat(2,1fr)!important; } }
+@media (max-width: 600px) {
+  .grid2 { grid-template-columns: 1fr; }
+  .tabs { gap: 6px; }
+  .tab { font-size: 12.5px; height: 36px; padding: 0 14px; }
+  .admin-wrap { padding: 24px 16px 60px; }
+  .login-box { padding: 28px 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen" class="login-wrap" style="display:none;">
+  <div class="login-box">
+    <img src="assets/qbox-logo-ink.webp" alt="qBox" class="login-logo">
+    <h1 class="login-title">Panel de administración</h1>
+    <p class="login-sub">Ingresá tu correo y la clave de acceso para editar el contenido del sitio.</p>
+    <div id="login-err" class="login-err" style="display:none;">Correo o clave incorrectos. Intentá de nuevo.</div>
+    <div class="field">
+      <label class="lbl" for="inp-email">Correo</label>
+      <input type="email" id="inp-email" placeholder="comercial@qboxmodular.com.ar" onkeydown="onEnter(event)">
+    </div>
+    <div class="field">
+      <label class="lbl" for="inp-pass">Clave</label>
+      <input type="password" id="inp-pass" placeholder="••••••••" onkeydown="onEnter(event)">
+    </div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:4px;" onclick="doLogin()">Ingresar</button>
+    <a href="index.html" style="display:block;text-align:center;margin-top:16px;font-size:13.5px;color:var(--accent);text-decoration:none;">← Volver al sitio</a>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="admin-screen" style="display:none;">
+  <header id="hdr">
+    <div class="hdr-in">
+      <div class="hdr-left">
+        <img src="assets/qbox-logo-ink.webp" alt="qBox" class="hdr-logo">
+        <span class="hdr-title">Administración</span>
+      </div>
+      <div class="hdr-right">
+        <a href="index.html" target="_blank" rel="noopener" class="btn btn-outline" style="font-size:13.5px;padding:8px 16px;">Ver sitio ↗</a>
+        <button class="btn btn-outline" style="font-size:13.5px;padding:8px 16px;" onclick="doLogout()">Salir</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="admin-wrap">
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('analytics', this)">Dashboard</button>
+      <button class="tab" onclick="showTab('contenido', this)">Contenido</button>
+      <button class="tab" onclick="showTab('cotizador', this)">Cotizador</button>
+      <button class="tab" onclick="showTab('confian', this)">Confían en nosotros</button>
+      <button class="tab" onclick="showTab('seo', this)">SEO</button>
+      <button class="tab" onclick="showTab('medios', this)">Medios</button>
+    </div>
+
+    <!-- ANALYTICS DASHBOARD -->
+    <div id="panel-analytics" class="panel active">
+      <p class="sec-title">Dashboard</p>
+      <p class="sec-sub">Actividad de los últimos 30 días en el sitio.</p>
+
+      <!-- Filtro de período -->
+      <div style="display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;">
+        <button class="pill active" id="f-7" onclick="setRange(7,this)">Últimos 7 días</button>
+        <button class="pill" id="f-30" onclick="setRange(30,this)">30 días</button>
+        <button class="pill" id="f-90" onclick="setRange(90,this)">90 días</button>
+        <button class="pill" id="f-all" onclick="setRange(0,this)">Todo</button>
+        <button class="btn btn-outline" style="margin-left:auto;font-size:13px;padding:7px 16px;" onclick="loadAnalytics()">↻ Actualizar</button>
+      </div>
+
+      <!-- KPI Cards fila 1 -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px;" id="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon">👁</div>
+          <div class="kpi-num" id="n-pv">—</div>
+          <div class="kpi-lbl">Visitas al sitio</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">🧮</div>
+          <div class="kpi-num" id="n-cot">—</div>
+          <div class="kpi-lbl">Usaron el cotizador</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">📅</div>
+          <div class="kpi-num" id="n-sh">—</div>
+          <div class="kpi-lbl">Solicitudes de visita</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">💬</div>
+          <div class="kpi-num" id="n-wa">—</div>
+          <div class="kpi-lbl">Contactos WhatsApp</div>
+        </div>
+      </div>
+
+      <!-- KPI Cards fila 2 -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px;">
+        <div class="kpi-card" style="border-left:3px solid var(--ink);">
+          <div class="kpi-icon">🎯</div>
+          <div class="kpi-num" id="n-conv">—</div>
+          <div class="kpi-lbl">Tasa de conversión</div>
+          <div style="font-size:12px;color:var(--accent);margin-top:4px;">visitas → contacto</div>
+        </div>
+        <div class="kpi-card" style="border-left:3px solid var(--ink);">
+          <div class="kpi-icon">🏗</div>
+          <div class="kpi-num" id="n-top-type" style="font-size:22px;margin-top:4px;">—</div>
+          <div class="kpi-lbl">Proyecto más cotizado</div>
+          <div style="font-size:12px;color:var(--accent);margin-top:4px;" id="n-top-type-pct"></div>
+        </div>
+        <div class="kpi-card" style="border-left:3px solid var(--ink);">
+          <div class="kpi-icon">🕐</div>
+          <div class="kpi-num" id="n-peak" style="font-size:32px;margin-top:4px;">—</div>
+          <div class="kpi-lbl">Horario pico de visitas</div>
+          <div style="font-size:12px;color:var(--accent);margin-top:4px;" id="n-peak-sub"></div>
+        </div>
+      </div>
+
+      <!-- Gráfico histórico -->
+      <p class="lbl" style="margin-bottom:12px;">Actividad diaria</p>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px 20px 16px;margin-bottom:24px;">
+        <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px;" id="chart-legend">
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;cursor:pointer;">
+            <span style="width:12px;height:12px;border-radius:50%;background:#1E2022;display:inline-block;"></span> Visitas
+            <input type="checkbox" id="tog-pv" checked style="display:none;">
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;cursor:pointer;">
+            <span style="width:12px;height:12px;border-radius:50%;background:#8C7E74;display:inline-block;"></span> Cotizador
+            <input type="checkbox" id="tog-cot" checked style="display:none;">
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;cursor:pointer;">
+            <span style="width:12px;height:12px;border-radius:50%;background:#A0917F;display:inline-block;"></span> Contactos
+            <input type="checkbox" id="tog-contact" checked style="display:none;">
+          </label>
+        </div>
+        <canvas id="chart-main" style="width:100%;height:220px;display:block;"></canvas>
+        <div id="chart-empty" style="display:none;text-align:center;padding:60px 0;color:var(--accent);font-size:14px;">Sin datos suficientes para mostrar el gráfico.</div>
+      </div>
+
+      <!-- Tabla de eventos recientes -->
+      <p class="lbl" style="margin-bottom:12px;">Actividad reciente</p>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;">
+        <table style="width:100%;border-collapse:collapse;" id="events-table">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border);">
+              <th style="text-align:left;padding:12px 16px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);">Evento</th>
+              <th style="text-align:left;padding:12px 16px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);">Origen</th>
+              <th style="text-align:right;padding:12px 16px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);">Fecha</th>
+            </tr>
+          </thead>
+          <tbody id="events-body">
+            <tr><td colspan="3" style="padding:24px;text-align:center;color:var(--accent);font-size:14px;">Cargando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p id="events-empty" style="display:none;text-align:center;color:var(--accent);font-size:14px;margin-top:24px;">Sin eventos en este período.</p>
+    </div>
+
+    <!-- CONTENIDO -->
+    <div id="panel-contenido" class="panel">
+      <p class="sec-title">Contenido</p>
+      <p class="sec-sub">Textos editables del Home. Los cambios se ven en el sitio al recargar la página.</p>
+      <div class="field">
+        <label class="lbl" for="f-herosub">Subtítulo del hero</label>
+        <textarea id="f-herosub" rows="3"></textarea>
+      </div>
+      <div class="field">
+        <label class="lbl" for="f-nos1">Quiénes somos · párrafo principal</label>
+        <textarea id="f-nos1" rows="4"></textarea>
+      </div>
+      <div class="field">
+        <label class="lbl" for="f-nos2">Quiénes somos · párrafo secundario</label>
+        <textarea id="f-nos2" rows="3"></textarea>
+      </div>
+      <button class="btn btn-primary" onclick="saveContent()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Guardar contenido
+      </button>
+    </div>
+
+    <!-- COTIZADOR -->
+    <div id="panel-cotizador" class="panel">
+      <p class="sec-title">Cotizador</p>
+      <p class="sec-sub">Precio base de referencia por m² (USD). Se usa para calcular la estimación en el sitio.</p>
+      <div class="grid2">
+        <div class="field">
+          <label class="lbl" for="f-modulo">Módulo habitable · USD/m²</label>
+          <input type="number" id="f-modulo" min="1">
+        </div>
+        <div class="field">
+          <label class="lbl" for="f-semi">Semicubierto · USD/m²</label>
+          <input type="number" id="f-semi" min="1">
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="saveCotizador()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+        Guardar tarifas
+      </button>
+    </div>
+
+    <!-- CONFÍAN -->
+    <div id="panel-confian" class="panel">
+      <p class="sec-title">Confían en nosotros</p>
+      <p class="sec-sub">Gestioná las marcas que aparecen en la grilla de respaldo. Marcá/desmarcá para mostrar u ocultar. Arrastrá para reordenar.</p>
+
+      <div class="clients-list" id="clients-list"></div>
+
+      <!-- Agregar nueva -->
+      <div class="add-row" style="margin-bottom:24px;">
+        <input type="text" id="new-client" placeholder="Nombre de la marca..." onkeydown="if(event.key==='Enter')addClient()">
+        <button class="btn btn-primary" onclick="addClient()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Agregar
+        </button>
+      </div>
+
+      <button class="btn btn-primary" onclick="saveClients()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+        Guardar marcas
+      </button>
+    </div>
+
+    <!-- SEO -->
+    <div id="panel-seo" class="panel">
+      <p class="sec-title">SEO</p>
+      <p class="sec-sub">Título, descripción y palabras clave por página.</p>
+      <div class="pills" id="seo-pills"></div>
+      <div class="field">
+        <label class="lbl" id="seo-title-lbl">Título</label>
+        <input type="text" id="f-seo-title">
+      </div>
+      <div class="field">
+        <label class="lbl" for="f-seo-desc">Descripción</label>
+        <textarea id="f-seo-desc" rows="3"></textarea>
+      </div>
+      <div class="field">
+        <label class="lbl" for="f-seo-kw">Palabras clave (separadas por coma)</label>
+        <textarea id="f-seo-kw" rows="2"></textarea>
+      </div>
+      <button class="btn btn-primary" onclick="saveSeo()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
+        Guardar SEO
+      </button>
+    </div>
+
+    <!-- MEDIOS -->
+    <div id="panel-medios" class="panel">
+      <p class="sec-title">Medios</p>
+      <p class="sec-sub">Subí fotos para cada categoría. Se guardan directamente en el repositorio y aparecen en la galería del sitio.</p>
+      <div class="pills" id="media-pills"></div>
+
+      <!-- Drop zone -->
+      <div id="drop-zone" onclick="document.getElementById('file-input').click()"
+        style="border:2px dashed var(--border);border-radius:16px;padding:40px 24px;text-align:center;cursor:pointer;transition:.2s;margin-bottom:20px;background:var(--card);"
+        ondragover="event.preventDefault();this.style.borderColor='var(--ink)'"
+        ondragleave="this.style.borderColor='var(--border)'"
+        ondrop="handleDrop(event)">
+        <div style="font-size:32px;margin-bottom:10px;">📷</div>
+        <p style="font-size:15px;font-weight:600;color:var(--ink);margin-bottom:4px;">Arrastrá fotos o hacé clic para seleccionar</p>
+        <p style="font-size:13px;color:var(--accent);">JPG, PNG, WebP · máx 5 MB por imagen</p>
+        <input type="file" id="file-input" multiple accept="image/*" style="display:none;" onchange="handleFiles(this.files)">
+      </div>
+
+      <!-- Upload queue -->
+      <div id="upload-queue" style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;"></div>
+
+      <!-- Existing images -->
+      <div id="existing-images" style="margin-bottom:24px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast">✓ Guardado</div>
+
+<script>
+/* ===== CONFIG ===== */
+const PASS = 'qbox2026';
+const EMAIL = 'comercial@qboxmodular.com.ar';
+
+const DEF = {
+  heroSub: 'Diseñamos, gestionamos y construimos su espacio con ingeniería sismo resistente.',
+  nosotrosP1: 'En qBox adaptamos y flexibilizamos la forma de construir. Nacimos en San Juan durante la pandemia con un objetivo claro: ofrecer espacios habitables en tiempo récord, en lugares con desafíos logísticos y con la mejor relación precio–calidad.',
+  nosotrosP2: 'Nos diferenciamos por nuestra localía, compromiso y transparencia. Cada proyecto lo desarrollamos en conjunto con nuestros clientes, asegurando soluciones eficientes y personalizadas.',
+  rateModulo: 640,
+  rateSemi: 135,
+  clients: [
+    {name:'Mapal', active:true},
+    {name:'Sigma', active:true},
+    {name:'MTZ Transporte', active:true},
+    {name:'Logística Empresaria', active:true},
+    {name:'Bulonería Mitre', active:true},
+    {name:'Proyecto Altar', active:true},
+    {name:'Austral Gold', active:true},
+    {name:'Caposo', active:true},
+    {name:'Linked', active:true},
+    {name:'Tip Top', active:true},
+    {name:'Starlink Monitoreo', active:true},
+  ]
+};
+
+const SEO_PAGES = [
+  ['inicio','Inicio'],['modulos','Módulos'],['stands','Stands'],
+  ['cocheras-galerias','Cocheras y Galerías'],['ampliaciones','Ampliaciones'],['locales','Locales']
+];
+const SEO_DEF = {
+  inicio: {
+    title: 'qBox · Construcción Modular y en Seco San Juan | Llave en Mano',
+    desc: 'Empresa local de construcción modular y en seco en San Juan. Viviendas, oficinas, cocheras y ampliaciones sismo resistentes listas para habitar. Más de 120 proyectos entregados en Cuyo.',
+    keywords: 'construcción modular San Juan, casas modulares San Juan, construcción en seco San Juan, viviendas modulares sismo resistente, módulos habitacionales San Juan, empresa constructora San Juan, casas prefabricadas San Juan Argentina, construcción rápida San Juan, qBox modular'
+  },
+  modulos: {
+    title: 'Módulos Habitacionales San Juan | Casas y Oficinas Modulares | qBox',
+    desc: 'Módulos habitacionales premium en San Juan. Viviendas, estudios y oficinas modulares llave en mano con ingeniería sismo resistente. Entrega en 45 días. Presupuesto sin cargo.',
+    keywords: 'módulos habitacionales San Juan, casas modulares San Juan, viviendas modulares llave en mano, módulo habitable San Juan, casa prefabricada San Juan, oficinas modulares San Juan, vivienda modular sismo resistente San Juan, construcción modular residencial Cuyo'
+  },
+  stands: {
+    title: 'Stands Modulares para Eventos y Ferias San Juan | qBox',
+    desc: 'Stands modulares para eventos, ferias y exposiciones en San Juan. Diseño profesional, montaje rápido y alto impacto visual. Especialistas en Feria Minera PDAC y eventos corporativos.',
+    keywords: 'stands para ferias San Juan, stands modulares San Juan, stands feria minera San Juan, stands eventos corporativos San Juan, alquiler stands San Juan, diseño stands San Juan, stands exposición San Juan, estructuras modulares eventos Cuyo'
+  },
+  'cocheras-galerias': {
+    title: 'Cocheras y Galerías Modulares San Juan | Semicubiertos | qBox',
+    desc: 'Cocheras, galerías y semicubiertos modulares en San Juan. Diseño moderno, montaje en días, sin obra húmeda. Soluciones de construcción en seco para proteger y valorizar tu propiedad.',
+    keywords: 'cocheras modulares San Juan, galerías modulares San Juan, semicubiertos San Juan, cochera metálica San Juan, galería construcción en seco San Juan, ampliación semicubierta San Juan, cochera prefabricada San Juan, galería aluminio San Juan'
+  },
+  ampliaciones: {
+    title: 'Ampliaciones en Seco San Juan | Rápidas y Sin Obra Húmeda | qBox',
+    desc: 'Ampliaciones de viviendas y locales en construcción en seco en San Juan. Sin demoler, sin obra húmeda, sin meses de espera. Steel framing y estructura metálica. Entrega express.',
+    keywords: 'ampliaciones en seco San Juan, ampliar casa San Juan, construcción en seco San Juan, steel framing San Juan, ampliación rápida San Juan, ampliación sin obra húmeda San Juan, segundo piso construcción en seco San Juan, ampliación económica San Juan'
+  },
+  locales: {
+    title: 'Locales Comerciales y Showrooms Modulares San Juan | qBox',
+    desc: 'Locales comerciales, showrooms y espacios retail modulares en San Juan. Alta gama, entrega rápida y diseño a medida. Construcción modular para comercios, franquicias y emprendedores.',
+    keywords: 'locales comerciales modulares San Juan, showroom modular San Juan, locales prefabricados San Juan, construcción local comercial San Juan, tienda modular San Juan, espacio comercial modular Cuyo, local llave en mano San Juan, retail modular San Juan'
+  },
+};
+const MEDIA_CATS = [['modulos','Módulos'],['stands','Stands'],['cocheras-galerias','Cocheras y Galerías'],['ampliaciones','Ampliaciones'],['locales','Locales']];
+
+/* ===== STORAGE ===== */
+function get(key, fb) { try { return JSON.parse(localStorage.getItem(key)) ?? fb; } catch { return fb; } }
+function set(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch {} }
+
+/* ===== SUPABASE ===== */
+const SB_URL='https://xnycltgfyvvguyqkuczo.supabase.co';
+const SB_KEY='sb_publishable_-ul7ZIFMaZdg37uMDs0SKA_1P7pIuu0';
+
+let rangeDays = 7;
+function setRange(days, btn){
+  rangeDays = days;
+  document.querySelectorAll('#panel-analytics .pill').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  loadAnalytics();
+}
+
+async function loadAnalytics(){
+  // Build date filter
+  let dateFilter = '';
+  if(rangeDays > 0){
+    const since = new Date(Date.now() - rangeDays*24*60*60*1000).toISOString();
+    dateFilter = `&created_at=gte.${since}`;
+  }
+
+  try {
+    const resp = await fetch(
+      `${SB_URL}/rest/v1/events?select=type,metadata,created_at&order=created_at.desc&limit=200${dateFilter}`,
+      { headers:{'apikey':SB_KEY,'Authorization':`Bearer ${SB_KEY}`} }
+    );
+
+    if(!resp.ok) throw new Error(await resp.text());
+    const events = await resp.json();
+
+    // Count by type
+    const counts = {page_view:0, cotizador_use:0, showroom_click:0, whatsapp_click:0};
+    events.forEach(e => { if(counts[e.type]!==undefined) counts[e.type]++; });
+
+    document.getElementById('n-pv').textContent  = counts.page_view.toLocaleString('es-AR');
+    document.getElementById('n-cot').textContent = counts.cotizador_use.toLocaleString('es-AR');
+    document.getElementById('n-sh').textContent  = counts.showroom_click.toLocaleString('es-AR');
+    document.getElementById('n-wa').textContent  = counts.whatsapp_click.toLocaleString('es-AR');
+
+    // ── KPI 1: Tasa de conversión ──
+    const contacts = counts.showroom_click + counts.whatsapp_click;
+    const conv = counts.page_view > 0 ? Math.round((contacts / counts.page_view) * 100) : 0;
+    document.getElementById('n-conv').textContent = conv + '%';
+
+    // ── KPI 2: Tipo de proyecto más cotizado ──
+    const typeCount = {};
+    events.filter(e => e.type === 'cotizador_use' && e.metadata?.type).forEach(e => {
+      const t = e.metadata.type;
+      typeCount[t] = (typeCount[t] || 0) + 1;
+    });
+    const typeLabels = { modulo: 'Módulo habitable', semi: 'Semicubierto' };
+    if(Object.keys(typeCount).length > 0) {
+      const topType = Object.entries(typeCount).sort((a,b) => b[1]-a[1])[0];
+      const totalCot = Object.values(typeCount).reduce((a,b) => a+b, 0);
+      const pct = Math.round(topType[1] / totalCot * 100);
+      document.getElementById('n-top-type').textContent = typeLabels[topType[0]] || topType[0];
+      document.getElementById('n-top-type-pct').textContent = pct + '% de las consultas';
+    } else {
+      document.getElementById('n-top-type').textContent = 'Sin datos';
+      document.getElementById('n-top-type-pct').textContent = '';
+    }
+
+    // ── KPI 3: Horario pico ──
+    const hourCount = {};
+    events.filter(e => e.type === 'page_view').forEach(e => {
+      const h = new Date(e.created_at).getHours();
+      hourCount[h] = (hourCount[h] || 0) + 1;
+    });
+    if(Object.keys(hourCount).length > 0) {
+      const peakHour = Object.entries(hourCount).sort((a,b) => b[1]-a[1])[0];
+      const h = parseInt(peakHour[0]);
+      document.getElementById('n-peak').textContent = `${h}:00 – ${h+1}:00`;
+      document.getElementById('n-peak-sub').textContent = `${peakHour[1]} visitas en esa franja`;
+    } else {
+      document.getElementById('n-peak').textContent = 'Sin datos';
+      document.getElementById('n-peak-sub').textContent = '';
+    }
+
+    // Recent events table
+    const labels = {
+      page_view:'👁 Visita al sitio',
+      cotizador_use:'🧮 Usó el cotizador',
+      showroom_click:'📅 Solicitó visita',
+      whatsapp_click:'💬 WhatsApp'
+    };
+    const tbody = document.getElementById('events-body');
+    if(!events.length){
+      tbody.innerHTML='<tr><td colspan="3" style="padding:24px;text-align:center;color:var(--accent);font-size:14px;">Sin eventos en este período.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = events.slice(0,50).map(e=>{
+      const d = new Date(e.created_at);
+      const fecha = d.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'});
+      const hora  = d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+      const origen = e.metadata?.source || e.metadata?.type || '—';
+      return `<tr style="border-bottom:1px solid var(--border);">
+        <td style="padding:12px 16px;font-size:14px;font-weight:500;">${labels[e.type]||e.type}</td>
+        <td style="padding:12px 16px;font-size:13px;color:var(--accent);">${origen}</td>
+        <td style="padding:12px 16px;font-size:13px;color:var(--accent);text-align:right;">${fecha} ${hora}</td>
+      </tr>`;
+    }).join('');
+
+    // ── Gráfico histórico ──
+    renderChart(events);
+
+  } catch(err){
+    document.getElementById('events-body').innerHTML =
+      `<tr><td colspan="3" style="padding:24px;text-align:center;color:#B4452F;font-size:14px;">Error: ${err.message}</td></tr>`;
+  }
+}
+
+function renderChart(events) {
+  const canvas = document.getElementById('chart-main');
+  const empty  = document.getElementById('chart-empty');
+  if (!canvas) return;
+
+  // Group events by day
+  const days = {};
+  const addDay = (date, type) => {
+    const d = new Date(date).toLocaleDateString('es-AR', {day:'2-digit', month:'2-digit'});
+    if (!days[d]) days[d] = {pv:0, cot:0, contact:0};
+    days[d][type]++;
+  };
+  events.forEach(e => {
+    if (e.type === 'page_view')    addDay(e.created_at, 'pv');
+    if (e.type === 'cotizador_use') addDay(e.created_at, 'cot');
+    if (e.type === 'showroom_click' || e.type === 'whatsapp_click') addDay(e.created_at, 'contact');
+  });
+
+  const labels = Object.keys(days).slice(-30); // max 30 días
+  if (labels.length < 2) {
+    canvas.style.display = 'none';
+    empty.style.display = 'block';
+    return;
+  }
+  canvas.style.display = 'block';
+  empty.style.display = 'none';
+
+  const pvData      = labels.map(d => days[d].pv);
+  const cotData     = labels.map(d => days[d].cot);
+  const contactData = labels.map(d => days[d].contact);
+  const maxVal      = Math.max(...pvData, ...cotData, ...contactData, 1);
+
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const W   = canvas.offsetWidth;
+  const H   = 220;
+  canvas.width  = W * dpr;
+  canvas.height = H * dpr;
+  ctx.scale(dpr, dpr);
+
+  const PAD = { top:16, right:12, bottom:36, left:36 };
+  const cW  = W - PAD.left - PAD.right;
+  const cH  = H - PAD.top  - PAD.bottom;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Grid lines
+  const gridLines = 4;
+  ctx.strokeStyle = 'rgba(30,32,34,.07)';
+  ctx.lineWidth   = 1;
+  for (let i = 0; i <= gridLines; i++) {
+    const y = PAD.top + (cH / gridLines) * i;
+    ctx.beginPath(); ctx.moveTo(PAD.left, y); ctx.lineTo(PAD.left + cW, y); ctx.stroke();
+    const val = Math.round(maxVal - (maxVal / gridLines) * i);
+    ctx.fillStyle = '#8C7E74'; ctx.font = '11px system-ui'; ctx.textAlign = 'right';
+    ctx.fillText(val, PAD.left - 6, y + 4);
+  }
+
+  // X labels (show every N labels to avoid crowding)
+  const step = Math.ceil(labels.length / 10);
+  ctx.fillStyle = '#8C7E74'; ctx.font = '11px system-ui'; ctx.textAlign = 'center';
+  labels.forEach((lbl, i) => {
+    if (i % step === 0 || i === labels.length - 1) {
+      const x = PAD.left + (i / (labels.length - 1)) * cW;
+      ctx.fillText(lbl, x, H - 8);
+    }
+  });
+
+  // Draw line + area
+  const drawSeries = (data, color, alpha) => {
+    if (!data.some(v => v > 0)) return;
+    const pts = data.map((v, i) => ({
+      x: PAD.left + (i / Math.max(labels.length - 1, 1)) * cW,
+      y: PAD.top  + cH - (v / maxVal) * cH
+    }));
+
+    // Area fill
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, PAD.top + cH);
+    pts.forEach(p => ctx.lineTo(p.x, p.y));
+    ctx.lineTo(pts[pts.length-1].x, PAD.top + cH);
+    ctx.closePath();
+    ctx.fillStyle = color.replace(')', `, ${alpha})`).replace('rgb', 'rgba');
+    ctx.fill();
+
+    // Line
+    ctx.beginPath();
+    pts.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+    ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.lineJoin = 'round';
+    ctx.stroke();
+
+    // Dots on data points (only if few)
+    if (labels.length <= 14) {
+      pts.forEach(p => {
+        ctx.beginPath(); ctx.arc(p.x, p.y, 3.5, 0, Math.PI*2);
+        ctx.fillStyle = color; ctx.fill();
+        ctx.strokeStyle = '#FAF9F5'; ctx.lineWidth = 1.5; ctx.stroke();
+      });
+    }
+  };
+
+  drawSeries(contactData, 'rgb(160,145,127)', 0.12);
+  drawSeries(cotData,     'rgb(140,126,116)', 0.14);
+  drawSeries(pvData,      'rgb(30,32,34)',    0.06);
+}
+
+/* ===== AUTH ===== */
+function init() {
+  const authed = sessionStorage.getItem('qbox-admin-auth') === '1';
+  document.getElementById('login-screen').style.display = authed ? 'none' : 'flex';
+  document.getElementById('admin-screen').style.display = authed ? 'block' : 'none';
+  if (authed) { loadAll(); loadAnalytics(); }
+}
+function onEnter(e) { if (e.key === 'Enter') doLogin(); }
+function doLogin() {
+  const email = document.getElementById('inp-email').value.trim().toLowerCase();
+  const pass = document.getElementById('inp-pass').value.trim();
+  if (email === EMAIL && pass === PASS) {
+    sessionStorage.setItem('qbox-admin-auth', '1');
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-screen').style.display = 'block';
+    document.getElementById('login-err').style.display = 'none';
+    loadAll();
+    loadAnalytics();
+  } else {
+    document.getElementById('login-err').style.display = 'block';
+  }
+}
+function doLogout() {
+  sessionStorage.removeItem('qbox-admin-auth');
+  document.getElementById('admin-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+}
+
+/* ===== TABS ===== */
+function showTab(name, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+/* ===== TOAST ===== */
+let toastT;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = '✓ ' + msg;
+  el.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+/* ===== LOAD ALL ===== */
+function loadAll() {
+  loadContent();
+  loadCotizador();
+  loadClients();
+  loadSeo();
+  loadMedia();
+}
+
+/* ===== CONTENIDO ===== */
+function loadContent() {
+  const c = get('qbox-content', {});
+  document.getElementById('f-herosub').value = c.heroSub ?? DEF.heroSub;
+  document.getElementById('f-nos1').value = c.nosotrosP1 ?? DEF.nosotrosP1;
+  document.getElementById('f-nos2').value = c.nosotrosP2 ?? DEF.nosotrosP2;
+}
+function saveContent() {
+  const c = get('qbox-content', {});
+  c.heroSub = document.getElementById('f-herosub').value;
+  c.nosotrosP1 = document.getElementById('f-nos1').value;
+  c.nosotrosP2 = document.getElementById('f-nos2').value;
+  set('qbox-content', c);
+  toast('Contenido guardado');
+}
+
+/* ===== COTIZADOR ===== */
+function loadCotizador() {
+  const c = get('qbox-content', {});
+  document.getElementById('f-modulo').value = c.rateModulo ?? DEF.rateModulo;
+  document.getElementById('f-semi').value = c.rateSemi ?? DEF.rateSemi;
+}
+function saveCotizador() {
+  const c = get('qbox-content', {});
+  c.rateModulo = parseFloat(document.getElementById('f-modulo').value) || DEF.rateModulo;
+  c.rateSemi = parseFloat(document.getElementById('f-semi').value) || DEF.rateSemi;
+  set('qbox-content', c);
+  toast('Tarifas guardadas');
+}
+
+/* ===== CLIENTES ===== */
+let clients = [];
+
+function loadClients() {
+  const saved = get('qbox-clients', null);
+  if (saved && Array.isArray(saved)) {
+    clients = saved;
+  } else {
+    // migrate from old format
+    const c = get('qbox-content', {});
+    const old = Array.isArray(c.clients) ? c.clients : DEF.clients.map(cl => cl.name);
+    clients = old.map(name => typeof name === 'string' ? {name, active:true} : name);
+  }
+  renderClients();
+}
+
+function renderClients() {
+  const list = document.getElementById('clients-list');
+  list.innerHTML = '';
+  clients.forEach((cl, i) => {
+    const item = document.createElement('div');
+    item.className = 'client-item' + (cl.active ? '' : ' inactive');
+    item.draggable = true;
+    item.dataset.index = i;
+    item.innerHTML = `
+      <div class="client-check ${cl.active ? 'checked' : ''}" onclick="toggleClient(${i})" title="${cl.active ? 'Ocultar' : 'Mostrar'}"></div>
+      <span class="client-name">${cl.name}</span>
+      <button class="btn-sm btn-danger" onclick="removeClient(${i})" title="Eliminar">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+      </button>
+      <span class="client-handle" title="Arrastrar para reordenar">⠿</span>
+    `;
+    // Drag & drop
+    item.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', i); item.style.opacity = '.4'; });
+    item.addEventListener('dragend', () => item.style.opacity = '1');
+    item.addEventListener('dragover', e => e.preventDefault());
+    item.addEventListener('drop', e => {
+      e.preventDefault();
+      const from = parseInt(e.dataTransfer.getData('text/plain'));
+      const to = i;
+      if (from === to) return;
+      const moved = clients.splice(from, 1)[0];
+      clients.splice(to, 0, moved);
+      renderClients();
+    });
+    list.appendChild(item);
+  });
+}
+
+function toggleClient(i) {
+  clients[i].active = !clients[i].active;
+  renderClients();
+}
+function removeClient(i) {
+  if (!confirm(`¿Eliminar "${clients[i].name}"?`)) return;
+  clients.splice(i, 1);
+  renderClients();
+}
+function addClient() {
+  const inp = document.getElementById('new-client');
+  const name = inp.value.trim();
+  if (!name) return;
+  clients.push({ name, active: true });
+  inp.value = '';
+  renderClients();
+  inp.focus();
+}
+function saveClients() {
+  set('qbox-clients', clients);
+  // also save in old format for compatibility
+  const c = get('qbox-content', {});
+  c.clients = clients.filter(cl => cl.active).map(cl => cl.name);
+  set('qbox-content', c);
+  toast('Marcas guardadas');
+}
+
+/* ===== SEO ===== */
+let seoPage = 'inicio';
+function loadSeo() {
+  const pillsEl = document.getElementById('seo-pills');
+  pillsEl.innerHTML = '';
+  SEO_PAGES.forEach(([key, label]) => {
+    const b = document.createElement('button');
+    b.className = 'pill' + (key === seoPage ? ' active' : '');
+    b.textContent = label;
+    b.onclick = () => { seoPage = key; loadSeoFields(); document.querySelectorAll('#seo-pills .pill').forEach(p => p.classList.remove('active')); b.classList.add('active'); };
+    pillsEl.appendChild(b);
+  });
+  loadSeoFields();
+}
+function loadSeoFields() {
+  const saved = get('qbox-seo-' + seoPage, {});
+  const d = SEO_DEF[seoPage] || {};
+  const label = SEO_PAGES.find(p => p[0] === seoPage)?.[1] || seoPage;
+  document.getElementById('seo-title-lbl').textContent = 'Título (' + label + ')';
+  document.getElementById('f-seo-title').value = saved.title ?? d.title ?? '';
+  document.getElementById('f-seo-desc').value = saved.desc ?? d.desc ?? '';
+  document.getElementById('f-seo-kw').value = saved.keywords ?? d.keywords ?? '';
+}
+function saveSeo() {
+  set('qbox-seo-' + seoPage, {
+    title: document.getElementById('f-seo-title').value,
+    desc: document.getElementById('f-seo-desc').value,
+    keywords: document.getElementById('f-seo-kw').value,
+  });
+  toast('SEO guardado');
+}
+
+/* ===== MEDIOS ===== */
+let mediaCat = 'modulos';
+
+function loadMedia() {
+  const pillsEl = document.getElementById('media-pills');
+  pillsEl.innerHTML = '';
+  MEDIA_CATS.forEach(([key, label]) => {
+    const b = document.createElement('button');
+    b.className = 'pill' + (key === mediaCat ? ' active' : '');
+    b.textContent = label;
+    b.onclick = () => {
+      mediaCat = key;
+      document.querySelectorAll('#media-pills .pill').forEach(p => p.classList.remove('active'));
+      b.classList.add('active');
+      loadExistingImages();
+    };
+    pillsEl.appendChild(b);
+  });
+  loadExistingImages();
+}
+
+function loadExistingImages() {
+  const arr = get('qbox-media-' + mediaCat, []);
+  const el = document.getElementById('existing-images');
+  if (!arr.length) { el.innerHTML = '<p style="font-size:14px;color:var(--accent);">No hay imágenes en esta categoría todavía.</p>'; return; }
+  const label = MEDIA_CATS.find(c => c[0] === mediaCat)?.[1] || mediaCat;
+  el.innerHTML = `<p class="lbl" style="margin-bottom:12px;">Imágenes actuales — ${label} (${arr.length})</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;">
+      ${arr.map((url,i) => `
+        <div style="position:relative;border-radius:10px;overflow:hidden;aspect-ratio:1;background:var(--border);">
+          <img src="${url}" style="width:100%;height:100%;object-fit:cover;" loading="lazy" onerror="this.parentElement.style.opacity='.3'">
+          <button onclick="removeImage(${i})" title="Eliminar"
+            style="position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;background:rgba(180,69,47,.9);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;line-height:1;">×</button>
+        </div>`).join('')}
+    </div>`;
+}
+
+function removeImage(i) {
+  const arr = get('qbox-media-' + mediaCat, []);
+  if (!confirm(`¿Eliminar imagen ${i+1}?`)) return;
+  arr.splice(i, 1);
+  set('qbox-media-' + mediaCat, arr);
+  loadExistingImages();
+  toast('Imagen eliminada');
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('drop-zone').style.borderColor = 'var(--border)';
+  handleFiles(e.dataTransfer.files);
+}
+
+function handleFiles(files) {
+  console.log('[qBox] handleFiles called, files:', files, 'length:', files?.length);
+  if (!files || files.length === 0) { console.log('[qBox] No files received'); return; }
+  Array.from(files).forEach(file => {
+    console.log('[qBox] Processing file:', file.name, file.type, file.size);
+    if (!file.type.startsWith('image/')) { console.log('[qBox] Rejected: not an image'); return; }
+    if (file.size > 5 * 1024 * 1024) { alert(`${file.name} supera los 5 MB`); return; }
+    queueUpload(file);
+  });
+}
+
+function queueUpload(file) {
+  console.log('[qBox] queueUpload called for:', file.name);
+  const id = 'q' + Date.now() + Math.random().toString(36).slice(2);
+  const queue = document.getElementById('upload-queue');
+  const item = document.createElement('div');
+  item.id = id;
+  item.style.cssText = 'display:flex;align-items:center;gap:12px;background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:10px 14px;';
+  item.innerHTML = `
+    <div style="width:40px;height:40px;border-radius:8px;background:var(--border);overflow:hidden;flex-shrink:0;">
+      <img id="prev-${id}" style="width:100%;height:100%;object-fit:cover;">
+    </div>
+    <div style="flex:1;min-width:0;">
+      <p style="font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${file.name}</p>
+      <p id="status-${id}" style="font-size:12px;color:var(--accent);margin-top:2px;">Preparando...</p>
+    </div>
+    <div id="prog-${id}" style="width:60px;height:4px;background:var(--border);border-radius:2px;overflow:hidden;">
+      <div id="bar-${id}" style="height:100%;width:0%;background:var(--ink);transition:width .3s;"></div>
+    </div>`;
+  queue.appendChild(item);
+
+  // Preview
+  const reader = new FileReader();
+  reader.onload = e => document.getElementById('prev-' + id).src = e.target.result;
+  reader.readAsDataURL(file);
+
+  // Upload
+  uploadFile(file, id);
+}
+
+async function uploadFile(file, id) {
+  console.log('[qBox] uploadFile started for:', file.name, 'mediaCat:', mediaCat);
+  const setStatus = (msg, color='var(--accent)') => {
+    const el = document.getElementById('status-' + id);
+    if (el) { el.textContent = msg; el.style.color = color; }
+  };
+  const setBar = (pct) => {
+    const el = document.getElementById('bar-' + id);
+    if (el) el.style.width = pct + '%';
+  };
+
+  try {
+    setStatus('Leyendo imagen...');
+    setBar(20);
+
+    // Convert to base64
+    const b64 = await new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = () => res(r.result.split(',')[1]);
+      r.onerror = rej;
+      r.readAsDataURL(file);
+    });
+    console.log('[qBox] base64 ready, length:', b64.length);
+
+    setStatus('Subiendo...');
+    setBar(50);
+
+    const filename = Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+    console.log('[qBox] Fetching /api/upload with filename:', filename, 'category:', mediaCat);
+
+    const resp = await fetch('/api/upload', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer qbox2026'
+      },
+      body: JSON.stringify({ filename, contentBase64: b64, category: mediaCat })
+    });
+
+    console.log('[qBox] Response status:', resp.status, resp.statusText);
+    setBar(85);
+
+    if (!resp.ok) {
+      const err = await resp.json();
+      console.error('[qBox] Upload error response:', err);
+      throw new Error(err.error || 'Error del servidor');
+    }
+
+    const data = await resp.json();
+    console.log('[qBox] Upload success:', data);
+    setBar(100);
+    setStatus('✓ Subida exitosa', '#2E7D32');
+
+    // Save URL to localStorage
+    const arr = get('qbox-media-' + mediaCat, []);
+    arr.push(data.url);
+    set('qbox-media-' + mediaCat, arr);
+    loadExistingImages();
+
+    // Remove from queue after 2s
+    setTimeout(() => document.getElementById(id)?.remove(), 2000);
+
+  } catch (err) {
+    console.error('[qBox] uploadFile CATCH:', err);
+    setStatus('Error: ' + err.message, '#B4452F');
+    setBar(0);
+  }
+}
+
+/* ===== INIT ===== */
+init();
+</script>
+</body>
+</html>
