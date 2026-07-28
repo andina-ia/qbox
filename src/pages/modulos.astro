@@ -261,6 +261,14 @@ const protos = [
   <style is:global>
     #cat-hero {
       position: relative;
+      min-height: 30vh;
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+      padding-top: 68px;
+      background: #0E0C0A;
+    }
+      position: relative;
       min-height: 22vh;
       display: flex;
       align-items: flex-end;
@@ -285,7 +293,7 @@ const protos = [
     .cat-hero-cnt {
       position: relative;
       z-index: 2;
-      padding: clamp(16px, 2vw, 28px) var(--px) clamp(16px, 2vw, 28px);
+      padding: clamp(20px, 3vw, 36px) var(--px) clamp(20px, 3vw, 36px);
       width: 100%;
     }
     .back-link {
@@ -301,7 +309,7 @@ const protos = [
     }
     .back-link:hover { color: rgba(245, 238, 220, .8); }
     .cat-kicker {
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 600;
       letter-spacing: .1em;
       text-transform: uppercase;
@@ -322,19 +330,19 @@ const protos = [
 
     .mod-main-sec {
       background: var(--bg);
-      padding: clamp(24px, 3vw, 36px) var(--px);
+      padding: clamp(40px, 5vw, 60px) var(--px);
     }
     .mod-main-grid {
       display: grid;
       grid-template-columns: 5fr 6fr;
-      gap: clamp(32px, 4vw, 60px);
+      gap: clamp(40px, 5vw, 72px);
       max-width: var(--max);
       margin: 0 auto;
       align-items: start;
     }
     .mod-left-h2 {
       font-family: var(--serif);
-      font-size: clamp(1.2rem, 2vw, 1.6rem);
+      font-size: clamp(1.6rem, 2.8vw, 2.2rem);
       font-weight: 400;
       line-height: 1.2;
       color: var(--ink);
@@ -358,7 +366,7 @@ const protos = [
     }
     .mod-stat {
       text-align: center;
-      padding: 10px 6px;
+      padding: 14px 8px;
       border-right: 1px solid var(--border);
       background: var(--card);
     }
@@ -366,7 +374,7 @@ const protos = [
     .mod-stat-val {
       display: block;
       font-family: var(--serif);
-      font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+      font-size: clamp(1rem, 1.8vw, 1.3rem);
       font-weight: 400;
       color: var(--ink);
       margin-bottom: 4px;
@@ -380,7 +388,7 @@ const protos = [
     }
     .mod-right-h2 {
       font-family: var(--serif);
-      font-size: clamp(1.1rem, 1.8vw, 1.5rem);
+      font-size: clamp(1.4rem, 2.2vw, 1.8rem);
       font-weight: 400;
       color: var(--ink);
       margin-bottom: 6px;
@@ -409,7 +417,7 @@ const protos = [
     }
     .proto-sel-img {
       position: relative;
-      aspect-ratio: 1 / 1;
+      aspect-ratio: 4 / 3;
       overflow: hidden;
     }
     .proto-sel-img img {
