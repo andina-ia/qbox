@@ -168,18 +168,18 @@ const protos = [
     </div>
   </section>
 
-  <div id="proto-modal" onclick="if (event.target === this) closeProto()">
+  <div id="proto-modal" data-close-modal="overlay">
     <div class="proto-modal-inner">
-      <button class="proto-modal-close" onclick="closeProto()">✕</button>
+      <button class="proto-modal-close" data-close-modal="btn">✕</button>
       <div id="proto-modal-content"></div>
     </div>
   </div>
 
-  <div class="lb" id="lb" onclick="if (event.target === this) closeLb()">
-    <button class="lb-close" onclick="closeLb()">×</button>
-    <button class="lb-nav lb-prev" onclick="lbNav(-1)">‹</button>
+  <div class="lb" id="lb" data-close-lb="overlay">
+    <button class="lb-close" data-close-lb="btn">×</button>
+    <button class="lb-nav lb-prev" data-lb-nav="-1">‹</button>
     <img id="lb-img" src="" alt="" />
-    <button class="lb-nav lb-next" onclick="lbNav(1)">›</button>
+    <button class="lb-nav lb-next" data-lb-nav="1">›</button>
   </div>
 
   <script is:inline define:vars={{ protos }}>
@@ -189,6 +189,31 @@ const protos = [
 
     // Event delegation para las cards
     document.addEventListener('DOMContentLoaded', function() {
+
+      // Cerrar modal
+      document.querySelectorAll('[data-close-modal]').forEach(function(el) {
+        el.addEventListener('click', function(e) {
+          if (this.dataset.closeModal === 'overlay' && e.target !== this) return;
+          closeProto();
+        });
+      });
+
+      // Cerrar lightbox
+      document.querySelectorAll('[data-close-lb]').forEach(function(el) {
+        el.addEventListener('click', function(e) {
+          if (this.dataset.closeLb === 'overlay' && e.target !== this) return;
+          closeLb();
+        });
+      });
+
+      // Nav lightbox
+      document.querySelectorAll('[data-lb-nav]').forEach(function(el) {
+        el.addEventListener('click', function() {
+          lbNav(parseInt(this.dataset.lbNav));
+        });
+      });
+
+      // Cards prototipos
       document.querySelectorAll('[data-proto]').forEach(function(card) {
         card.addEventListener('click', function() {
           openProto(parseInt(this.getAttribute('data-proto')));
