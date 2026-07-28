@@ -401,12 +401,12 @@ const protos = [
     .proto-selector-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 6px;
+      gap: 5px;
     }
     .proto-sel-card {
       background: var(--bg);
       border: 1px solid var(--border);
-      border-radius: 14px;
+      border-radius: 10px;
       overflow: hidden;
       cursor: pointer;
       transition: transform .2s, box-shadow .2s;
@@ -417,7 +417,7 @@ const protos = [
     }
     .proto-sel-img {
       position: relative;
-      aspect-ratio: 4 / 3;
+      aspect-ratio: 16 / 9;
       overflow: hidden;
     }
     .proto-sel-img img {
@@ -440,15 +440,15 @@ const protos = [
     }
     .proto-sel-label { padding: 18px 20px 22px; }
     .proto-sel-num {
-      font-size: 10px;
+      font-size: 9px;
       letter-spacing: .14em;
       color: rgba(255, 255, 255, .65);
       font-weight: 600;
-      margin-bottom: 5px;
+      margin-bottom: 3px;
     }
     .proto-sel-title {
       font-family: var(--serif);
-      font-size: 1.2rem;
+      font-size: 0.9rem;
       font-weight: 400;
       color: #fff;
       line-height: 1.2;
@@ -585,7 +585,7 @@ const protos = [
       margin-bottom: 24px;
     }
     .pmod-gallery { display:grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 28px; }
-    .pmod-gal-item { aspect-ratio: 4 / 3; overflow: hidden; border-radius: 8px; cursor:pointer; }
+    .pmod-gal-item { aspect-ratio: 16 / 9; overflow: hidden; border-radius: 8px; cursor:pointer; }
     .pmod-gal-item img { width:100%; height:100%; object-fit:cover; transition:transform .3s; }
     .pmod-gal-item:hover img { transform: scale(1.06); }
     .pmod-cta {
@@ -670,7 +670,7 @@ const protos = [
       .pmod-gallery { grid-template-columns: repeat(2, 1fr); }
       .pmod-body { padding: 24px 20px 28px; }
       .pmod-specs-row { flex-direction: column; }
-      .pmod-hero { aspect-ratio: 4 / 3; }
+      .pmod-hero { aspect-ratio: 16 / 9; }
       .lb-nav { width: 40px; height: 40px; font-size: 24px; }
       .lb-prev { left: 10px; }
       .lb-next { right: 10px; }
