@@ -139,10 +139,9 @@ const protos = [
             {protos.map((proto, index) => (
               <div
                 class="proto-sel-card"
-                onclick={`openProto(${index + 1})`}
+                data-proto={index + 1}
                 role="button"
                 tabindex="0"
-                onkeydown={`if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openProto(${index + 1}); }`}
               >
                 <div class="proto-sel-img">
                   <img src={proto.heroImg} alt={proto.title} loading={index < 2 ? 'eager' : 'lazy'} />
@@ -187,6 +186,21 @@ const protos = [
     const PROTOS = protos;
     let lbImgs = [];
     let lbIdx = 0;
+
+    // Event delegation para las cards
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('[data-proto]').forEach(function(card) {
+        card.addEventListener('click', function() {
+          openProto(parseInt(this.getAttribute('data-proto')));
+        });
+        card.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openProto(parseInt(this.getAttribute('data-proto')));
+          }
+        });
+      });
+    });
 
     function openProto(n) {
       const p = PROTOS[n - 1];
