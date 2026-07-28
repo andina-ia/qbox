@@ -112,6 +112,10 @@ const protos = [
             <div class="mod-stat"><span class="mod-stat-val">120km/h</span><span class="mod-stat-lbl">Resist. al viento</span></div>
             <div class="mod-stat"><span class="mod-stat-val">-15°C</span><span class="mod-stat-lbl">Temp. mínima</span></div>
           </div>
+          <a class="mod-ficha-btn" href="/assets/modulos/FICHA_TECNICA_QBOX.pdf" download="Ficha_Tecnica_qBox.pdf">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="12" x2="12" y2="18"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+            Descargar ficha técnica
+          </a>
         </div>
 
         <div class="mod-right rv d1">
@@ -367,7 +371,9 @@ const protos = [
       color: var(--ink);
       margin-bottom: 4px;
     }
-    .mod-stat-lbl {
+    .mod-ficha-btn { display:inline-flex; align-items:center; gap:8px; margin-top:20px; font-family:var(--sans); font-size:13px; font-weight:600; color:var(--ink); border:1.5px solid var(--ink); border-radius:8px; padding:10px 18px; text-decoration:none; transition:background .15s, color .15s; }
+.mod-ficha-btn:hover { background:var(--ink); color:var(--bg); }
+.mod-stat-lbl {
       font-size: 10px;
       color: var(--accent);
       letter-spacing: .02em;
