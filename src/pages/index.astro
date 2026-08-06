@@ -603,12 +603,12 @@ const schema = {
     /* ===== PUB CARDS ===== */
     .pub-hd { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; flex-wrap: wrap; margin-bottom: 36px; }
     .pub-hd p { max-width: 320px; font-size: 15px; color: var(--ink); }
-    .pub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-    .pub-card { background: var(--card); border-radius: 18px; border: 1.5px solid var(--border); overflow: hidden; text-decoration: none; display: flex; flex-direction: column; transition: .25s; }
+    .pub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .pub-card { background: var(--card); border-radius: 12px; border: 1.5px solid var(--border); overflow: hidden; text-decoration: none; display: flex; flex-direction: column; transition: .25s; }
     .pub-card:hover { transform: translateY(-4px); box-shadow: 0 30px 60px -34px rgba(30,32,34,.4); border-color: rgba(30,32,34,.2); }
-    .pub-img { height: 310px; overflow: hidden; }
+    .pub-img { height: 200px; overflow: hidden; }
     .pub-img img { width: 100%; height: 100%; object-fit: cover; }
-    .pub-body { padding: 24px clamp(20px,2.6vw,28px) 26px; }
+    .pub-body { padding: 16px clamp(16px,2vw,20px) 18px; }
     .pub-kicker { font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
     .pub-body h3 { margin-bottom: 12px; }
     .pub-body p { color: var(--ink); font-size: 16px; line-height: 1.65; margin-bottom: 16px; }
