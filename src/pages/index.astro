@@ -96,16 +96,16 @@ const schema = {
           <span class="ind-lbl">Proyectos entregados</span>
         </div>
         <div class="ind-item rv">
-          <span class="ind-val" data-target="8">0</span>
+          <span class="ind-val" data-target="45">0</span>
+          <span class="ind-lbl">Días de montaje promedio</span>
+        </div>
+        <div class="ind-item rv">
+          <span class="ind-val" data-target="5">0</span><span class="ind-plus">+</span>
           <span class="ind-lbl">Años de experiencia</span>
         </div>
         <div class="ind-item rv">
-          <span class="ind-val" data-target="98">0</span><span class="ind-plus">%</span>
-          <span class="ind-lbl">Clientes satisfechos</span>
-        </div>
-        <div class="ind-item rv">
-          <span class="ind-val" data-target="30">0</span>
-          <span class="ind-lbl">Días promedio de entrega</span>
+          <span class="ind-val" data-target="3">0</span>
+          <span class="ind-lbl">Provincias · Cuyo</span>
         </div>
       </div>
     </div>
@@ -319,12 +319,7 @@ const schema = {
           <div class="about-img-ov"></div>
         </div>
       </div>
-      <div class="stats rv">
-        <div class="stat"><div class="stat-n" data-count="120" data-suffix="+">0</div><div class="stat-l">Proyectos entregados</div></div>
-        <div class="stat"><div class="stat-n" data-count="45">0</div><div class="stat-l">Días de montaje promedio</div></div>
-        <div class="stat"><div class="stat-n" data-count="5" data-suffix="+">0</div><div class="stat-l">Años de experiencia</div></div>
-        <div class="stat" style="border-right:none;"><div class="stat-n" data-count="3">0</div><div class="stat-l">Provincias · Cuyo</div></div>
-      </div>
+
     </div>
   </section>
 
@@ -790,8 +785,10 @@ const schema = {
     }
     /* ===== INDICADORES ===== */
     .ind-sec {
-      background: var(--ink);
-      padding: clamp(32px, 4vw, 48px) var(--px);
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: clamp(24px, 3vw, 36px) var(--px);
     }
     .ind-grid {
       display: grid;
@@ -813,17 +810,18 @@ const schema = {
       gap: 6px;
     }
     .ind-item:last-child { border-right: none; }
+    .ind-item { border-right: 1px solid var(--border); }
     .ind-val {
       font-family: var(--serif);
       font-size: clamp(2rem, 4vw, 3rem);
       font-weight: 400;
-      color: #F5F4F0;
+      color: var(--ink);
       line-height: 1;
     }
     .ind-plus {
       font-family: var(--serif);
       font-size: clamp(1.2rem, 2.5vw, 1.8rem);
-      color: var(--accent);
+      color: var(--ink);
       margin-left: 2px;
       align-self: flex-start;
       margin-top: 4px;
@@ -831,7 +829,7 @@ const schema = {
     .ind-lbl {
       font-family: var(--sans);
       font-size: 12px;
-      color: rgba(245,244,240,.55);
+      color: var(--muted, #6b6560);
       letter-spacing: .04em;
     }
     .cr-showroom-link {
