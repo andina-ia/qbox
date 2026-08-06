@@ -92,19 +92,19 @@ const schema = {
     <div class="wrap">
       <div class="ind-grid">
         <div class="ind-item rv">
-          <span class="ind-val" data-target="120">0</span><span class="ind-plus">+</span>
+          <div class="ind-num"><span class="ind-val" data-target="120" data-suffix="+">0</span><span class="ind-suffix">+</span></div>
           <span class="ind-lbl">Proyectos entregados</span>
         </div>
         <div class="ind-item rv">
-          <span class="ind-val" data-target="45">0</span>
+          <div class="ind-num"><span class="ind-val" data-target="45" data-suffix="">0</span></div>
           <span class="ind-lbl">Días de montaje promedio</span>
         </div>
         <div class="ind-item rv">
-          <span class="ind-val" data-target="5">0</span><span class="ind-plus">+</span>
+          <div class="ind-num"><span class="ind-val" data-target="5" data-suffix="+">0</span><span class="ind-suffix">+</span></div>
           <span class="ind-lbl">Años de experiencia</span>
         </div>
         <div class="ind-item rv">
-          <span class="ind-val" data-target="3">0</span>
+          <div class="ind-num"><span class="ind-val" data-target="3" data-suffix="">0</span></div>
           <span class="ind-lbl">Provincias · Cuyo</span>
         </div>
       </div>
@@ -817,10 +817,10 @@ const schema = {
     }
     /* ===== INDICADORES ===== */
     .ind-sec {
-      background: var(--bg);
+      background: var(--card);
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
-      padding: clamp(24px, 3vw, 36px) var(--px);
+      padding: clamp(20px, 2.5vw, 32px) var(--px);
     }
     .ind-grid {
       display: grid;
@@ -828,41 +828,50 @@ const schema = {
       gap: 0;
       max-width: var(--max);
       margin: 0 auto;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
     }
     @media (max-width: 600px) {
       .ind-grid { grid-template-columns: repeat(2, 1fr); }
     }
     .ind-item {
       text-align: center;
-      padding: 20px 12px;
-      border-right: 1px solid rgba(255,255,255,.1);
+      padding: clamp(20px, 3vw, 32px) 16px;
+      border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 6px;
+      justify-content: center;
+      gap: 8px;
+      background: var(--card);
     }
     .ind-item:last-child { border-right: none; }
-    .ind-item { border-right: 1px solid var(--border); }
+    .ind-num {
+      display: flex;
+      align-items: baseline;
+      gap: 2px;
+      line-height: 1;
+    }
     .ind-val {
       font-family: var(--serif);
-      font-size: clamp(2rem, 4vw, 3rem);
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
       font-weight: 400;
       color: var(--ink);
       line-height: 1;
     }
-    .ind-plus {
+    .ind-suffix {
       font-family: var(--serif);
       font-size: clamp(1.2rem, 2.5vw, 1.8rem);
       color: var(--ink);
-      margin-left: 2px;
-      align-self: flex-start;
-      margin-top: 4px;
+      line-height: 1;
     }
     .ind-lbl {
       font-family: var(--sans);
       font-size: 12px;
       color: var(--muted, #6b6560);
-      letter-spacing: .04em;
+      letter-spacing: .02em;
+      line-height: 1.4;
     }
     .cr-showroom-link {
       font-family: var(--sans);
