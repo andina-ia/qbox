@@ -583,12 +583,12 @@ const schema = {
 
   <style is:global>
     /* ===== HERO ===== */
-    #hero { position: relative; min-height: 65vh; display: flex; align-items: center; overflow: hidden; padding-top: 68px; background: #0E0C0A; }
+    #hero { position: relative; min-height: auto; display: flex; align-items: center; overflow: hidden; padding-top: 68px; background: #0E0C0A; }
     #hero-vid { position: absolute; top: 0; right: 0; height: 100%; width: 62%; object-fit: cover; object-position: center center; z-index: 0; opacity: .85; }
     #hero-vid-fade { position: absolute; top: 0; right: 0; height: 100%; width: 62%; z-index: 1; background: linear-gradient(to right, rgba(14,12,10,1) 0%, rgba(14,12,10,.85) 18%, rgba(14,12,10,.4) 38%, rgba(14,12,10,0) 60%); }
     .hero-ov { position: absolute; inset: 0; background: linear-gradient(to right, rgba(14,12,10,1) 0%, rgba(14,12,10,1) 38%, rgba(14,12,10,0) 50%); z-index: 1; }
     .hero-ov-top { position: absolute; top: 0; left: 0; right: 0; height: 160px; background: linear-gradient(to bottom, rgba(14,12,10,1) 0%, rgba(14,12,10,.8) 40%, rgba(14,12,10,0) 100%); z-index: 1; }
-    .hero-cnt { position: relative; z-index: 2; padding: clamp(40px,5vw,64px) clamp(20px,4vw,60px) clamp(28px,3vw,40px); width: 100%; }
+    .hero-cnt { position: relative; z-index: 2; padding: clamp(36px,4vw,56px) clamp(20px,4vw,60px) 0; width: 100%; }
     .hero-badge { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 28px; background: rgba(245,238,220,.08); border: 1px solid rgba(245,238,220,.2); padding: 7px 16px; border-radius: 100px; }
     .hero-badge-dot { width: 7px; height: 7px; border-radius: 50%; background: #8C7E74; }
     .hero-badge-txt { font-size: 12px; font-weight: 600; color: rgba(245,238,220,.75); letter-spacing: .1em; text-transform: uppercase; }
