@@ -47,19 +47,19 @@ h3 { font-family: var(--serif); font-size: clamp(17px, 1.8vw, 26px); font-weight
 #nav a:hover, #nav .nav-link:hover { color: var(--accent); }
 
 /* ===== FOOTER ===== */
-footer { background: var(--card); border-top: 1px solid var(--border); padding: clamp(36px, 4vw, 56px) var(--px) 28px; }
+footer { background: #0E0C0A; border-top: 1px solid rgba(245,238,220,.08); padding: clamp(36px, 4vw, 56px) var(--px) 28px; }
 .foot-in { max-width: var(--max); margin: 0 auto; }
 .foot-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 40px; margin-bottom: 36px; }
 .foot-logo { height: 30px; margin-bottom: 18px; }
-.foot-desc { font-size: 16px; line-height: 1.6; max-width: 300px; }
+.foot-desc { font-size: 14px; line-height: 1.6; max-width: 300px; color: rgba(245,238,220,.55); }
 .foot-r { text-align: right; }
-.foot-sh-title { font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+.foot-sh-title { font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
 .foot-info { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; }
-.foot-addr { display: inline-flex; align-items: center; gap: 6px; font-size: 15px; text-decoration: none; border-bottom: 1px solid transparent; transition: .2s; }
-.foot-addr:hover { border-bottom-color: var(--ink); }
-.foot-hrs { font-size: 14.5px; color: var(--accent); }
-.foot-vis { font-size: 14.5px; font-weight: 600; text-decoration: underline; cursor: pointer; background: none; border: none; }
-.foot-bot { border-top: 1px solid var(--border); padding-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+.foot-addr { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: rgba(245,238,220,.7); text-decoration: none; border-bottom: 1px solid transparent; transition: .2s; }
+.foot-addr:hover { border-bottom-color: rgba(245,238,220,.5); }
+.foot-hrs { font-size: 12px; color: var(--accent); }
+.foot-vis { font-size: 13px; font-weight: 600; color: rgba(245,238,220,.8); text-decoration: underline; cursor: pointer; background: none; border: none; }
+.foot-bot { border-top: 1px solid rgba(245,238,220,.08); padding-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
 .foot-bot span, .foot-bot a { font-size: 14px; color: var(--accent); text-decoration: none; }
 .foot-bot a:hover { color: var(--ink); }
 .foot-links { display: flex; gap: 20px; }
