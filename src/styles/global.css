@@ -60,7 +60,7 @@ footer { background: #0E0C0A; border-top: 1px solid rgba(245,238,220,.08); paddi
 .foot-hrs { font-size: 12px; color: var(--accent); }
 .foot-vis { font-size: 13px; font-weight: 600; color: rgba(245,238,220,.8); text-decoration: underline; cursor: pointer; background: none; border: none; }
 .foot-bot { border-top: 1px solid rgba(245,238,220,.08); padding-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
-.foot-bot span, .foot-bot a { font-size: 14px; color: var(--accent); text-decoration: none; }
+.foot-bot span, .foot-bot a { font-size: 12px; color: rgba(245,238,220,.4); text-decoration: none; }
 .foot-bot a:hover { color: var(--ink); }
 .foot-links { display: flex; gap: 20px; }
 
