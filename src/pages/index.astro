@@ -84,33 +84,29 @@ const schema = {
         </a>
         <a href="#proyectos" class="btn-s">Ver proyectos terminados</a>
       </div>
-    </div>
-  </section>
-
-  <!-- INDICADORES -->
-  <section id="indicadores" class="ind-sec">
-    <div class="wrap">
-      <div class="ind-grid">
-        <div class="ind-item rv">
-          <div class="ind-num"><span class="ind-val" data-target="120" data-suffix="+">0</span><span class="ind-suffix">+</span></div>
-          <span class="ind-lbl">Proyectos entregados</span>
+      <!-- INDICADORES INLINE -->
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-num"><span class="ind-val" data-target="120" data-suffix="+">0</span><span class="ind-suffix">+</span></div>
+          <span class="hero-stat-lbl">Proyectos entregados</span>
         </div>
-        <div class="ind-item rv">
-          <div class="ind-num"><span class="ind-val" data-target="45" data-suffix="">0</span></div>
-          <span class="ind-lbl">Días de montaje promedio</span>
+        <div class="hero-stat">
+          <div class="hero-stat-num"><span class="ind-val" data-target="45" data-suffix="">0</span></div>
+          <span class="hero-stat-lbl">Días de montaje promedio</span>
         </div>
-        <div class="ind-item rv">
-          <div class="ind-num"><span class="ind-val" data-target="5" data-suffix="+">0</span><span class="ind-suffix">+</span></div>
-          <span class="ind-lbl">Años de experiencia</span>
+        <div class="hero-stat">
+          <div class="hero-stat-num"><span class="ind-val" data-target="5" data-suffix="+">0</span><span class="ind-suffix">+</span></div>
+          <span class="hero-stat-lbl">Años de experiencia</span>
         </div>
-        <div class="ind-item rv">
-          <div class="ind-num"><span class="ind-val" data-target="3" data-suffix="">0</span></div>
-          <span class="ind-lbl">Provincias · Cuyo</span>
+        <div class="hero-stat">
+          <div class="hero-stat-num"><span class="ind-val" data-target="3" data-suffix="">0</span></div>
+          <span class="hero-stat-lbl">Provincias · Cuyo</span>
         </div>
       </div>
     </div>
   </section>
 
+  
   <!-- SOLUCIONES -->
   <section id="soluciones" class="sec">
     <div class="pub-hd rv">
@@ -814,6 +810,46 @@ const schema = {
       .slot-b { padding: 9px 6px; font-size: 13px; }
       .day-bot { font-size: 17px; }
       .conf-btn { font-size: 14px; height: 50px; }
+    }
+    /* ===== INDICADORES EN HERO ===== */
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      margin-top: clamp(32px, 5vw, 56px);
+      border-top: 1px solid rgba(255,255,255,.15);
+      padding-top: clamp(20px, 3vw, 32px);
+    }
+    @media (max-width: 600px) {
+      .hero-stats { grid-template-columns: repeat(2, 1fr); gap: 16px 0; }
+    }
+    .hero-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding-right: 24px;
+    }
+    .hero-stat:not(:first-child) {
+      padding-left: 24px;
+      border-left: 1px solid rgba(255,255,255,.15);
+    }
+    .hero-stat-num {
+      display: flex;
+      align-items: baseline;
+      gap: 2px;
+      font-family: var(--serif);
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 400;
+      color: #F5F4F0;
+      line-height: 1;
+    }
+    .hero-stat-num .ind-val { color: #F5F4F0; font-family: var(--serif); font-size: inherit; }
+    .hero-stat-num .ind-suffix { color: var(--accent); font-family: var(--serif); font-size: 0.7em; }
+    .hero-stat-lbl {
+      font-family: var(--sans);
+      font-size: 11px;
+      color: rgba(245,244,240,.55);
+      letter-spacing: .04em;
     }
     /* ===== INDICADORES ===== */
     .ind-sec {
