@@ -6,45 +6,75 @@ import Footer from '../components/Footer.astro';
 import WhatsAppButton from '../components/WhatsAppButton.astro';
 
 interface Props {
-  seo: { title: string; description?: string; keywords?: string };
+  seo: { title: string; description?: string; desc?: string; keywords?: string };
+  /** Clave de config.seo que el admin puede editar para esta página (ej. 'inicio'). */
+  seoKey?: string;
   home?: boolean;
 }
-const { seo, home = false } = Astro.props;
+const { seo, seoKey, home = false } = Astro.props;
+const description = seo.description ?? seo.desc;
 ---
 <!DOCTYPE html>
 <html lang="es">
   <head>
-    <BaseHead title={seo.title} description={seo.description} keywords={seo.keywords}>
+    <BaseHead title={seo.title} description={description} keywords={seo.keywords}>
+      <script is:inline>
+        /* ===== CONFIG EN VIVO (MySQL vía /api/config.php) =====
+           El HTML trae los valores del build como respaldo; al cargar, se piden los
+           valores actuales de la base y se aplican. Las páginas pueden esperar
+           `window.QBOX_CFG` (promesa que resuelve al objeto de config o null). */
+        window.QBOX_CFG = fetch('/api/config.php', { cache: 'no-store' })
+          .then((r) => (r.ok ? r.json() : null))
+          .catch(() => null);
+      </script>
       <slot name="head" />
     </BaseHead>
   </head>
-  <body>
+  <body data-seo-key={seoKey}>
     <Nav home={home} />
     <slot />
     <Footer home={home} />
     <WhatsAppButton />
 
     <script is:inline>
-      /* ===== ANALYTICS ===== */
-      const SB_URL = 'https://xnycltgfyvvguyqkuczo.supabase.co';
-      const SB_KEY = 'sb_publishable_-ul7ZIFMaZdg37uMDs0SKA_1P7pIuu0';
-      window.track = async function (type, metadata = {}) {
+      /* ===== APLICAR CONFIG EN VIVO ===== */
+      window.qboxSetSeo = function (s) {
+        if (!s) return;
+        if (s.title) document.title = s.title;
+        const setMeta = (name, val) => {
+          if (!val) return;
+          let m = document.querySelector(`meta[name="${name}"]`);
+          if (!m) { m = document.createElement('meta'); m.setAttribute('name', name); document.head.appendChild(m); }
+          m.setAttribute('content', val);
+        };
+        setMeta('description', s.desc);
+        setMeta('keywords', s.keywords);
+      };
+      window.QBOX_CFG.then((cfg) => {
+        if (!cfg) return;
+        const key = document.body.dataset.seoKey;
+        if (key && cfg.seo) qboxSetSeo(cfg.seo[key]);
+        // Textos simples: <p data-cfg="content.heroSub">
+        document.querySelectorAll('[data-cfg]').forEach((el) => {
+          const val = el.dataset.cfg.split('.').reduce((o, k) => (o == null ? o : o[k]), cfg);
+          if (typeof val === 'string' && val.trim()) el.textContent = val;
+        });
+      });
+
+      /* ===== ANALYTICS (MySQL vía /api/track.php) ===== */
+      window.track = function (type, metadata = {}) {
         try {
-          await fetch(`${SB_URL}/rest/v1/events`, {
+          fetch('/api/track.php', {
             method: 'POST',
-            headers: {
-              apikey: SB_KEY,
-              Authorization: `Bearer ${SB_KEY}`,
-              'Content-Type': 'application/json',
-              Prefer: 'return=minimal'
-            },
-            body: JSON.stringify({ type, metadata })
-          });
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type, metadata }),
+            keepalive: true
+          }).catch(() => {});
         } catch (e) {}
       };
       if (!sessionStorage.getItem('qbox_pv')) {
         sessionStorage.setItem('qbox_pv', '1');
-        track('page_view', { referrer: document.referrer });
+        track('page_view', { referrer: document.referrer, path: location.pathname });
       }
 
       /* ===== MENU ===== */

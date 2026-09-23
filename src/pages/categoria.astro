@@ -210,6 +210,15 @@ const siteConfig = { media: config.media || {}, seo: config.seo || {} };
     }
     renderGallery();
 
+    /* Config en vivo (MySQL): SEO y galería editados desde el admin */
+    window.QBOX_CFG.then((cfg) => {
+      if (!cfg) return;
+      const live = (cfg.seo || {})[slug];
+      if (live) qboxSetSeo({ ...live, title: live.title || cat.name + ' | qBox' });
+      const m = (cfg.media || {})[slug];
+      if (Array.isArray(m) && m.length) { imgs = m; renderGallery(); }
+    });
+
     /* CTA */
     document.getElementById('cta-title').textContent = '¿Querés saber más sobre nuestros ' + cat.name.toLowerCase() + '?';
     document.getElementById('cta-p').textContent = 'Contactanos por WhatsApp o agendá una visita al showroom para conocer el sistema constructivo en persona.';

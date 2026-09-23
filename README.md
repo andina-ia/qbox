@@ -28,47 +28,36 @@ npm run preview  # sirve el build
 | `src/components/` | Componentes compartidos: `Nav`, `Footer`, `WhatsAppButton`, `BaseHead` |
 | `src/layouts/BaseLayout.astro` | Layout base (head + nav + slot + footer + whatsapp + analytics) |
 | `src/styles/global.css` | Design tokens y estilos compartidos (header, nav, footer, botones, etc.) |
-| `src/data/config.json` | **Configuración editable del sitio** (textos, tarifas, marcas, SEO, medios) |
-| `api/config.js` | Función serverless: lee/escribe `config.json` vía GitHub API |
-| `api/upload.js` | Función serverless: sube imágenes al repo (`public/assets/media/`) |
+| `src/data/config.json` | Valores iniciales de la config (la fuente real es MySQL) |
+| `public/api/` | Backend PHP + MySQL del panel (ver abajo) |
 | `public/assets/` | Imágenes, video (`hero.mp4`), logos y favicons |
 
-## Configuración del sitio (sin base de datos)
+## Configuración del sitio (MySQL en cPanel)
 
-La config editable vive en `src/data/config.json` y se **hornea en build**: cada
-página Astro la importa y renderiza los textos/tarifas/marcas/SEO directamente en
-el HTML (no hay fetch en runtime).
+El contenido editable (textos, tarifas, marcas, SEO, galerías) vive en **MySQL**.
+`src/data/config.json` queda solo como valor inicial: se hornea en el HTML como
+respaldo y `install.php` lo carga en la base la primera vez.
 
-El panel `/admin` edita esa config. Al guardar:
+Al abrir cualquier página, `BaseLayout` pide `/api/config.php` y aplica los
+valores actuales. Los cambios del panel `/admin` se ven **al instante**, sin rebuild.
 
-1. `POST /api/config` con `{ section, value }` (header `Authorization: Bearer <ADMIN_PASS>`).
-2. La función commitea `src/data/config.json` en el repo vía GitHub API.
-3. El commit dispara un redeploy en Vercel → el cambio queda publicado en ~1 min.
+| Endpoint | Qué hace |
+|---|---|
+| `api/install.php` | Instalación única: crea tablas, carga la config y el primer admin. **Borrar después de usar.** |
+| `api/auth.php` | Login con sesión PHP (claves con `password_hash`, límite de 8 intentos / 15 min) |
+| `api/config.php` | `GET` público · `POST {section, value}` solo admin (sesión + `X-CSRF-Token`) |
+| `api/upload.php` | Sube imágenes a `/uploads/<categoría>/` (fuera del build, no se pisa al redeployar) |
+| `api/track.php` / `api/events.php` | Analytics propios en la tabla `qbox_events` |
 
-Las imágenes que se suben desde **Medios** se commitean en `public/assets/media/`
-y su URL se guarda en `config.json` (sección `media`).
+El código PHP está en `public/api/` y Astro lo copia tal cual a `dist/api/`.
 
-> Seguridad: el login del Admin (correo + clave) es solo una barrera de UX en el
-> cliente. El control real es la validación del `Bearer <ADMIN_PASS>` en las
-> funciones serverless. Mantené `ADMIN_PASS` en secreto en Vercel.
+## Instalación en cPanel
 
-## Variables de entorno (Vercel)
-
-Ver `.env.example`. Necesarias para que el Admin pueda guardar:
-
-- `ADMIN_PASS` — clave compartida (debe coincidir con la del panel).
-- `GITHUB_TOKEN` — token con permisos de escritura sobre el repo.
-- `GITHUB_OWNER` (`andina-ia`), `GITHUB_REPO` (`qbox`), `GITHUB_BRANCH` (`main`).
-
-## Analytics
-
-Las páginas registran eventos (visitas, uso del cotizador, clics a WhatsApp y
-showroom) en una tabla `events` de Supabase usando una publishable key desde el
-cliente. El dashboard del Admin los lee de ahí. Esto es independiente de la
-configuración del sitio.
-
-## Deploy (Vercel)
-
-- Framework preset: **Astro** (autodetectado). Build command `astro build`,
-  output `dist/`. Las funciones de `api/` se despliegan automáticamente.
-- Configurar las variables de entorno listadas arriba.
+1. **Base de datos:** cPanel → Database Wizard → crear base + usuario con *ALL PRIVILEGES*.
+2. **Credenciales:** copiar `public/api/_env.sample.php` a `/home/USUARIO/qbox-env.php`
+   (fuera de `public_html`) y completarlo.
+3. **Subir el sitio:** `npm run build` y subir el contenido de `dist/` a `public_html/`.
+   No borrar nunca `public_html/uploads/` (ahí quedan las imágenes del panel).
+4. **Instalar:** abrir `https://qboxmodular.com.ar/api/install.php`, crear el admin y
+   **borrar `api/install.php`** del servidor.
+5. Entrar a `/admin`.

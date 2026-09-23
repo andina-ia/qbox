@@ -21,3 +21,7 @@ node_modules/
 *.log
 .vercel
 .env*
+
+# credenciales del backend PHP
+public/api/_env.php
+qbox-env.php

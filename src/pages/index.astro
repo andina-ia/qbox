@@ -14,7 +14,7 @@ const schema = {
   name: 'qBox Construcciones Modulares',
   description:
     'Empresa de construcción modular y en seco en San Juan, Argentina. Viviendas, oficinas, cocheras, ampliaciones y locales comerciales sismo resistentes.',
-  url: 'https://qbox-five.vercel.app',
+  url: 'https://qboxmodular.com.ar',
   telephone: '+5492644431309',
   email: 'comercial@qboxmodular.com.ar',
   address: {
@@ -32,24 +32,24 @@ const schema = {
   },
   areaServed: ['San Juan', 'Mendoza', 'San Luis', 'La Rioja', 'Cuyo'],
   priceRange: '$$',
-  image: 'https://qbox-five.vercel.app/assets/modulo-nosotros.webp'
+  image: 'https://qboxmodular.com.ar/assets/modulo-nosotros.webp'
 };
 ---
 
-<BaseLayout seo={seo} home={true}>
+<BaseLayout seo={seo} seoKey="inicio" home={true}>
   <Fragment slot="head">
     <meta name="robots" content="index, follow" />
     <meta name="author" content="qBox Construcciones Modulares" />
     <meta name="geo.region" content="AR-J" />
     <meta name="geo.placename" content="San Juan, Argentina" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://qbox-five.vercel.app/" />
+    <meta property="og:url" content="https://qboxmodular.com.ar/" />
     <meta property="og:title" content="qBox · Construcción Modular y en Seco San Juan" />
     <meta
       property="og:description"
       content="Viviendas, oficinas, cocheras y ampliaciones sismo resistentes listas para habitar en San Juan. Más de 120 proyectos entregados."
     />
-    <meta property="og:image" content="https://qbox-five.vercel.app/assets/modulo-nosotros.webp" />
+    <meta property="og:image" content="https://qboxmodular.com.ar/assets/modulo-nosotros.webp" />
     <meta property="og:locale" content="es_AR" />
     <meta property="og:site_name" content="qBox Construcciones Modulares" />
     <meta name="twitter:card" content="summary_large_image" />
@@ -58,7 +58,7 @@ const schema = {
       name="twitter:description"
       content="Viviendas y estructuras modulares premium sismo resistentes en San Juan, Argentina."
     />
-    <meta name="twitter:image" content="https://qbox-five.vercel.app/assets/modulo-nosotros.webp" />
+    <meta name="twitter:image" content="https://qboxmodular.com.ar/assets/modulo-nosotros.webp" />
     <script type="application/ld+json" set:html={JSON.stringify(schema)} />
   </Fragment>
 
@@ -76,7 +76,7 @@ const schema = {
         <span class="hero-badge-txt">San Juan</span>
       </div>
       <h1>Construimos espacios para <em>vivir, trabajar y producir.</em></h1>
-      <p class="body hero-sub">{content.heroSub}</p>
+      <p class="body hero-sub" data-cfg="content.heroSub">{content.heroSub}</p>
       <div class="ctas">
         <a href="#precios" class="btn-p">
           Cotizá tu proyecto
@@ -215,12 +215,12 @@ const schema = {
             <button class="type-opt sel" id="t-modulo" onclick="selType('modulo',this)">
               <span class="type-opt-name">Módulo habitable</span>
               <span class="type-opt-desc">Viviendas, estudios, oficinas y locales.</span>
-              <span class="type-opt-price">USD {rateModulo} <span>/m²</span></span>
+              <span class="type-opt-price">USD <span class="rate-val" data-rate="modulo">{rateModulo}</span> <span>/m²</span></span>
             </button>
             <button class="type-opt" id="t-semi" onclick="selType('semi',this)">
               <span class="type-opt-name">Semicubierto</span>
               <span class="type-opt-desc">Cocheras, galerías y semicubiertos.</span>
-              <span class="type-opt-price">USD {rateSemi} <span>/m²</span></span>
+              <span class="type-opt-price">USD <span class="rate-val" data-rate="semi">{rateSemi}</span> <span>/m²</span></span>
               <span class="type-opt-note" id="semi-note">Superficie mínima de cálculo: 20 m².</span>
             </button>
           </div>
@@ -301,8 +301,8 @@ const schema = {
       <div class="about-grid">
         <div class="rv d1">
           <hr style="width:40px;border:none;border-top:2px solid var(--accent);margin-bottom:24px;" />
-          <p class="about-p1">{content.nosotrosP1}</p>
-          <p class="about-p2">{content.nosotrosP2}</p>
+          <p class="about-p1" data-cfg="content.nosotrosP1">{content.nosotrosP1}</p>
+          <p class="about-p2" data-cfg="content.nosotrosP2">{content.nosotrosP2}</p>
           <p class="val-title">Nuestros valores</p>
           <ul class="val-list">
             <li>Honestidad</li>
@@ -326,7 +326,7 @@ const schema = {
         <p class="eye">Confían en nosotros</p>
         <h2 style="margin-top:10px;">Empresas que ya construyeron con qBox.</h2>
       </div>
-      <div class="logos rv">
+      <div class="logos rv" id="clients-logos">
         {clients.map((cl) => <div class="logo-i">{cl.name}</div>)}
       </div>
     </div>
@@ -405,7 +405,7 @@ const schema = {
     };
     let st = { type: 'modulo', area: 48, fin: 'estandar' };
 
-    function calcCot() {
+    function calcCot(silent) {
       const tc = TYPES[st.type], fc = FINS[st.fin];
       const pm2 = Math.round(tc.base * fc.mult);
       const tot = pm2 * st.area;
@@ -417,7 +417,7 @@ const schema = {
       document.getElementById('cr-finish').textContent = fc.label;
       const msg = encodeURIComponent('Hola qBox, calculé un proyecto en el cotizador: ' + tc.label + ' · ' + st.area + ' m² · terminación ' + fc.label + ' · estimado ' + fmt(tot) + '. Quiero un presupuesto real.');
       document.getElementById('cr-wa').href = 'https://wa.me/5492644431309?text=' + msg;
-      if (window.track) track('cotizador_use', { type: st.type, area: st.area, finish: st.fin });
+      if (!silent && window.track) track('cotizador_use', { type: st.type, area: st.area, finish: st.fin });
     }
 
     function selType(key, btn) {
@@ -457,7 +457,23 @@ const schema = {
       btn.classList.add('sel');
       calcCot();
     }
-    calcCot();
+    calcCot(true);
+
+    /* ===== CONFIG EN VIVO: tarifas y marcas desde la base ===== */
+    window.QBOX_CFG.then((cfg) => {
+      if (!cfg) return;
+      const c = cfg.cotizador || {};
+      if (c.rateModulo > 0) TYPES.modulo.base = +c.rateModulo;
+      if (c.rateSemi > 0) TYPES.semi.base = +c.rateSemi;
+      document.querySelectorAll('.rate-val').forEach((el) => { el.textContent = TYPES[el.dataset.rate].base; });
+      calcCot(true);
+      if (Array.isArray(cfg.clients)) {
+        const box = document.getElementById('clients-logos');
+        box.replaceChildren(...cfg.clients.filter((cl) => cl.active && cl.name).map((cl) => {
+          const d = document.createElement('div'); d.className = 'logo-i'; d.textContent = cl.name; return d;
+        }));
+      }
+    });
 
     /* ===== VIDEO ===== */
     setTimeout(() => { const v = document.getElementById('hero-vid'); if (v) v.setAttribute('preload', 'auto'); }, 800);
