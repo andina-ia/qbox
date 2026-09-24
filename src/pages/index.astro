@@ -1,4 +1,5 @@
 ---
+import { waLink } from '../lib/site.js';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import config from '../data/config.json';
 
@@ -268,12 +269,11 @@ const schema = {
           <div class="cr-row"><span>Terminación</span><span id="cr-finish">Estándar</span></div>
         </div>
         <p class="cr-disc">* Estimación automática orientativa. El valor final se define con relevamiento de obra, terreno y logística.</p>
-        <p class="cr-showroom-link">¿Querés ver el módulo antes? <a href="#showroom" class="cr-showroom-a">Agendá una visita al showroom →</a></p>
+        <p class="cr-showroom-link">¿Querés ver el módulo antes? <a href="#showroom" class="cr-showroom-a">Conocé nuestro showroom →</a></p>
         <a id="cr-wa" href="#" target="_blank" rel="noopener" class="cr-wa" onclick="track('whatsapp_click',{source:'cotizador'})">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.978-1.607zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.096 3.2 5.077 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
           Solicitar presupuesto real
         </a>
-        <a href="https://calendly.com/gambettadiegooscar/30min" target="_blank" rel="noopener" class="cr-visit">Agendar visita al showroom</a>
       </div>
     </div>
   </section>
@@ -283,10 +283,10 @@ const schema = {
     <div class="showroom-box rv">
       <p class="eye" style="color:rgba(245,244,240,.55);">Showroom · San Juan</p>
       <h2>Atención personalizada en Showroom.</h2>
-      <p>Reserve un bloque exclusivo de consultoría técnica para conocer nuestro sistema constructivo.</p>
-      <a href="https://calendly.com/gambettadiegooscar/30min" target="_blank" rel="noopener" class="btn-showroom">
-        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-        Agendar Cita en Showroom
+      <p>Escribinos por WhatsApp y coordinamos tu visita para conocer nuestro sistema constructivo en persona.</p>
+      <a href={waLink('Hola qBox, quiero coordinar una visita al showroom.')} target="_blank" rel="noopener" class="btn-showroom" onclick="track('whatsapp_click',{source:'showroom'})">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.978-1.607z"/></svg>
+        Coordinar visita por WhatsApp
       </a>
     </div>
   </section>
@@ -331,64 +331,6 @@ const schema = {
       </div>
     </div>
   </section>
-
-  <!-- MODAL -->
-  <div class="m-ov" id="modal" onclick="handleOv(event)">
-    <div class="m-box" onclick="event.stopPropagation()">
-      <div class="m-hdr">
-        <div class="m-hdr-l">
-          <img src="/assets/qbox-logo-ink.webp" alt="qBox" class="m-logo" />
-          <span class="m-brand">Calendly</span>
-        </div>
-        <button class="m-close" onclick="closeModal()">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 6L6 18M6 6l12 12"/></svg>
-        </button>
-      </div>
-      <div id="m-picker" class="m-body">
-        <p class="m-title">Agendar visita al showroom</p>
-        <p class="m-sub">Turno de 1 hora · Lunes a Viernes, de 09:00 a 18:00 hs</p>
-
-        <p class="m-sec">Tus datos</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
-          <div>
-            <label style="font-size:12px;font-weight:600;color:var(--accent);display:block;margin-bottom:5px;">Nombre</label>
-            <input id="m-nombre" type="text" placeholder="Ej: María" autocomplete="given-name"
-              style="width:100%;padding:11px 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--card);font-family:var(--sans);font-size:14.5px;color:var(--ink);outline:none;transition:.2s;"
-              oninput="checkForm()" onfocus="this.style.borderColor='var(--ink)'" onblur="this.style.borderColor='var(--border)'" />
-          </div>
-          <div>
-            <label style="font-size:12px;font-weight:600;color:var(--accent);display:block;margin-bottom:5px;">Apellido</label>
-            <input id="m-apellido" type="text" placeholder="Ej: González" autocomplete="family-name"
-              style="width:100%;padding:11px 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--card);font-family:var(--sans);font-size:14.5px;color:var(--ink);outline:none;transition:.2s;"
-              oninput="checkForm()" onfocus="this.style.borderColor='var(--ink)'" onblur="this.style.borderColor='var(--border)'" />
-          </div>
-        </div>
-        <div style="margin-bottom:22px;">
-          <label style="font-size:12px;font-weight:600;color:var(--accent);display:block;margin-bottom:5px;">Correo electrónico</label>
-          <input id="m-email" type="email" placeholder="tu@email.com" autocomplete="email"
-            style="width:100%;padding:11px 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--card);font-family:var(--sans);font-size:14.5px;color:var(--ink);outline:none;transition:.2s;"
-            oninput="checkForm()" onfocus="this.style.borderColor='var(--ink)'" onblur="this.style.borderColor='var(--border)'" />
-          <p id="email-err" style="display:none;font-size:12px;color:#c0392b;margin-top:4px;">Ingresá un email válido.</p>
-        </div>
-
-        <p class="m-sec">Elegí un día</p>
-        <div class="days-g" id="days-g"></div>
-        <p class="m-sec">Elegí un horario</p>
-        <div class="slots-g" id="slots-g"></div>
-        <button class="conf-btn" id="conf-btn" disabled onclick="confirmBook()">Completá tus datos para continuar</button>
-      </div>
-
-      <div class="m-done" id="m-done">
-        <div class="done-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FAF9F5" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
-        </div>
-        <p class="done-title">¡Visita reservada!</p>
-        <p class="done-det" id="done-det"></p>
-        <p class="done-hint">Recibirás la confirmación con todos los detalles del turno.</p>
-        <button class="btn-p" style="margin:0 auto;display:inline-flex;" onclick="closeModal()">Listo</button>
-      </div>
-    </div>
-  </div>
 
   <script type="application/json" id="index-data" set:html={JSON.stringify({ rateModulo, rateSemi })}></script>
   <script is:inline>
@@ -482,87 +424,6 @@ const schema = {
     const _co = new IntersectionObserver((es) => { es.forEach((e) => { if (e.isIntersecting) { cnt(e.target); _co.unobserve(e.target); } }); }, { threshold: 0.5 });
     document.querySelectorAll('[data-count]').forEach((el) => _co.observe(el));
     function cnt(el) { const t = +el.dataset.count, s = el.dataset.suffix || '', d = 1300, start = performance.now(); const tick = (n) => { const p = Math.min(1, (n - start) / d); el.textContent = Math.round(t * (1 - Math.pow(1 - p, 3))) + s; if (p < 1) requestAnimationFrame(tick); }; requestAnimationFrame(tick); }
-
-    /* ===== MODAL ===== */
-    let selDay = null, selSlot = null;
-    function openModal() {
-      if (window.track) track('showroom_click', { source: 'modal' });
-      document.getElementById('modal').classList.add('open');
-      document.body.style.overflow = 'hidden';
-      buildDays(); buildSlots(); resetModal();
-    }
-    function closeModal() {
-      document.getElementById('modal').classList.remove('open');
-      document.body.style.overflow = '';
-      setTimeout(resetModal, 300);
-    }
-    function handleOv(e) { if (e.target === document.getElementById('modal')) closeModal(); }
-    function buildDays() {
-      const g = document.getElementById('days-g'); g.innerHTML = '';
-      const dn = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-      const mn = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
-      const today = new Date(); let cnt = 0, d = new Date(today); d.setDate(d.getDate() + 1);
-      while (cnt < 8) {
-        if (d.getDay() >= 1 && d.getDay() <= 5) {
-          const key = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
-          const lbl = dn[d.getDay()]; const full = lbl + ' ' + d.getDate() + ' ' + mn[d.getMonth()];
-          const btn = document.createElement('button'); btn.className = 'day-b'; btn.dataset.key = key; btn.dataset.full = full;
-          btn.innerHTML = '<span class="day-top">' + lbl + '</span><span class="day-bot">' + d.getDate() + '</span>';
-          btn.onclick = function () { selectDay(this); }; g.appendChild(btn); cnt++;
-        }
-        d.setDate(d.getDate() + 1);
-      }
-    }
-    function buildSlots() {
-      const g = document.getElementById('slots-g'); g.innerHTML = '';
-      ['09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00', '18:00'].forEach((h) => {
-        const b = document.createElement('button'); b.className = 'slot-b'; b.textContent = h;
-        b.onclick = function () { selectSlot(this); }; g.appendChild(b);
-      });
-    }
-    function checkForm() {
-      const nombre = document.getElementById('m-nombre').value.trim();
-      const apellido = document.getElementById('m-apellido').value.trim();
-      const email = document.getElementById('m-email').value.trim();
-      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-      const errEl = document.getElementById('email-err');
-      const btn = document.getElementById('conf-btn');
-      errEl.style.display = (email && !emailOk) ? 'block' : 'none';
-      if (!nombre) { btn.disabled = true; btn.textContent = 'Ingresá tu nombre para continuar'; return; }
-      if (!apellido) { btn.disabled = true; btn.textContent = 'Ingresá tu apellido para continuar'; return; }
-      if (!email || !emailOk) { btn.disabled = true; btn.textContent = 'Ingresá un email válido para continuar'; return; }
-      if (!selDay) { btn.disabled = true; btn.textContent = 'Elegí un día para continuar'; return; }
-      if (!selSlot) { btn.disabled = true; btn.textContent = 'Elegí un horario para continuar'; return; }
-      btn.disabled = false;
-      btn.textContent = 'Confirmar turno · ' + selDay + ' · ' + selSlot + ' hs';
-    }
-    function selectDay(btn) {
-      document.querySelectorAll('.day-b').forEach((b) => b.classList.remove('sel'));
-      btn.classList.add('sel'); selDay = btn.dataset.full; checkForm();
-    }
-    function selectSlot(btn) {
-      document.querySelectorAll('.slot-b').forEach((b) => b.classList.remove('sel'));
-      btn.classList.add('sel'); selSlot = btn.textContent; checkForm();
-    }
-    function confirmBook() {
-      const nombre = document.getElementById('m-nombre').value.trim();
-      const apellido = document.getElementById('m-apellido').value.trim();
-      const email = document.getElementById('m-email').value.trim();
-      document.getElementById('m-picker').style.display = 'none';
-      document.getElementById('m-done').classList.add('show');
-      document.getElementById('done-det').innerHTML =
-        'Te esperamos en el showroom el <strong>' + selDay + '</strong> a las <strong>' + selSlot + ' hs</strong>.<br>' +
-        '<span style="font-size:14px;color:var(--accent)">Confirmación para ' + nombre + ' ' + apellido + ' · ' + email + '</span>';
-    }
-    function resetModal() {
-      selDay = null; selSlot = null;
-      document.getElementById('m-picker').style.display = '';
-      document.getElementById('m-done').classList.remove('show');
-      document.querySelectorAll('.day-b,.slot-b').forEach((b) => b.classList.remove('sel'));
-      ['m-nombre', 'm-apellido', 'm-email'].forEach((id) => document.getElementById(id).value = '');
-      document.getElementById('email-err').style.display = 'none';
-      const btn = document.getElementById('conf-btn'); btn.disabled = true; btn.textContent = 'Completá tus datos para continuar';
-    }
 
     /* ===== INDICADORES CONTADOR ===== */
     (function() {

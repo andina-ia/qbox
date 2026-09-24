@@ -1,4 +1,5 @@
 ---
+import { waLink } from '../lib/site.js';
 interface Props {
   home?: boolean;
 }
@@ -23,14 +24,14 @@ const prefix = home ? '' : '/';
   <a href={`${prefix}#showroom`} onclick="closeMenu()">Showroom</a>
   {home && (
     <a
-      href="https://calendly.com/gambettadiegooscar/30min"
+      href={waLink('Hola qBox, quiero coordinar una visita al showroom.')}
       target="_blank"
       rel="noopener"
       class="btn-p"
       style="margin-top:20px;align-self:flex-start;background:var(--ink);color:#FAF9F5;"
-      onclick="closeMenu()"
+      onclick="closeMenu();track('whatsapp_click',{source:'menu'})"
     >
-      Agendar visita al showroom
+      Coordinar visita por WhatsApp
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
     </a>
   )}

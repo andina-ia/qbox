@@ -1,5 +1,5 @@
 ---
-import { MAPS_URL } from '../lib/site.js';
+import { waLink, MAPS_URL } from '../lib/site.js';
 interface Props {
   home?: boolean;
 }
@@ -21,7 +21,7 @@ const { home = false } = Astro.props;
           </a>
           <span class="foot-hrs">Lun a Sáb · 09 a 18 h</span>
           {home && (
-            <a href="https://calendly.com/gambettadiegooscar/30min" target="_blank" rel="noopener" class="foot-vis">Agendar visita</a>
+            <a href={waLink('Hola qBox, quiero coordinar una visita al showroom.')} target="_blank" rel="noopener" class="foot-vis" onclick="track('whatsapp_click',{source:'footer'})">Coordinar visita por WhatsApp</a>
           )}
         </div>
       </div>
