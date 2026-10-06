@@ -19,7 +19,7 @@ if (stripos($ctype, 'application/json') === 0) {
     $body = json_body(4096);
     if (($body['action'] ?? '') !== 'delete') json_out(['error' => 'Acción inválida'], 400);
     $url = (string)($body['url'] ?? '');
-    if (!preg_match('#^/uploads/([a-z-]+)/([A-Za-z0-9._-]+)$#', $url, $m) || !in_array($m[1], QBOX_MEDIA_CATS, true)) {
+    if (!preg_match('#^/uploads/([a-z0-9-]+)/([A-Za-z0-9._-]+)$#', $url, $m) || !in_array($m[1], QBOX_MEDIA_CATS, true)) {
         json_out(['ok' => true, 'skipped' => true]); // no es un archivo nuestro: nada que borrar
     }
     $path = $root . '/' . $m[1] . '/' . $m[2];

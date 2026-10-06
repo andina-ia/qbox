@@ -58,3 +58,48 @@ export const DEFAULT_COVERS = {
   "ampliaciones": "/assets/ampliaciones.webp",
   "locales": "/assets/locales-comerciales.webp"
 };
+
+// Prototipos de /modulos: galería (ventana de cada prototipo) y foto de su tarjeta.
+Object.assign(DEFAULT_GALLERIES, {
+  "proto1": [
+    "/assets/modulos/real-p1-cover.webp",
+    "/assets/modulos/real-p1-11.webp",
+    "/assets/modulos/real-p1-02.webp",
+    "/assets/modulos/real-p1-09.webp",
+    "/assets/modulos/real-p1-08.webp",
+    "/assets/modulos/real-p1-06.webp",
+    "/assets/modulos/real-p1-07.webp",
+    "/assets/modulos/real-p1-05.webp",
+    "/assets/modulos/real-p1-04.webp",
+    "/assets/modulos/real-p1-03.webp",
+    "/assets/modulos/real-p1-01.webp",
+    "/assets/modulos/real-p1-10.webp",
+    "/assets/modulos/real-p1-12.webp"
+  ],
+  "proto2": [
+    "/assets/modulos/p2-01.webp",
+    "/assets/modulos/p2-06.webp",
+    "/assets/modulos/p2-02.webp",
+    "/assets/modulos/p2-03.webp",
+    "/assets/modulos/p2-04.webp",
+    "/assets/modulos/p2-05.webp"
+  ],
+  "proto3": [
+    "/assets/modulos/p3-01.webp",
+    "/assets/modulos/p3-02.webp",
+    "/assets/modulos/p3-03.webp",
+    "/assets/modulos/p3-04.webp"
+  ],
+  "proto4": [
+    "/assets/modulos/p4-01.webp",
+    "/assets/modulos/p4-02.webp",
+    "/assets/modulos/p4-03.webp",
+    "/assets/modulos/p4-04.webp"
+  ]
+});
+Object.assign(DEFAULT_COVERS, {
+  "proto1": "/assets/modulos/real-p1-11.webp",
+  "proto2": "/assets/modulos/p2-01.webp",
+  "proto3": "/assets/modulos/ficha-proto3.webp",
+  "proto4": "/assets/modulos/ficha-proto4.webp"
+});
