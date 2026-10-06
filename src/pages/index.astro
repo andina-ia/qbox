@@ -358,7 +358,19 @@ const schema = {
       document.getElementById('cr-finish').textContent = fc.label;
       const msg = encodeURIComponent('Hola qBox, calculé un proyecto en el cotizador: ' + tc.label + ' · ' + st.area + ' m² · terminación ' + fc.label + ' · estimado ' + fmt(tot) + '. Quiero un presupuesto real.');
       document.getElementById('cr-wa').href = 'https://wa.me/5492644431309?text=' + msg;
-      if (!silent && window.track) track('cotizador_use', { type: st.type, area: st.area, finish: st.fin });
+      if (!silent) trackCotizador();
+    }
+    /* El cotizador se registra cuando la persona deja de tocar opciones (1,5 s)
+       y solo si la combinación cambió: un evento por consulta, no por movimiento. */
+    let cotTimer = null, cotLastKey = '';
+    function trackCotizador() {
+      clearTimeout(cotTimer);
+      cotTimer = setTimeout(() => {
+        const key = st.type + '|' + st.area + '|' + st.fin;
+        if (key === cotLastKey || !window.track) return;
+        cotLastKey = key;
+        track('cotizador_use', { type: st.type, area: st.area, finish: st.fin });
+      }, 1500);
     }
 
     function selType(key, btn) {
@@ -547,6 +559,7 @@ const schema = {
     .type-opt-desc { font-size: 14px; color: var(--accent); line-height: 1.4; }
     .type-opt-price { font-family: var(--serif); font-size: 20px; margin-top: 6px; }
     .type-opt-price span { font-size: 14px; color: var(--accent); }
+    .type-opt-price .rate-val { font-size: inherit; color: inherit; }
     .type-opt-note { margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(30,32,34,.1); font-size: 12px; font-weight: 600; color: var(--accent); line-height: 1.4; }
     .range-hd { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
     .range-val { font-family: var(--serif); font-size: 28px; }

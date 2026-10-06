@@ -62,12 +62,19 @@ const description = seo.description ?? seo.desc;
       });
 
       /* ===== ANALYTICS (MySQL vía /api/track.php) ===== */
+      /* Identificador anónimo de la visita (dura mientras la pestaña esté abierta):
+         permite contar personas y no clics. No guarda datos personales. */
+      let qboxSid = '';
+      try {
+        qboxSid = sessionStorage.getItem('qbox_sid') || '';
+        if (!qboxSid) { qboxSid = Math.random().toString(36).slice(2, 10) + Date.now().toString(36); sessionStorage.setItem('qbox_sid', qboxSid); }
+      } catch (e) {}
       window.track = function (type, metadata = {}) {
         try {
           fetch('/api/track.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ type, metadata }),
+            body: JSON.stringify({ type, metadata: { ...metadata, sid: qboxSid } }),
             keepalive: true
           }).catch(() => {});
         } catch (e) {}
