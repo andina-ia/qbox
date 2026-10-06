@@ -103,6 +103,17 @@ function validate_section(string $section, $v)
                 $out[$cat] = $clean;
             }
             return $out;
+
+        case 'covers':
+            // Portada de cada tarjeta del inicio: { categoria: url }. Vacío = foto original.
+            if (!is_array($v)) bad('covers debe ser un objeto');
+            $out = [];
+            foreach ($v as $cat => $u) {
+                if (!in_array($cat, QBOX_MEDIA_CATS, true)) continue;
+                $u = str_or_empty($u, 500);
+                if (preg_match('#^/(uploads|assets)/[A-Za-z0-9._/-]+$#', $u) || preg_match('#^https://[^\s"<>]+$#', $u)) $out[$cat] = $u;
+            }
+            return $out;
     }
     bad('Sección desconocida');
 }

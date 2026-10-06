@@ -10,7 +10,7 @@ if (basename($_SERVER['SCRIPT_FILENAME'] ?? '') === basename(__FILE__)) {
     exit;
 }
 
-const QBOX_SECTIONS = ['content', 'cotizador', 'clients', 'seo', 'media'];
+const QBOX_SECTIONS = ['content', 'cotizador', 'clients', 'seo', 'media', 'covers'];
 const QBOX_MEDIA_CATS = ['modulos', 'stands', 'cocheras-galerias', 'ampliaciones', 'locales'];
 
 /**

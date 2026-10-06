@@ -48,3 +48,13 @@ export const DEFAULT_GALLERIES = {
     "/assets/locales/local_5_lateral_camioneta.webp"
   ]
 };
+
+// Portadas originales de las tarjetas "Proyectos terminados" del inicio.
+// Desde /admin → Medios se pueden reemplazar (config.covers en MySQL).
+export const DEFAULT_COVERS = {
+  "modulos": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1300&auto=format&fit=crop",
+  "stands": "/assets/stand-emergencias.webp",
+  "cocheras-galerias": "/assets/cochera-bento.webp",
+  "ampliaciones": "/assets/ampliaciones.webp",
+  "locales": "/assets/locales-comerciales.webp"
+};

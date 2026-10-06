@@ -1,4 +1,5 @@
 ---
+import { DEFAULT_COVERS } from '../data/galleries.js';
 import { waLink } from '../lib/site.js';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import config from '../data/config.json';
@@ -118,7 +119,7 @@ const schema = {
       <p style="font-size:15px;">Explorá cada línea de trabajo.</p>
     </div>
     <div class="bento-grid">
-      <a href="/modulos" class="bento-card bento-big rv d1" style="background-image:url(https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1300&auto=format&fit=crop)">
+      <a href="/modulos" class="bento-card bento-big rv d1" data-cover="modulos" style={`background-image:url(${DEFAULT_COVERS['modulos']})`}>
         <div class="bento-ov"></div>
         <div class="bento-body">
           <p class="bento-kicker">Viviendas · Oficinas</p>
@@ -126,7 +127,7 @@ const schema = {
           <span class="bento-link">Ver proyectos <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </div>
       </a>
-      <a href="/categoria?cat=stands" class="bento-card bento-sm rv d2" style="background-image:url(/assets/stand-emergencias.webp)">
+      <a href="/categoria?cat=stands" class="bento-card bento-sm rv d2" data-cover="stands" style={`background-image:url(${DEFAULT_COVERS['stands']})`}>
         <div class="bento-ov"></div>
         <div class="bento-body">
           <p class="bento-kicker">Eventos · Ferias</p>
@@ -134,7 +135,7 @@ const schema = {
           <span class="bento-link">Ver proyectos <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </div>
       </a>
-      <a href="/categoria?cat=cocheras-galerias" class="bento-card bento-sm rv d3" style="background-image:url(/assets/cochera-bento.webp)">
+      <a href="/categoria?cat=cocheras-galerias" class="bento-card bento-sm rv d3" data-cover="cocheras-galerias" style={`background-image:url(${DEFAULT_COVERS['cocheras-galerias']})`}>
         <div class="bento-ov"></div>
         <div class="bento-body">
           <p class="bento-kicker">Semicubiertos</p>
@@ -142,7 +143,7 @@ const schema = {
           <span class="bento-link">Ver proyectos <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </div>
       </a>
-      <a href="/categoria?cat=ampliaciones" class="bento-card bento-sm rv d1" style="background-image:url(/assets/ampliaciones.webp)">
+      <a href="/categoria?cat=ampliaciones" class="bento-card bento-sm rv d1" data-cover="ampliaciones" style={`background-image:url(${DEFAULT_COVERS['ampliaciones']})`}>
         <div class="bento-ov"></div>
         <div class="bento-body">
           <p class="bento-kicker">Construcción en seco</p>
@@ -150,7 +151,7 @@ const schema = {
           <span class="bento-link">Ver proyectos <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
         </div>
       </a>
-      <a href="/categoria?cat=locales" class="bento-card bento-sm rv d2" style="background-image:url(/assets/locales-comerciales.webp)">
+      <a href="/categoria?cat=locales" class="bento-card bento-sm rv d2" data-cover="locales" style={`background-image:url(${DEFAULT_COVERS['locales']})`}>
         <div class="bento-ov"></div>
         <div class="bento-body">
           <p class="bento-kicker">Retail · Showrooms</p>
@@ -415,6 +416,11 @@ const schema = {
     /* ===== CONFIG EN VIVO: tarifas y marcas desde la base ===== */
     window.QBOX_CFG.then((cfg) => {
       if (!cfg) return;
+      const covers = cfg.covers || {};
+      document.querySelectorAll('[data-cover]').forEach((el) => {
+        const u = covers[el.dataset.cover];
+        if (typeof u === 'string' && /^(\/(uploads|assets)\/|https:\/\/)/.test(u)) el.style.backgroundImage = `url("${u}")`;
+      });
       const c = cfg.cotizador || {};
       if (c.rateModulo > 0) TYPES.modulo.base = +c.rateModulo;
       if (c.rateSemi > 0) TYPES.semi.base = +c.rateSemi;

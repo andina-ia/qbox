@@ -1,7 +1,7 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
 import config from '../data/config.json';
-import { DEFAULT_GALLERIES } from '../data/galleries.js';
+import { DEFAULT_GALLERIES, DEFAULT_COVERS } from '../data/galleries.js';
 
 const CONFIG_SEED = config;
 ---
@@ -281,8 +281,11 @@ const CONFIG_SEED = config;
         <!-- MEDIOS -->
         <div id="panel-medios" class="panel">
           <p class="sec-title">Medios</p>
-          <p class="sec-sub">Estas son las fotos que se muestran hoy en la galería de cada categoría, en el mismo orden. Podés reemplazarlas, cambiarlas de lugar, eliminarlas o sumar nuevas. Los cambios se publican al instante.</p>
+          <p class="sec-sub">Elegí una categoría para cambiar su portada en el inicio y las fotos de su galería. Los cambios se publican al instante.</p>
           <div class="pills" id="media-pills"></div>
+          <div id="cover-box" style="margin-bottom:28px;"></div>
+          <input type="file" id="cover-input" accept="image/*" style="display:none;" onchange="handleCoverFile(this)" />
+          <p class="lbl" style="margin-bottom:10px;">Galería de la categoría</p>
           <div id="drop-zone" onclick="document.getElementById('file-input').click()"
             style="border:2px dashed var(--border);border-radius:16px;padding:40px 24px;text-align:center;cursor:pointer;transition:.2s;margin-bottom:20px;background:var(--card);"
             ondragover="event.preventDefault();this.style.borderColor='var(--ink)'"
@@ -304,6 +307,7 @@ const CONFIG_SEED = config;
 
     <script type="application/json" id="admin-data" set:html={JSON.stringify(CONFIG_SEED)}></script>
     <script type="application/json" id="admin-galleries" set:html={JSON.stringify(DEFAULT_GALLERIES)}></script>
+    <script type="application/json" id="admin-covers" set:html={JSON.stringify(DEFAULT_COVERS)}></script>
     <script is:inline>
       /* ===== CONFIG ===== */
       const CONFIG_SEED = JSON.parse(document.getElementById('admin-data').textContent);
@@ -778,11 +782,71 @@ const CONFIG_SEED = config;
       /** Borra del servidor un archivo subido que ya no se usa en ninguna galería. */
       function cleanupFile(url) {
         if (!url || !url.startsWith('/uploads/')) return;
-        const used = Object.keys(DEFAULT_GALLERIES).some((c) => currentList(c).includes(url));
+        const used = Object.keys(DEFAULT_GALLERIES).some((c) => currentList(c).includes(url) || currentCover(c) === url);
         if (!used) api('/api/upload.php', { method: 'POST', body: JSON.stringify({ action: 'delete', url }) }).catch(() => {});
       }
       const btnStyle = 'width:28px;height:28px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;line-height:1;';
+      /* ===== PORTADAS (tarjetas "Proyectos terminados" del inicio) ===== */
+      const DEFAULT_COVERS = JSON.parse(document.getElementById('admin-covers').textContent);
+      let pickingCover = false;
+      function currentCover(cat) {
+        const c = (CONFIG.covers || {})[cat];
+        return typeof c === 'string' && c ? c : DEFAULT_COVERS[cat] || '';
+      }
+      function renderCover() {
+        const box = document.getElementById('cover-box');
+        const url = currentCover(mediaCat);
+        const custom = !!(CONFIG.covers || {})[mediaCat];
+        const label = MEDIA_CATS.find((c) => c[0] === mediaCat)?.[1] || mediaCat;
+        const b = 'font-size:13px;font-weight:600;border-radius:100px;padding:8px 16px;cursor:pointer;font-family:inherit;';
+        box.innerHTML = `
+          <p class="lbl" style="margin-bottom:10px;">Portada en el inicio</p>
+          <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:16px;">
+            <div style="position:relative;width:260px;max-width:100%;aspect-ratio:16/10;border-radius:12px;overflow:hidden;background:#1E2022 center/cover no-repeat;background-image:url('${url}');">
+              <div style="position:absolute;inset:0;background:linear-gradient(transparent 40%,rgba(0,0,0,.65));"></div>
+              <span style="position:absolute;left:12px;bottom:10px;color:#fff;font-family:var(--serif);font-size:18px;">${label}</span>
+            </div>
+            <div style="flex:1;min-width:220px;">
+              <p style="font-size:13.5px;color:var(--accent);margin-bottom:12px;line-height:1.5;">Es la foto de la tarjeta de ${label} en la sección “Proyectos terminados” del inicio. ${custom ? 'Tiene una portada personalizada.' : 'Hoy muestra la foto original.'}</p>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button onclick="document.getElementById('cover-input').value='';document.getElementById('cover-input').click()" style="${b}background:var(--ink);color:#fff;border:none;">Subir foto nueva</button>
+                <button onclick="togglePickCover()" style="${b}background:none;border:1.5px solid var(--border);color:var(--ink);">${pickingCover ? 'Cancelar' : 'Elegir de la galería'}</button>
+                ${custom ? `<button onclick="restoreCover()" style="${b}background:none;border:1.5px solid var(--border);color:var(--ink);">↺ Restaurar original</button>` : ''}
+              </div>
+              ${pickingCover ? '<p style="font-size:13px;font-weight:600;color:#B4452F;margin-top:10px;">Hacé clic en una foto de la galería de abajo para usarla como portada.</p>' : ''}
+            </div>
+          </div>`;
+      }
+      async function setCover(url, msg) {
+        const prev = currentCover(mediaCat);
+        const all = { ...(CONFIG.covers || {}) };
+        if (url) all[mediaCat] = url; else delete all[mediaCat];
+        await saveSection('covers', all);
+        pickingCover = false;
+        loadExistingImages();
+        toast(msg);
+        if (prev !== currentCover(mediaCat)) cleanupFile(prev);
+      }
+      function togglePickCover() { pickingCover = !pickingCover; loadExistingImages(); }
+      async function pickCover(i) {
+        try { await setCover(currentList(mediaCat)[i], 'Portada actualizada · ya está publicado'); }
+        catch (e) { toast(e.message, true); }
+      }
+      async function restoreCover() {
+        try { await setCover('', 'Portada original restaurada'); } catch (e) { toast(e.message, true); }
+      }
+      async function handleCoverFile(input) {
+        const file = input.files && input.files[0];
+        if (!file) return;
+        if (!file.type.startsWith('image/')) { toast('El archivo no es una imagen', true); return; }
+        if (file.size > 8 * 1024 * 1024) { toast(`${file.name} supera los 8 MB`, true); return; }
+        toast('Subiendo portada...');
+        try { await setCover(await uploadToServer(file), 'Portada actualizada · ya está publicado'); }
+        catch (e) { toast(e.message, true); }
+      }
+
       function loadExistingImages() {
+        renderCover();
         const arr = currentList(mediaCat);
         const el = document.getElementById('existing-images');
         const label = MEDIA_CATS.find((c) => c[0] === mediaCat)?.[1] || mediaCat;
@@ -796,9 +860,9 @@ const CONFIG_SEED = config;
             ${arr.map((url, i) => {
               const tag = url.startsWith('/uploads/') ? 'Subida' : 'Original';
               return `
-              <div style="position:relative;border-radius:12px;overflow:hidden;aspect-ratio:1;background:var(--border);">
-                <img src="${url}" style="width:100%;height:100%;object-fit:cover;cursor:zoom-in;" loading="lazy" onclick="window.open('${url}','_blank')" onerror="this.parentElement.style.opacity='.3'">
-                <span style="position:absolute;top:6px;left:6px;font-size:11px;font-weight:700;background:rgba(30,32,34,.8);color:#fff;border-radius:100px;padding:3px 8px;">${i === 0 ? '★ ' : ''}${i + 1} · ${tag}</span>
+              <div style="position:relative;border-radius:12px;overflow:hidden;aspect-ratio:1;background:var(--border);${pickingCover ? 'outline:3px solid #B4452F;outline-offset:-3px;cursor:pointer;' : ''}${url === currentCover(mediaCat) ? 'box-shadow:0 0 0 3px var(--ink);' : ''}">
+                <img src="${url}" style="width:100%;height:100%;object-fit:cover;cursor:zoom-in;" loading="lazy" onclick="${pickingCover ? `pickCover(${i})` : `window.open('${url}','_blank')`}" onerror="this.parentElement.style.opacity='.3'">
+                <span style="position:absolute;top:6px;left:6px;font-size:11px;font-weight:700;background:rgba(30,32,34,.8);color:#fff;border-radius:100px;padding:3px 8px;">${i === 0 ? '★ ' : ''}${i + 1} · ${url === currentCover(mediaCat) ? 'Portada' : tag}</span>
                 <button onclick="removeImage(${i})" title="Eliminar" style="${btnStyle}position:absolute;top:6px;right:6px;background:rgba(180,69,47,.92);color:#fff;">×</button>
                 <div style="position:absolute;left:0;right:0;bottom:0;display:flex;gap:6px;justify-content:center;align-items:center;padding:8px;background:linear-gradient(transparent,rgba(0,0,0,.55));">
                   <button onclick="moveImage(${i},-1)" title="Mover antes" ${i === 0 ? 'disabled' : ''} style="${btnStyle}background:#fff;opacity:${i === 0 ? '.35' : '1'};">←</button>
