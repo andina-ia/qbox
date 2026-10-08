@@ -322,14 +322,14 @@ const CONFIG_SEED = config;
             ondragover="event.preventDefault();this.style.borderColor='var(--ink)'"
             ondragleave="this.style.borderColor='var(--border)'"
             ondrop="handleDrop(event)">
-            <div style="font-size:32px;margin-bottom:10px;">📷</div>
-            <p style="font-size:15px;font-weight:600;color:var(--ink);margin-bottom:4px;">Arrastrá fotos o hacé clic para seleccionar</p>
-            <p style="font-size:13px;color:var(--accent);">JPG, PNG, WebP · máx 8 MB por imagen · se agregan al final de la galería</p>
-            <input type="file" id="file-input" multiple accept="image/*" style="display:none;" onchange="handleFiles(this.files)" />
+            <div style="font-size:32px;margin-bottom:10px;">📷🎬</div>
+            <p style="font-size:15px;font-weight:600;color:var(--ink);margin-bottom:4px;">Arrastrá fotos o videos, o hacé clic para seleccionar</p>
+            <p style="font-size:13px;color:var(--accent);">JPG, PNG, WebP · máx 8 MB · MP4, MOV · máx 200 MB · se agregan al final de la galería</p>
+            <input type="file" id="file-input" multiple accept="image/*,video/mp4,video/quicktime,.mp4,.mov" style="display:none;" onchange="handleFiles(this.files)" />
           </div>
           <div id="upload-queue" style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;"></div>
           <div id="existing-images" style="margin-bottom:24px;"></div>
-          <input type="file" id="replace-input" accept="image/*" style="display:none;" onchange="handleReplace(this)" />
+          <input type="file" id="replace-input" accept="image/*,video/mp4,video/quicktime,.mp4,.mov" style="display:none;" onchange="handleReplace(this)" />
 
           <!-- VIDEO HERO -->
           <div style="margin-top:36px;padding-top:28px;border-top:1px solid var(--border);">
@@ -960,14 +960,18 @@ const CONFIG_SEED = config;
         el.innerHTML = head + `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;">
             ${arr.map((url, i) => {
               const tag = url.startsWith('/uploads/') ? 'Subida' : 'Original';
+              const isVid = /\.(mp4|mov|m4v)$/i.test(url);
+              const media = isVid
+                ? `<video src="${url}" style="width:100%;height:100%;object-fit:cover;cursor:pointer;" muted playsinline preload="metadata" onclick="${pickingCover ? `pickCover(${i})` : `window.open('${url}','_blank')`}" onmouseenter="this.play()" onmouseleave="this.pause();this.currentTime=0"></video><span style="position:absolute;bottom:36px;left:50%;transform:translateX(-50%);font-size:22px;pointer-events:none;">▶</span>`
+                : `<img src="${url}" style="width:100%;height:100%;object-fit:cover;cursor:zoom-in;" loading="lazy" onclick="${pickingCover ? `pickCover(${i})` : `window.open('${url}','_blank')`}" onerror="this.parentElement.style.opacity='.3'">`;
               return `
               <div style="position:relative;border-radius:12px;overflow:hidden;aspect-ratio:1;background:var(--border);${pickingCover ? 'outline:3px solid #B4452F;outline-offset:-3px;cursor:pointer;' : ''}${url === currentCover(mediaCat) ? 'box-shadow:0 0 0 3px var(--ink);' : ''}">
-                <img src="${url}" style="width:100%;height:100%;object-fit:cover;cursor:zoom-in;" loading="lazy" onclick="${pickingCover ? `pickCover(${i})` : `window.open('${url}','_blank')`}" onerror="this.parentElement.style.opacity='.3'">
-                <span style="position:absolute;top:6px;left:6px;font-size:11px;font-weight:700;background:rgba(30,32,34,.8);color:#fff;border-radius:100px;padding:3px 8px;">${i === 0 ? '★ ' : ''}${i + 1} · ${url === currentCover(mediaCat) ? 'Portada' : tag}</span>
+                ${media}
+                <span style="position:absolute;top:6px;left:6px;font-size:11px;font-weight:700;background:rgba(30,32,34,.8);color:#fff;border-radius:100px;padding:3px 8px;">${i === 0 ? '★ ' : ''}${i + 1} · ${url === currentCover(mediaCat) ? 'Portada' : tag}${isVid ? ' · 🎬' : ''}</span>
                 <button onclick="removeImage(${i})" title="Eliminar" style="${btnStyle}position:absolute;top:6px;right:6px;background:rgba(180,69,47,.92);color:#fff;">×</button>
                 <div style="position:absolute;left:0;right:0;bottom:0;display:flex;gap:6px;justify-content:center;align-items:center;padding:8px;background:linear-gradient(transparent,rgba(0,0,0,.55));">
                   <button onclick="moveImage(${i},-1)" title="Mover antes" ${i === 0 ? 'disabled' : ''} style="${btnStyle}background:#fff;opacity:${i === 0 ? '.35' : '1'};">←</button>
-                  <button onclick="startReplace(${i})" title="Reemplazar esta foto" style="height:28px;border-radius:100px;border:none;cursor:pointer;background:#fff;font-size:12px;font-weight:700;padding:0 12px;">Reemplazar</button>
+                  <button onclick="startReplace(${i})" title="Reemplazar" style="height:28px;border-radius:100px;border:none;cursor:pointer;background:#fff;font-size:12px;font-weight:700;padding:0 12px;">Reemplazar</button>
                   <button onclick="moveImage(${i},1)" title="Mover después" ${i === arr.length - 1 ? 'disabled' : ''} style="${btnStyle}background:#fff;opacity:${i === arr.length - 1 ? '.35' : '1'};">→</button>
                 </div>
               </div>`; }).join('')}
@@ -1008,8 +1012,11 @@ const CONFIG_SEED = config;
       async function handleReplace(input) {
         const file = input.files && input.files[0];
         if (!file || replaceIdx === null) return;
-        if (!file.type.startsWith('image/')) { toast('El archivo no es una imagen', true); return; }
-        if (file.size > 8 * 1024 * 1024) { toast(`${file.name} supera los 8 MB`, true); return; }
+        if (isVideoFile(file)) {
+          if (file.size > 200 * 1024 * 1024) { toast(`${file.name} supera los 200 MB`, true); return; }
+        } else if (file.type.startsWith('image/')) {
+          if (file.size > 8 * 1024 * 1024) { toast(`${file.name} supera los 8 MB`, true); return; }
+        } else { toast('Formato no válido', true); return; }
         const i = replaceIdx; replaceIdx = null;
         toast('Subiendo foto nueva...');
         try {
@@ -1035,12 +1042,19 @@ const CONFIG_SEED = config;
         document.getElementById('drop-zone').style.borderColor = 'var(--border)';
         handleFiles(e.dataTransfer.files);
       }
+      function isVideoFile(file) {
+        return file.type.startsWith('video/') || /\.(mp4|mov|m4v)$/i.test(file.name);
+      }
       function handleFiles(files) {
         if (!files || files.length === 0) return;
         Array.from(files).forEach((file) => {
-          if (!file.type.startsWith('image/')) return;
-          if (file.size > 8 * 1024 * 1024) { alert(`${file.name} supera los 8 MB`); return; }
-          queueUpload(file);
+          if (isVideoFile(file)) {
+            if (file.size > 200 * 1024 * 1024) { alert(`${file.name} supera los 200 MB`); return; }
+            queueUpload(file);
+          } else if (file.type.startsWith('image/')) {
+            if (file.size > 8 * 1024 * 1024) { alert(`${file.name} supera los 8 MB`); return; }
+            queueUpload(file);
+          }
         });
       }
       let uploadChain = Promise.resolve();

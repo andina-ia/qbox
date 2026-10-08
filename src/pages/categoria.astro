@@ -159,6 +159,7 @@ const siteConfig = { media: config.media || {}, seo: config.seo || {} };
     <button class="lb-close" onclick="closeLb()">×</button>
     <button class="lb-nav lb-prev" onclick="lbNav(-1)">‹</button>
     <img id="lb-img" src="" alt="" />
+    <video id="lb-vid" src="" controls autoplay muted playsinline style="display:none;max-height:90vh;max-width:88vw;border-radius:10px;"></video>
     <button class="lb-nav lb-next" onclick="lbNav(1)">›</button>
   </div>
 
@@ -199,10 +200,16 @@ const siteConfig = { media: config.media || {}, seo: config.seo || {} };
     /* Gallery — admin media overrides defaults */
     const media = (siteConfig.media || {})[slug];
     let imgs = Array.isArray(media) && media.length ? media : cat.images;
+    function isVideo(src) { return /\.(mp4|mov|m4v)$/i.test(src); }
     function renderGallery() {
       document.getElementById('gal-count').textContent = imgs.length + ' proyectos';
       document.getElementById('gallery').innerHTML = imgs
-        .map((src, i) => `<div class="gal-item" onclick="openLb(${i})"><img src="${src}" alt="${cat.name} qBox ${i + 1}" loading="${i < 4 ? 'eager' : 'lazy'}"></div>`)
+        .map((src, i) => {
+          const media = isVideo(src)
+            ? `<video src="${src}" muted playsinline preload="metadata" style="width:100%;height:100%;object-fit:cover;" onmouseenter="this.play()" onmouseleave="this.pause();this.currentTime=0"></video><span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:28px;pointer-events:none;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.5);">▶</span>`
+            : `<img src="${src}" alt="${cat.name} qBox ${i + 1}" loading="${i < 4 ? 'eager' : 'lazy'}">`;
+          return `<div class="gal-item" onclick="openLb(${i})" style="position:relative;">${media}</div>`;
+        })
         .join('');
     }
     renderGallery();
@@ -223,9 +230,27 @@ const siteConfig = { media: config.media || {}, seo: config.seo || {} };
 
     /* Lightbox */
     let lbIdx = 0;
-    function openLb(i) { lbIdx = i; document.getElementById('lb-img').src = imgs[i]; document.getElementById('lb').classList.add('open'); document.body.style.overflow = 'hidden'; }
-    function closeLb() { document.getElementById('lb').classList.remove('open'); document.body.style.overflow = ''; }
-    function lbNav(dir) { lbIdx = (lbIdx + dir + imgs.length) % imgs.length; document.getElementById('lb-img').src = imgs[lbIdx]; }
+    function openLb(i) {
+      lbIdx = i;
+      const src = imgs[i];
+      const imgEl = document.getElementById('lb-img');
+      const vidEl = document.getElementById('lb-vid');
+      if (isVideo(src)) {
+        imgEl.style.display = 'none'; imgEl.src = '';
+        vidEl.style.display = ''; vidEl.src = src; vidEl.play();
+      } else {
+        vidEl.style.display = 'none'; vidEl.src = ''; vidEl.pause();
+        imgEl.style.display = ''; imgEl.src = src;
+      }
+      document.getElementById('lb').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLb() {
+      document.getElementById('lb').classList.remove('open');
+      document.getElementById('lb-vid').pause();
+      document.body.style.overflow = '';
+    }
+    function lbNav(dir) { lbIdx = (lbIdx + dir + imgs.length) % imgs.length; openLb(lbIdx); }
     document.addEventListener('keydown', (e) => {
       if (!document.getElementById('lb').classList.contains('open')) return;
       if (e.key === 'ArrowRight') lbNav(1);

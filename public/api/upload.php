@@ -63,22 +63,41 @@ if (in_array($cat, QBOX_VIDEO_CATS, true)) {
     json_out(['url' => '/uploads/hero/hero.mp4']);
 }
 
-// ── Subida de IMAGEN ──
+// ── Subida de IMAGEN o VIDEO de galería ──
 if (!in_array($cat, QBOX_MEDIA_CATS, true)) json_out(['error' => 'Categoría inválida'], 400);
 
 $f = $_FILES['file'] ?? null;
 if (!$f || !is_array($f) || ($f['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
     $code = is_array($f) ? (int)$f['error'] : UPLOAD_ERR_NO_FILE;
     $msg = in_array($code, [UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE], true)
-        ? 'La imagen supera el límite del servidor' : 'No se recibió la imagen';
+        ? 'El archivo supera el límite del servidor' : 'No se recibió el archivo';
     json_out(['error' => $msg], 400);
 }
+
+$mime = (new finfo(FILEINFO_MIME_TYPE))->file($f['tmp_name']) ?: '';
+$ext_raw = strtolower(pathinfo((string)$f['name'], PATHINFO_EXTENSION));
+
+// ── Video de galería ──
+$allowed_vid = ['video/mp4' => 'mp4', 'video/quicktime' => 'mp4', 'video/x-m4v' => 'mp4'];
+if (isset($allowed_vid[$mime]) || in_array($ext_raw, ['mp4', 'mov', 'm4v'], true)) {
+    if ($f['size'] > 200 * 1024 * 1024) json_out(['error' => 'El video supera los 200 MB'], 400);
+    $base = pathinfo((string)$f['name'], PATHINFO_FILENAME);
+    $base = strtolower(preg_replace('/[^A-Za-z0-9_-]+/', '-', $base) ?? '');
+    $base = trim(substr($base, 0, 50), '-') ?: 'video';
+    $name = date('Ymd-His') . '-' . bin2hex(random_bytes(3)) . '-' . $base . '.mp4';
+    $dir = $root . '/' . $cat;
+    if (!is_dir($dir) && !mkdir($dir, 0755, true)) json_out(['error' => 'No se pudo crear la carpeta de destino'], 500);
+    if (!move_uploaded_file($f['tmp_name'], $dir . '/' . $name)) json_out(['error' => 'No se pudo guardar el video'], 500);
+    @chmod($dir . '/' . $name, 0644);
+    json_out(['url' => '/uploads/' . $cat . '/' . $name]);
+}
+
+// ── Imagen de galería ──
 if ($f['size'] > 8 * 1024 * 1024) json_out(['error' => 'La imagen supera los 8 MB'], 400);
 
 $allowed = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp', 'image/gif' => 'gif'];
-$mime = (new finfo(FILEINFO_MIME_TYPE))->file($f['tmp_name']) ?: '';
 if (!isset($allowed[$mime]) || @getimagesize($f['tmp_name']) === false) {
-    json_out(['error' => 'Formato no permitido (JPG, PNG, WEBP o GIF)'], 400);
+    json_out(['error' => 'Formato no permitido (JPG, PNG, WEBP, GIF, MP4 o MOV)'], 400);
 }
 
 $base = pathinfo((string)$f['name'], PATHINFO_FILENAME);
