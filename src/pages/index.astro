@@ -423,11 +423,21 @@ const schema = {
         if (typeof u === 'string' && /^(\/(uploads|assets)\/|https:\/\/)/.test(u)) el.style.backgroundImage = `url("${u}")`;
       });
       const c = cfg.cotizador || {};
-      if (c.rateModulo > 0) TYPES.modulo.base = +c.rateModulo;
-      if (c.rateSemi > 0) TYPES.semi.base = +c.rateSemi;
-      if (c.multEsencial > 0) FINS.esencial.mult = +c.multEsencial;
-      if (c.multEstandar > 0) FINS.estandar.mult = +c.multEstandar;
-      if (c.multPremium > 0) FINS.premium.mult = +c.multPremium;
+      // Sistema nuevo: precios directos por terminación
+      if (c.rateModuloEsencial > 0) {
+        TYPES.modulo.base = +c.rateModuloEsencial;
+        FINS.esencial.mult = 1;
+        FINS.estandar.mult = c.rateModuloEstandar > 0 ? +(c.rateModuloEstandar / c.rateModuloEsencial).toFixed(4) : 1.15;
+        FINS.premium.mult  = c.rateModuloPremium  > 0 ? +(c.rateModuloPremium  / c.rateModuloEsencial).toFixed(4) : 1.35;
+      } else {
+        // Compatibilidad legado: base + mult
+        if (c.rateModulo > 0) TYPES.modulo.base = +c.rateModulo;
+        if (c.multEsencial > 0) FINS.esencial.mult = +c.multEsencial;
+        if (c.multEstandar > 0) FINS.estandar.mult = +c.multEstandar;
+        if (c.multPremium  > 0) FINS.premium.mult  = +c.multPremium;
+      }
+      if (c.rateSemiEsencial > 0) TYPES.semi.base = +c.rateSemiEsencial;
+      else if (c.rateSemi > 0) TYPES.semi.base = +c.rateSemi;
       document.querySelectorAll('.rate-val').forEach((el) => { el.textContent = TYPES[el.dataset.rate].base; });
       calcCot(true);
       if (Array.isArray(cfg.clients)) {
