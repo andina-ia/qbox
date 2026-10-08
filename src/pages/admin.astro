@@ -1165,36 +1165,37 @@ const CONFIG_SEED = config;
       /* ===== VIDEO HERO ===== */
       let heroVidExists = null; // null = no verificado, true/false
 
-      async function renderHeroCurrent() {
+      function renderHeroCurrent() {
         const box = document.getElementById('hero-current-box');
-        box.innerHTML = '<p style="font-size:13px;color:var(--accent);">Verificando video actual…</p>';
-
-        // Verificar si existe el video en el servidor
-        try {
-          const resp = await fetch('/uploads/hero/hero.mp4', { method: 'HEAD' });
-          heroVidExists = resp.ok;
-        } catch { heroVidExists = false; }
-
-        if (!heroVidExists) {
-          box.innerHTML = '<p style="font-size:14px;color:var(--accent);background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:16px;">No hay ningún video del hero cargado todavía. Subí uno con el formulario de abajo.</p>';
-          return;
-        }
-
+        const ts = Date.now();
+        const src = '/uploads/hero/hero.mp4?t=' + ts;
         const bStyle = 'font-size:13px;font-weight:600;border-radius:100px;padding:8px 18px;cursor:pointer;font-family:inherit;border:none;';
+
+        // Renderizamos el video directamente; si no carga, mostramos el mensaje de "no hay video"
         box.innerHTML = `
           <p class="lbl" style="margin-bottom:10px;">Video actual en el sitio</p>
-          <div style="background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:16px;display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;">
+          <div id="hero-exists-wrap" style="background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:16px;display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;">
             <div style="border-radius:10px;overflow:hidden;background:#000;flex-shrink:0;width:280px;max-width:100%;">
-              <video src="/uploads/hero/hero.mp4?t=${Date.now()}" controls muted playsinline style="width:100%;display:block;max-height:158px;object-fit:cover;"></video>
+              <video id="hero-cur-vid" src="${src}" controls muted playsinline style="width:100%;display:block;max-height:158px;object-fit:cover;"></video>
             </div>
             <div style="flex:1;min-width:180px;">
               <p style="font-size:13.5px;color:var(--accent);margin-bottom:16px;line-height:1.5;">Este es el video que se ve en el fondo de la pantalla principal. Podés subir uno nuevo abajo para reemplazarlo, o eliminarlo para volver al video por defecto.</p>
               <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                <a href="/uploads/hero/hero.mp4" download style="${bStyle}background:var(--ink);color:#fff;text-decoration:none;display:inline-block;">⬇ Descargar</a>
+                <a href="${src}" download="hero.mp4" style="${bStyle}background:var(--ink);color:#fff;text-decoration:none;display:inline-block;">⬇ Descargar</a>
                 <button onclick="deleteHeroVideo()" style="${bStyle}background:none;border:1.5px solid #B4452F;color:#B4452F;">✕ Eliminar</button>
               </div>
             </div>
-          </div>`;
+          </div>
+          <p id="hero-no-vid" style="display:none;font-size:14px;color:var(--accent);background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:16px;">No hay ningún video del hero cargado todavía. Subí uno con el formulario de abajo.</p>`;
+
+        // Detectar si el video existe mediante el evento de error
+        const vid = document.getElementById('hero-cur-vid');
+        vid.addEventListener('error', () => {
+          heroVidExists = false;
+          document.getElementById('hero-exists-wrap').style.display = 'none';
+          document.getElementById('hero-no-vid').style.display = 'block';
+        });
+        vid.addEventListener('loadedmetadata', () => { heroVidExists = true; });
       }
 
       async function deleteHeroVideo() {
