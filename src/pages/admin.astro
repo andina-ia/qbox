@@ -1165,41 +1165,58 @@ const CONFIG_SEED = config;
       /* ===== VIDEO HERO ===== */
       let heroVidExists = null; // null = no verificado, true/false
 
-      async function renderHeroCurrent() {
+      function renderHeroCurrent() {
         const box = document.getElementById('hero-current-box');
-        box.innerHTML = '<p style="font-size:13px;color:var(--accent);">Cargando…</p>';
+        // El video del hero vive en /uploads/hero/hero.mp4 (subido por el admin)
+        // o en /assets/hero.mp4 (el video por defecto del sitio).
+        // Mostramos ambas fuentes: primero el de uploads, con fallback al de assets.
         const ts = Date.now();
-        const src = '/uploads/hero/hero.mp4?t=' + ts;
-        const bStyle = 'font-size:13px;font-weight:600;border-radius:100px;padding:8px 18px;cursor:pointer;font-family:inherit;border:none;';
-
-        // Verificar existencia con fetch GET (Range evita descargar el archivo entero)
-        let exists = false;
-        try {
-          const r = await fetch(src, { method: 'GET', headers: { Range: 'bytes=0-0' }, cache: 'no-store' });
-          exists = r.ok || r.status === 206;
-        } catch { exists = false; }
-
-        heroVidExists = exists;
-
-        if (!exists) {
-          box.innerHTML = '<p style="font-size:14px;color:var(--accent);background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:16px;">No hay ningún video del hero cargado todavía. Subí uno con el formulario de abajo.</p>';
-          return;
-        }
+        const srcUploaded = '/uploads/hero/hero.mp4?t=' + ts;
+        const srcDefault  = '/assets/hero.mp4';
+        const bStyle = 'font-size:13px;font-weight:600;border-radius:100px;padding:8px 18px;cursor:pointer;font-family:inherit;border:none;display:inline-block;';
 
         box.innerHTML = `
           <p class="lbl" style="margin-bottom:10px;">Video actual en el sitio</p>
           <div style="background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:16px;display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;">
             <div style="border-radius:10px;overflow:hidden;background:#000;flex-shrink:0;width:280px;max-width:100%;">
-              <video src="${src}" controls muted playsinline style="width:100%;display:block;max-height:158px;object-fit:cover;"></video>
+              <video id="hero-cur-vid" controls muted playsinline style="width:100%;display:block;max-height:158px;object-fit:cover;">
+                <source id="hero-src-up" src="${srcUploaded}" type="video/mp4">
+                <source src="${srcDefault}" type="video/mp4">
+              </video>
             </div>
             <div style="flex:1;min-width:180px;">
-              <p style="font-size:13.5px;color:var(--accent);margin-bottom:16px;line-height:1.5;">Este es el video que se ve en el fondo de la pantalla principal. Podés subir uno nuevo abajo para reemplazarlo, o eliminarlo para volver al video por defecto.</p>
-              <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                <a href="${src}" download="hero.mp4" style="${bStyle}background:var(--ink);color:#fff;text-decoration:none;display:inline-block;">⬇ Descargar</a>
-                <button onclick="deleteHeroVideo()" style="${bStyle}background:none;border:1.5px solid #B4452F;color:#B4452F;">✕ Eliminar</button>
-              </div>
+              <p id="hero-vid-label" style="font-size:13.5px;color:var(--accent);margin-bottom:16px;line-height:1.5;">Cargando video…</p>
+              <div id="hero-vid-btns" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
             </div>
           </div>`;
+
+        const vid = document.getElementById('hero-cur-vid');
+        const label = document.getElementById('hero-vid-label');
+        const btns  = document.getElementById('hero-vid-btns');
+
+        // Intentar cargar el video de uploads primero
+        fetch(srcUploaded, { method: 'GET', headers: { Range: 'bytes=0-0' }, cache: 'no-store' })
+          .then(r => {
+            if (r.ok || r.status === 206) {
+              // Existe el video subido por el admin
+              heroVidExists = true;
+              label.textContent = 'Este es el video que se ve en el fondo de la pantalla principal. Podés subir uno nuevo abajo para reemplazarlo.';
+              btns.innerHTML = `
+                <a href="${srcUploaded}" download="hero.mp4" style="${bStyle}background:var(--ink);color:#fff;text-decoration:none;">⬇ Descargar</a>
+                <button onclick="deleteHeroVideo()" style="${bStyle}background:none;border:1.5px solid #B4452F;color:#B4452F;">✕ Eliminar</button>`;
+            } else {
+              // No hay video subido, se usa el por defecto
+              heroVidExists = false;
+              vid.querySelector('#hero-src-up').remove();
+              vid.load();
+              label.textContent = 'El sitio está usando el video por defecto. Subí uno propio con el formulario de abajo para reemplazarlo.';
+              btns.innerHTML = '';
+            }
+          })
+          .catch(() => {
+            heroVidExists = false;
+            label.textContent = 'No se pudo verificar el video. Revisá la conexión.';
+          });
       }
 
       async function deleteHeroVideo() {
