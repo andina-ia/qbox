@@ -6,7 +6,10 @@
   },
   "cotizador": {
     "rateModulo": 640,
-    "rateSemi": 135
+    "rateSemi": 135,
+    "multEsencial": 1,
+    "multEstandar": 1.15,
+    "multPremium": 1.35
   },
   "clients": [
     {

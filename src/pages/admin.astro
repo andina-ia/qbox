@@ -235,11 +235,42 @@ const CONFIG_SEED = config;
         <!-- COTIZADOR -->
         <div id="panel-cotizador" class="panel">
           <p class="sec-title">Cotizador</p>
-          <p class="sec-sub">Precio base de referencia por m² (USD). Se usa para calcular la estimación en el sitio.</p>
-          <div class="grid2">
-            <div class="field"><label class="lbl" for="f-modulo">Módulo habitable · USD/m²</label><input type="number" id="f-modulo" min="1" /></div>
-            <div class="field"><label class="lbl" for="f-semi">Semicubierto · USD/m²</label><input type="number" id="f-semi" min="1" /></div>
+
+          <p class="lbl" style="margin-bottom:10px;">Precio base por m² (USD)</p>
+          <p class="sec-sub" style="margin-bottom:16px;">El precio base se multiplica por el nivel de terminación que elige el cliente.</p>
+          <div class="grid2" style="margin-bottom:28px;">
+            <div class="field"><label class="lbl" for="f-modulo">Módulo habitable · USD/m²</label><input type="number" id="f-modulo" min="1" step="1" /></div>
+            <div class="field"><label class="lbl" for="f-semi">Semicubierto · USD/m²</label><input type="number" id="f-semi" min="1" step="1" /></div>
           </div>
+
+          <p class="lbl" style="margin-bottom:6px;">Multiplicadores por nivel de terminación</p>
+          <p class="sec-sub" style="margin-bottom:16px;">El precio final = precio base × multiplicador. Ej: si el base es USD 640/m² y el multiplicador Premium es 1.35, el precio Premium es USD 864/m².</p>
+          <div class="grid2" style="margin-bottom:8px;">
+            <div class="field">
+              <label class="lbl" for="f-mult-esencial">Esencial · multiplicador</label>
+              <input type="number" id="f-mult-esencial" min="0.1" max="10" step="0.01" />
+              <p style="font-size:12px;color:var(--accent);margin-top:4px;">Estructura + cerramiento básico</p>
+            </div>
+            <div class="field">
+              <label class="lbl" for="f-mult-estandar">Estándar · multiplicador</label>
+              <input type="number" id="f-mult-estandar" min="0.1" max="10" step="0.01" />
+              <p style="font-size:12px;color:var(--accent);margin-top:4px;">Terminación completa</p>
+            </div>
+            <div class="field">
+              <label class="lbl" for="f-mult-premium">Premium · multiplicador</label>
+              <input type="number" id="f-mult-premium" min="0.1" max="10" step="0.01" />
+              <p style="font-size:12px;color:var(--accent);margin-top:4px;">Materiales superiores</p>
+            </div>
+          </div>
+          <div id="cot-preview" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin-bottom:24px;font-size:13.5px;display:none;">
+            <p style="font-weight:600;margin-bottom:8px;color:var(--ink);">Vista previa — Módulo habitable:</p>
+            <div style="display:flex;gap:20px;flex-wrap:wrap;">
+              <span>Esencial: <strong id="prev-esencial">—</strong></span>
+              <span>Estándar: <strong id="prev-estandar">—</strong></span>
+              <span>Premium: <strong id="prev-premium">—</strong></span>
+            </div>
+          </div>
+
           <button class="btn btn-primary" onclick="saveCotizador()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
             Guardar tarifas
@@ -673,15 +704,38 @@ const CONFIG_SEED = config;
       }
 
       /* ===== COTIZADOR ===== */
+      function updateCotPreview() {
+        const rateM = parseFloat(document.getElementById('f-modulo').value) || 640;
+        const rateSemi = parseFloat(document.getElementById('f-semi').value) || 135;
+        const mE = parseFloat(document.getElementById('f-mult-esencial').value) || 1;
+        const mS = parseFloat(document.getElementById('f-mult-estandar').value) || 1.15;
+        const mP = parseFloat(document.getElementById('f-mult-premium').value) || 1.35;
+        const el = document.getElementById('cot-preview');
+        if (!el) return;
+        el.innerHTML = `<strong>Vista previa · módulo 20 m²</strong><br>
+          Esencial: USD ${Math.round(rateM * 20 * mE).toLocaleString('es-AR')}<br>
+          Estándar: USD ${Math.round(rateM * 20 * mS).toLocaleString('es-AR')}<br>
+          Premium: USD ${Math.round(rateM * 20 * mP).toLocaleString('es-AR')}`;
+      }
       function loadCotizador() {
         const c = CONFIG.cotizador || {};
         document.getElementById('f-modulo').value = c.rateModulo ?? DEF.rateModulo;
         document.getElementById('f-semi').value = c.rateSemi ?? DEF.rateSemi;
+        document.getElementById('f-mult-esencial').value = c.multEsencial ?? 1;
+        document.getElementById('f-mult-estandar').value = c.multEstandar ?? 1.15;
+        document.getElementById('f-mult-premium').value = c.multPremium ?? 1.35;
+        updateCotPreview();
+        ['f-modulo','f-semi','f-mult-esencial','f-mult-estandar','f-mult-premium'].forEach(id => {
+          document.getElementById(id).addEventListener('input', updateCotPreview);
+        });
       }
       async function saveCotizador() {
         const value = {
           rateModulo: parseFloat(document.getElementById('f-modulo').value) || DEF.rateModulo,
-          rateSemi: parseFloat(document.getElementById('f-semi').value) || DEF.rateSemi
+          rateSemi: parseFloat(document.getElementById('f-semi').value) || DEF.rateSemi,
+          multEsencial: parseFloat(document.getElementById('f-mult-esencial').value) || 1,
+          multEstandar: parseFloat(document.getElementById('f-mult-estandar').value) || 1.15,
+          multPremium: parseFloat(document.getElementById('f-mult-premium').value) || 1.35
         };
         try { await saveSection('cotizador', value); toast('Tarifas guardadas · ya está publicado'); }
         catch (e) { toast(e.message, true); }

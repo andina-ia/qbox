@@ -425,6 +425,9 @@ const schema = {
       const c = cfg.cotizador || {};
       if (c.rateModulo > 0) TYPES.modulo.base = +c.rateModulo;
       if (c.rateSemi > 0) TYPES.semi.base = +c.rateSemi;
+      if (c.multEsencial > 0) FINS.esencial.mult = +c.multEsencial;
+      if (c.multEstandar > 0) FINS.estandar.mult = +c.multEstandar;
+      if (c.multPremium > 0) FINS.premium.mult = +c.multPremium;
       document.querySelectorAll('.rate-val').forEach((el) => { el.textContent = TYPES[el.dataset.rate].base; });
       calcCot(true);
       if (Array.isArray(cfg.clients)) {
