@@ -13,6 +13,7 @@ if (basename($_SERVER['SCRIPT_FILENAME'] ?? '') === basename(__FILE__)) {
 const QBOX_SECTIONS = ['content', 'cotizador', 'clients', 'seo', 'media', 'covers'];
 // Categorías de galería + los 4 prototipos de /modulos (galería y foto de tarjeta propias).
 const QBOX_MEDIA_CATS = ['modulos', 'stands', 'cocheras-galerias', 'ampliaciones', 'locales', 'proto1', 'proto2', 'proto3', 'proto4'];
+const QBOX_VIDEO_CATS = ['hero-video'];
 
 /**
  * Carga las credenciales. Busca primero FUERA de public_html (recomendado):

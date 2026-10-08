@@ -29,6 +29,41 @@ if (stripos($ctype, 'application/json') === 0) {
 
 // ── Subida ──
 $cat = (string)($_POST['category'] ?? '');
+
+// ── Subida de VIDEO del hero ──
+if (in_array($cat, QBOX_VIDEO_CATS, true)) {
+    $f = $_FILES['file'] ?? null;
+    if (!$f || !is_array($f) || ($f['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+        $code = is_array($f) ? (int)$f['error'] : UPLOAD_ERR_NO_FILE;
+        $msg = in_array($code, [UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE], true)
+            ? 'El video supera el límite del servidor (máx 200 MB)' : 'No se recibió el video';
+        json_out(['error' => $msg], 400);
+    }
+    // Máx 200 MB para video
+    if ($f['size'] > 200 * 1024 * 1024) json_out(['error' => 'El video supera los 200 MB'], 400);
+
+    $allowed_video = ['video/mp4' => 'mp4', 'video/quicktime' => 'mp4', 'video/x-m4v' => 'mp4'];
+    $mime = (new finfo(FILEINFO_MIME_TYPE))->file($f['tmp_name']) ?: '';
+    // Fallback: verificar extensión si finfo no detecta bien el mime del video
+    if (!isset($allowed_video[$mime])) {
+        $ext = strtolower(pathinfo((string)$f['name'], PATHINFO_EXTENSION));
+        if (!in_array($ext, ['mp4', 'mov', 'm4v'], true)) {
+            json_out(['error' => 'Formato no permitido. Subí un archivo MP4 o MOV.'], 400);
+        }
+    }
+
+    $dir = $root . '/hero';
+    if (!is_dir($dir) && !mkdir($dir, 0755, true)) json_out(['error' => 'No se pudo crear la carpeta de destino'], 500);
+
+    // Siempre se llama hero.mp4 — reemplaza el anterior
+    $dest = $dir . '/hero.mp4';
+    if (!move_uploaded_file($f['tmp_name'], $dest)) json_out(['error' => 'No se pudo guardar el video'], 500);
+    @chmod($dest, 0644);
+
+    json_out(['url' => '/uploads/hero/hero.mp4']);
+}
+
+// ── Subida de IMAGEN ──
 if (!in_array($cat, QBOX_MEDIA_CATS, true)) json_out(['error' => 'Categoría inválida'], 400);
 
 $f = $_FILES['file'] ?? null;

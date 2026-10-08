@@ -299,6 +299,37 @@ const CONFIG_SEED = config;
           <div id="upload-queue" style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;"></div>
           <div id="existing-images" style="margin-bottom:24px;"></div>
           <input type="file" id="replace-input" accept="image/*" style="display:none;" onchange="handleReplace(this)" />
+
+          <!-- VIDEO HERO -->
+          <div style="margin-top:36px;padding-top:28px;border-top:1px solid var(--border);">
+            <p class="sec-title" style="margin-bottom:4px;">Video del hero</p>
+            <p class="sec-sub" style="margin-bottom:20px;">Es el video de fondo de la pantalla principal. Reemplaza el video anterior al subir uno nuevo.<br>
+              <strong>Especificaciones:</strong> MP4 o MOV · 1920×1080px · 16:9 · sin audio · máx 200 MB · 15–25 seg en loop · acción en el tercio derecho del encuadre.</p>
+
+            <div id="hero-vid-preview" style="display:none;margin-bottom:16px;border-radius:12px;overflow:hidden;background:#000;max-width:480px;">
+              <video id="hero-vid-player" controls muted style="width:100%;display:block;max-height:270px;object-fit:cover;"></video>
+              <p id="hero-vid-name" style="font-size:12px;color:var(--accent);padding:8px 12px;"></p>
+            </div>
+
+            <div id="hero-vid-drop"
+              onclick="document.getElementById('hero-vid-input').click()"
+              ondragover="event.preventDefault();this.style.borderColor='var(--ink)'"
+              ondragleave="this.style.borderColor='var(--border)'"
+              ondrop="handleHeroVideoDrop(event)"
+              style="border:2px dashed var(--border);border-radius:16px;padding:36px 24px;text-align:center;cursor:pointer;transition:.2s;background:var(--card);">
+              <div style="font-size:32px;margin-bottom:10px;">🎬</div>
+              <p style="font-size:15px;font-weight:600;color:var(--ink);margin-bottom:4px;">Arrastrá el video o hacé clic para seleccionar</p>
+              <p style="font-size:13px;color:var(--accent);">MP4 o MOV · 1920×1080 · máx 200 MB</p>
+              <input type="file" id="hero-vid-input" accept="video/mp4,video/quicktime,.mp4,.mov" style="display:none;" onchange="handleHeroVideoFile(this.files[0])" />
+            </div>
+
+            <div id="hero-vid-progress" style="display:none;margin-top:16px;">
+              <div style="height:6px;background:var(--border);border-radius:100px;overflow:hidden;">
+                <div id="hero-vid-bar" style="height:100%;width:0%;background:var(--ink);border-radius:100px;transition:width .3s;"></div>
+              </div>
+              <p id="hero-vid-status" style="font-size:13px;color:var(--accent);margin-top:8px;text-align:center;">Subiendo…</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1002,6 +1033,80 @@ const CONFIG_SEED = config;
           setTimeout(() => document.getElementById(id)?.remove(), 2000);
         } catch (err) {
           setStatus('Error: ' + err.message, '#B4452F'); setBar(0);
+        }
+      }
+
+      /* ===== VIDEO HERO ===== */
+      function handleHeroVideoDrop(e) {
+        e.preventDefault();
+        document.getElementById('hero-vid-drop').style.borderColor = 'var(--border)';
+        const file = e.dataTransfer.files[0];
+        if (file) handleHeroVideoFile(file);
+      }
+
+      function handleHeroVideoFile(file) {
+        if (!file) return;
+        const allowed = ['video/mp4', 'video/quicktime'];
+        const ext = file.name.split('.').pop().toLowerCase();
+        if (!allowed.includes(file.type) && !['mp4','mov'].includes(ext)) {
+          showToast('Solo se aceptan archivos MP4 o MOV'); return;
+        }
+        if (file.size > 200 * 1024 * 1024) {
+          showToast('El video supera los 200 MB'); return;
+        }
+        // Preview local antes de subir
+        const player = document.getElementById('hero-vid-player');
+        const preview = document.getElementById('hero-vid-preview');
+        const nameEl = document.getElementById('hero-vid-name');
+        player.src = URL.createObjectURL(file);
+        nameEl.textContent = file.name + ' · ' + (file.size / 1024 / 1024).toFixed(1) + ' MB';
+        preview.style.display = 'block';
+        uploadHeroVideo(file);
+      }
+
+      async function uploadHeroVideo(file) {
+        const progress = document.getElementById('hero-vid-progress');
+        const bar = document.getElementById('hero-vid-bar');
+        const status = document.getElementById('hero-vid-status');
+        progress.style.display = 'block';
+        bar.style.width = '0%';
+        status.textContent = 'Subiendo… esto puede tardar unos minutos según el peso del video.';
+
+        try {
+          const fd = new FormData();
+          fd.append('file', file);
+          fd.append('category', 'hero-video');
+
+          // Usamos XMLHttpRequest para tener progreso real
+          await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/api/upload.php');
+            xhr.setRequestHeader('X-CSRF-Token', CSRF);
+            xhr.upload.onprogress = (e) => {
+              if (e.lengthComputable) {
+                const pct = Math.round(e.loaded / e.total * 90);
+                bar.style.width = pct + '%';
+                status.textContent = 'Subiendo… ' + pct + '%';
+              }
+            };
+            xhr.onload = () => {
+              try {
+                const resp = JSON.parse(xhr.responseText);
+                if (xhr.status !== 200 || resp.error) { reject(new Error(resp.error || 'Error al subir')); return; }
+                resolve(resp);
+              } catch { reject(new Error('Respuesta inválida del servidor')); }
+            };
+            xhr.onerror = () => reject(new Error('Error de red'));
+            xhr.send(fd);
+          });
+
+          bar.style.width = '100%';
+          status.textContent = '✓ Video subido correctamente. Ya está activo en el sitio.';
+          status.style.color = '#2E7D32';
+        } catch (err) {
+          bar.style.width = '0%';
+          status.textContent = 'Error: ' + err.message;
+          status.style.color = '#B4452F';
         }
       }
 

@@ -67,6 +67,7 @@ const schema = {
   <!-- HERO -->
   <section id="hero">
     <video id="hero-vid" autoplay muted loop playsinline preload="none" poster="/assets/modulo-nosotros.webp">
+      <source src="/uploads/hero/hero.mp4" type="video/mp4" onerror="this.src='/assets/hero.mp4'" />
       <source src="/assets/hero.mp4" type="video/mp4" />
     </video>
     <div id="hero-vid-fade"></div>
