@@ -314,34 +314,42 @@ const CONFIG_SEED = config;
           <p class="sec-title">Medios</p>
           <p class="sec-sub">Elegí una categoría para cambiar su portada en el inicio y las fotos de su galería. Los cambios se publican al instante.</p>
           <div class="pills" id="media-pills"></div>
-          <div id="cover-box" style="margin-bottom:28px;"></div>
-          <input type="file" id="cover-input" accept="image/*" style="display:none;" onchange="handleCoverFile(this)" />
-          <p class="lbl" style="margin-bottom:10px;" id="gal-title">Galería de la categoría</p>
-          <div id="drop-zone" onclick="document.getElementById('file-input').click()"
-            style="border:2px dashed var(--border);border-radius:16px;padding:40px 24px;text-align:center;cursor:pointer;transition:.2s;margin-bottom:20px;background:var(--card);"
-            ondragover="event.preventDefault();this.style.borderColor='var(--ink)'"
-            ondragleave="this.style.borderColor='var(--border)'"
-            ondrop="handleDrop(event)">
-            <div style="font-size:32px;margin-bottom:10px;">📷🎬</div>
-            <p style="font-size:15px;font-weight:600;color:var(--ink);margin-bottom:4px;">Arrastrá fotos o videos, o hacé clic para seleccionar</p>
-            <p style="font-size:13px;color:var(--accent);">JPG, PNG, WebP · máx 8 MB · MP4, MOV · máx 200 MB · se agregan al final de la galería</p>
-            <input type="file" id="file-input" multiple accept="image/*,video/mp4,video/quicktime,.mp4,.mov" style="display:none;" onchange="handleFiles(this.files)" />
-          </div>
-          <div id="upload-queue" style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;"></div>
-          <div id="existing-images" style="margin-bottom:24px;"></div>
-          <input type="file" id="replace-input" accept="image/*,video/mp4,video/quicktime,.mp4,.mov" style="display:none;" onchange="handleReplace(this)" />
 
-          <!-- VIDEO HERO -->
-          <div style="margin-top:36px;padding-top:28px;border-top:1px solid var(--border);">
-            <p class="sec-title" style="margin-bottom:4px;">Video del hero</p>
-            <p class="sec-sub" style="margin-bottom:20px;">Es el video de fondo de la pantalla principal. Reemplaza el video anterior al subir uno nuevo.<br>
+          <!-- Galería de categoría (oculta cuando está en modo hero) -->
+          <div id="media-gallery-section">
+            <div id="cover-box" style="margin-bottom:28px;"></div>
+            <input type="file" id="cover-input" accept="image/*" style="display:none;" onchange="handleCoverFile(this)" />
+            <p class="lbl" style="margin-bottom:10px;" id="gal-title">Galería de la categoría</p>
+            <div id="drop-zone" onclick="document.getElementById('file-input').click()"
+              style="border:2px dashed var(--border);border-radius:16px;padding:40px 24px;text-align:center;cursor:pointer;transition:.2s;margin-bottom:20px;background:var(--card);"
+              ondragover="event.preventDefault();this.style.borderColor='var(--ink)'"
+              ondragleave="this.style.borderColor='var(--border)'"
+              ondrop="handleDrop(event)">
+              <div style="font-size:32px;margin-bottom:10px;">📷🎬</div>
+              <p style="font-size:15px;font-weight:600;color:var(--ink);margin-bottom:4px;">Arrastrá fotos o videos, o hacé clic para seleccionar</p>
+              <p style="font-size:13px;color:var(--accent);">JPG, PNG, WebP · máx 8 MB · MP4, MOV · máx 200 MB · se agregan al final de la galería</p>
+              <input type="file" id="file-input" multiple accept="image/*,video/mp4,video/quicktime,.mp4,.mov" style="display:none;" onchange="handleFiles(this.files)" />
+            </div>
+            <div id="upload-queue" style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;"></div>
+            <div id="existing-images" style="margin-bottom:24px;"></div>
+            <input type="file" id="replace-input" accept="image/*,video/mp4,video/quicktime,.mp4,.mov" style="display:none;" onchange="handleReplace(this)" />
+          </div>
+
+          <!-- Video del hero (se muestra al seleccionar la píldora "Video del hero") -->
+          <div id="media-hero-section" style="display:none;">
+            <p class="sec-sub" style="margin-bottom:20px;">Es el video de fondo de la pantalla principal. Podés subir uno nuevo o eliminar el actual.<br>
               <strong>Especificaciones:</strong> MP4 o MOV · 1920×1080px · 16:9 · sin audio · máx 200 MB · 15–25 seg en loop · acción en el tercio derecho del encuadre.</p>
 
+            <!-- Video actual en el servidor -->
+            <div id="hero-current-box" style="margin-bottom:24px;"></div>
+
+            <!-- Preview local (antes de subir) -->
             <div id="hero-vid-preview" style="display:none;margin-bottom:16px;border-radius:12px;overflow:hidden;background:#000;max-width:480px;">
               <video id="hero-vid-player" controls muted style="width:100%;display:block;max-height:270px;object-fit:cover;"></video>
               <p id="hero-vid-name" style="font-size:12px;color:var(--accent);padding:8px 12px;"></p>
             </div>
 
+            <p class="lbl" style="margin-bottom:10px;">Subir video nuevo</p>
             <div id="hero-vid-drop"
               onclick="document.getElementById('hero-vid-input').click()"
               ondragover="event.preventDefault();this.style.borderColor='var(--ink)'"
@@ -833,19 +841,30 @@ const CONFIG_SEED = config;
 
       /* ===== MEDIOS ===== */
       let mediaCat = 'modulos';
+      let mediaMode = 'gallery'; // 'gallery' | 'hero'
       function loadMedia() {
         const pillsEl = document.getElementById('media-pills');
         pillsEl.innerHTML = '';
         const topKey = isProto(mediaCat) ? 'modulos' : mediaCat;
+
+        // Píldoras de categorías
         MEDIA_CATS.forEach(([key, label]) => {
           const b = document.createElement('button');
-          b.className = 'pill' + (key === topKey ? ' active' : '');
+          b.className = 'pill' + (mediaMode === 'gallery' && key === topKey ? ' active' : '');
           b.textContent = label;
-          b.onclick = () => { mediaCat = key; pickingCover = false; loadMedia(); };
+          b.onclick = () => { mediaCat = key; mediaMode = 'gallery'; pickingCover = false; loadMedia(); };
           pillsEl.appendChild(b);
         });
-        // Dentro de Módulos: galería general o uno de los 4 prototipos
-        if (topKey === 'modulos') {
+
+        // Píldora Video del hero
+        const bHero = document.createElement('button');
+        bHero.className = 'pill' + (mediaMode === 'hero' ? ' active' : '');
+        bHero.textContent = '🎬 Video del hero';
+        bHero.onclick = () => { mediaMode = 'hero'; loadMedia(); };
+        pillsEl.appendChild(bHero);
+
+        // Sub-píldoras de módulos
+        if (mediaMode === 'gallery' && topKey === 'modulos') {
           const sub = document.createElement('div');
           sub.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;width:100%;margin-top:4px;padding:12px;border-radius:14px;background:var(--card);border:1.5px solid var(--border);';
           sub.innerHTML = '<span style="font-size:12.5px;font-weight:700;color:var(--accent);align-self:center;margin-right:4px;">Dentro de Módulos:</span>';
@@ -854,12 +873,21 @@ const CONFIG_SEED = config;
             b.className = 'pill' + (key === mediaCat ? ' active' : '');
             b.style.fontSize = '13px';
             b.textContent = label;
-            b.onclick = () => { mediaCat = key; pickingCover = false; loadMedia(); };
+            b.onclick = () => { mediaCat = key; mediaMode = 'gallery'; pickingCover = false; loadMedia(); };
             sub.appendChild(b);
           });
           pillsEl.appendChild(sub);
         }
-        loadExistingImages();
+
+        // Mostrar sección correcta
+        document.getElementById('media-gallery-section').style.display = mediaMode === 'gallery' ? '' : 'none';
+        document.getElementById('media-hero-section').style.display = mediaMode === 'hero' ? '' : 'none';
+
+        if (mediaMode === 'gallery') {
+          loadExistingImages();
+        } else {
+          renderHeroCurrent();
+        }
       }
       /* Fotos originales de cada galería (las mismas que usa la página pública). */
       const DEFAULT_GALLERIES = JSON.parse(document.getElementById('admin-galleries').textContent);
@@ -1105,6 +1133,50 @@ const CONFIG_SEED = config;
       }
 
       /* ===== VIDEO HERO ===== */
+      let heroVidExists = null; // null = no verificado, true/false
+
+      async function renderHeroCurrent() {
+        const box = document.getElementById('hero-current-box');
+        box.innerHTML = '<p style="font-size:13px;color:var(--accent);">Verificando video actual…</p>';
+
+        // Verificar si existe el video en el servidor
+        try {
+          const resp = await fetch('/uploads/hero/hero.mp4', { method: 'HEAD' });
+          heroVidExists = resp.ok;
+        } catch { heroVidExists = false; }
+
+        if (!heroVidExists) {
+          box.innerHTML = '<p style="font-size:14px;color:var(--accent);background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:16px;">No hay ningún video del hero cargado todavía. Subí uno con el formulario de abajo.</p>';
+          return;
+        }
+
+        const bStyle = 'font-size:13px;font-weight:600;border-radius:100px;padding:8px 18px;cursor:pointer;font-family:inherit;border:none;';
+        box.innerHTML = `
+          <p class="lbl" style="margin-bottom:10px;">Video actual en el sitio</p>
+          <div style="background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:16px;display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;">
+            <div style="border-radius:10px;overflow:hidden;background:#000;flex-shrink:0;width:280px;max-width:100%;">
+              <video src="/uploads/hero/hero.mp4?t=${Date.now()}" controls muted playsinline style="width:100%;display:block;max-height:158px;object-fit:cover;"></video>
+            </div>
+            <div style="flex:1;min-width:180px;">
+              <p style="font-size:13.5px;color:var(--accent);margin-bottom:16px;line-height:1.5;">Este es el video que se ve en el fondo de la pantalla principal. Podés subir uno nuevo abajo para reemplazarlo, o eliminarlo para volver al video por defecto.</p>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <a href="/uploads/hero/hero.mp4" download style="${bStyle}background:var(--ink);color:#fff;text-decoration:none;display:inline-block;">⬇ Descargar</a>
+                <button onclick="deleteHeroVideo()" style="${bStyle}background:none;border:1.5px solid #B4452F;color:#B4452F;">✕ Eliminar</button>
+              </div>
+            </div>
+          </div>`;
+      }
+
+      async function deleteHeroVideo() {
+        if (!confirm('¿Eliminar el video del hero? El sitio volverá a usar el video por defecto.')) return;
+        try {
+          await api('/api/upload.php', { method: 'POST', body: JSON.stringify({ action: 'delete', url: '/uploads/hero/hero.mp4' }) });
+          heroVidExists = false;
+          toast('Video eliminado · el sitio usa el video por defecto');
+          renderHeroCurrent();
+        } catch (e) { toast(e.message, true); }
+      }
+
       function handleHeroVideoDrop(e) {
         e.preventDefault();
         document.getElementById('hero-vid-drop').style.borderColor = 'var(--border)';
@@ -1171,6 +1243,8 @@ const CONFIG_SEED = config;
           bar.style.width = '100%';
           status.textContent = '✓ Video subido correctamente. Ya está activo en el sitio.';
           status.style.color = '#2E7D32';
+          heroVidExists = true;
+          renderHeroCurrent();
         } catch (err) {
           bar.style.width = '0%';
           status.textContent = 'Error: ' + err.message;
